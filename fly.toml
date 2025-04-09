@@ -7,6 +7,8 @@ app = 'commandly-frontend'
 primary_region = 'sin'
 
 [build]
+  [build.args]
+    NODE_ENV = "production"
 
 [http_service]
   internal_port = 80
@@ -15,6 +17,22 @@ primary_region = 'sin'
   auto_start_machines = true
   min_machines_running = 0
   processes = ['app']
+
+  [[http_service.ports]]
+    port = 80
+    handlers = ["http"]
+  [[http_service.ports]]
+    port = 443
+    handlers = ["tls", "http"]
+
+  [[http_service.headers]]
+    for = "/**"
+    [http_service.headers.values]
+      X-Frame-Options = "DENY"
+      X-Content-Type-Options = "nosniff"
+      Referrer-Policy = "strict-origin-when-cross-origin"
+      Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+      Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://commandly-backend.fly.dev;"
 
 [[vm]]
   memory = '512mb'
