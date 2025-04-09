@@ -34,6 +34,12 @@ primary_region = 'sin'
       Permissions-Policy = "camera=(), microphone=(), geolocation=()"
       Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://commandly-backend.fly.dev;"
 
+  # Catch-all route for all paths
+  [[http_service.routes]]
+    from = "/**"
+    to = "/index.html"
+    methods = ["GET"]
+
 [[vm]]
   memory = '512mb'
   cpu_kind = 'shared'
