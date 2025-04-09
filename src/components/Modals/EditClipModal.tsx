@@ -92,7 +92,6 @@ export default function EditClipModal({
               value={sourceUrl}
               onChange={(e) => setSourceUrl(e.target.value)}
               maxLength={500}
-              required
               placeholder="https://..."
             />
           </div>

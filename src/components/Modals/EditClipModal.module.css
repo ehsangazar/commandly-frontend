@@ -54,6 +54,7 @@
 }
 
 .field {
+  text-align: left;
   margin-bottom: 1.25rem;
 }
 
@@ -122,12 +123,12 @@
 
 .saveButton {
   background: var(--primary-color);
-  border: none;
-  color: white;
+  border: 1px solid var(--primary-color);
+  color: var(--background-primary);
 }
 
 .saveButton:hover:not(:disabled) {
-  background: var(--primary-hover);
+  opacity: 0.9;
 }
 
 .cancelButton:disabled,
