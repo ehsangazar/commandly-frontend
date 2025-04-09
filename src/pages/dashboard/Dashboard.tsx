@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext";
 import styles from "./Dashboard.module.css";
-import StatsWidget from "../../components/widgets/StatsWidget";
-import DashboardHeader from "../../components/DashboardHeader";
+import StatsWidget from "../../components/Widgets/StatsWidget/StatsWidget";
 import Cookies from "js-cookie";
 
 const API_BASE_URL =
@@ -139,7 +138,6 @@ const Dashboard = () => {
       <main className={styles.mainContent}>
         {location.pathname === "/dashboard" ? (
           <div className={styles.dashboardContent}>
-            <DashboardHeader title="Dashboard Overview" />
             <div className={styles.widgetsContainer}>
               <StatsWidget />
               {/* Add more widgets here */}

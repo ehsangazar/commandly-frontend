@@ -1,4 +1,4 @@
-import styles from "./Legal.module.css";
+import styles from "./Terms.module.css";
 
 const Terms = () => {
   return (

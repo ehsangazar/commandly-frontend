@@ -5,18 +5,18 @@ import {
   Navigate,
 } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext";
-import Header from "./components/header";
-import Home from "./pages/home";
-import Dashboard from "./pages/dashboard";
+import Header from "./components/Header/Header";
+import Home from "./pages/home/Home";
 import "./styles/global.css";
 import "./App.css";
-import Contact from "./pages/contact";
-import Pricing from "./pages/pricing";
-import Privacy from "./pages/privacy";
-import Terms from "./pages/terms";
-import Login from "./pages/login";
-import About from "./pages/about";
-import ScreenTime from "./pages/screen-time";
+import Contact from "./pages/contact/Contact";
+import Pricing from "./pages/pricing/Pricing";
+import Privacy from "./pages/privacy/Privacy";
+import Terms from "./pages/terms/Terms";
+import Login from "./pages/login/Login";
+import About from "./pages/about/About";
+import ScreenTime from "./pages/dashboard/screen-time/ScreenTime";
+import Dashboard from "./pages/dashboard/Dashboard";
 
 const App = () => {
   return (
