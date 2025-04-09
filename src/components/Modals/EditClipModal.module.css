@@ -69,6 +69,22 @@
   color: var(--text-primary);
   font-size: 0.875rem;
   font-weight: 500;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.field label::after {
+  content: "*";
+  color: var(--error);
+  font-size: 0.875rem;
+  margin-left: 0.25rem;
+  display: none;
+}
+
+.field label[data-required="true"]::after {
+  display: inline;
 }
 
 .input {
@@ -112,6 +128,7 @@ textarea.input {
 .errorMessage {
   color: var(--error);
   font-size: 0.75rem;
+  text-align: left;
 }
 
 .actions {

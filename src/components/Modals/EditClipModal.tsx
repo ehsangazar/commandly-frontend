@@ -7,8 +7,8 @@ interface EditClipModalProps {
   clip: {
     id: string;
     text: string;
-    source_url: string;
-    image_url?: string;
+    sourceUrl: string;
+    imageUrl?: string;
   };
   onClose: () => void;
   onSave: (
@@ -42,8 +42,8 @@ export default function EditClipModal({
   } = useForm<FormData>({
     defaultValues: {
       text: clip.text,
-      imageUrl: clip.image_url || "",
-      sourceUrl: clip.source_url,
+      imageUrl: clip.imageUrl || "",
+      sourceUrl: clip.sourceUrl,
     },
   });
 
@@ -54,9 +54,9 @@ export default function EditClipModal({
     try {
       await onSave(clip.id, {
         text: data.text !== clip.text ? data.text : undefined,
-        imageUrl: data.imageUrl !== clip.image_url ? data.imageUrl : undefined,
+        imageUrl: data.imageUrl !== clip.imageUrl ? data.imageUrl : undefined,
         sourceUrl:
-          data.sourceUrl !== clip.source_url ? data.sourceUrl : undefined,
+          data.sourceUrl !== clip.sourceUrl ? data.sourceUrl : undefined,
       });
       onClose();
     } catch (err) {
@@ -70,7 +70,9 @@ export default function EditClipModal({
     <Modal isOpen={true} onClose={onClose} title="Edit Clip">
       <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
         <div className={styles.field}>
-          <label htmlFor="text">Text</label>
+          <label htmlFor="text" data-required="true">
+            Text
+          </label>
           <textarea
             id="text"
             className={`${styles.input} ${
@@ -119,10 +121,13 @@ export default function EditClipModal({
         </div>
 
         <div className={styles.field}>
-          <label htmlFor="sourceUrl">Source URL</label>
+          <label htmlFor="sourceUrl" data-required="true">
+            Source URL
+          </label>
           <input
             type="url"
             id="sourceUrl"
+            disabled={true}
             className={`${styles.input} ${
               errors.sourceUrl ? styles.inputError : ""
             }`}
