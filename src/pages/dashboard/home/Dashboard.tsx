@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import StatsWidget from "../../../components/Widgets/StatsWidget/StatsWidget";
+import ClipsWidget from "../../../components/Widgets/ClipsWidget/ClipsWidget";
 import Cookies from "js-cookie";
 import styles from "./Dashboard.module.css";
 
@@ -62,6 +63,7 @@ const Dashboard = () => {
     <div className={styles.dashboard}>
       <div className={styles.widgetsContainer}>
         <StatsWidget />
+        <ClipsWidget />
       </div>
     </div>
   );

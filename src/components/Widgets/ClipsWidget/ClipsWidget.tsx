@@ -1,19 +1,21 @@
 import { useEffect, useState } from "react";
-import styles from "./ClipsWidget.module.css";
+import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
+import styles from "./ClipsWidget.module.css";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 interface Clip {
   id: string;
-  text?: string;
-  imageUrl?: string;
+  text: string;
   sourceUrl: string;
+  imageUrl?: string;
   createdAt: string;
 }
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
 
-const ClipsWidget = () => {
+export default function ClipsWidget() {
   const [clips, setClips] = useState<Clip[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -22,21 +24,26 @@ const ClipsWidget = () => {
     const fetchRecentClips = async () => {
       try {
         const token = Cookies.get("commandly_token");
-        if (!token) return;
+        if (!token) {
+          throw new Error("No authentication token found");
+        }
 
-        const response = await fetch(`${API_BASE_URL}/clips?take=5`, {
+        const response = await fetch(`${API_BASE_URL}/clips?page=1&limit=3`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch clips");
+        }
 
         const data = await response.json();
         if (data.success) {
           setClips(data.clips);
         }
       } catch (err) {
-        setError("Failed to fetch recent clips");
-        console.error("Error fetching clips:", err);
+        setError(err instanceof Error ? err.message : "Failed to fetch clips");
       } finally {
         setLoading(false);
       }
@@ -45,81 +52,60 @@ const ClipsWidget = () => {
     fetchRecentClips();
   }, []);
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString(undefined, {
-      month: "short",
-      day: "numeric",
-    });
-  };
-
   if (loading) {
-    return (
-      <div className={styles.widget}>
-        <div className={styles.header}>
-          <h3>Recent Clips</h3>
-        </div>
-        <div className={styles.loading}>Loading clips...</div>
-      </div>
-    );
+    return <div className={styles.loading}>Loading recent clips...</div>;
   }
 
   if (error) {
-    return (
-      <div className={styles.widget}>
-        <div className={styles.header}>
-          <h3>Recent Clips</h3>
-        </div>
-        <div className={styles.error}>{error}</div>
-      </div>
-    );
+    return <div className={styles.error}>{error}</div>;
   }
 
   return (
     <div className={styles.widget}>
       <div className={styles.header}>
-        <h3>Recent Clips</h3>
-        <a href="/dashboard/clips" className={styles.viewAll}>
+        <h2>Recent Clips</h2>
+        <Link to="/dashboard/clips" className={styles.viewAll}>
           View All
-        </a>
+        </Link>
       </div>
-      <div className={styles.content}>
-        {clips.length === 0 ? (
-          <div className={styles.empty}>No clips yet</div>
-        ) : (
-          <div className={styles.clipsList}>
-            {clips.map((clip) => (
-              <div key={clip.id} className={styles.clipItem}>
-                <div className={styles.clipContent}>
-                  {clip.imageUrl ? (
-                    <img
-                      src={clip.imageUrl}
-                      alt="Clip"
-                      className={styles.clipImage}
-                    />
-                  ) : (
-                    <p className={styles.clipText}>{clip.text || "No text"}</p>
-                  )}
-                </div>
+
+      {clips.length === 0 ? (
+        <div className={styles.empty}>No clips found</div>
+      ) : (
+        <div className={styles.clipsList}>
+          {clips.map((clip) => (
+            <div key={clip.id} className={styles.clipItem}>
+              <div className={styles.clipContent}>
+                <p className={styles.clipText}>{clip.text}</p>
                 <div className={styles.clipMeta}>
-                  <a
-                    href={clip.sourceUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.sourceLink}
+                  <button
+                    onClick={() => {
+                      window.open(
+                        clip.sourceUrl,
+                        "_blank",
+                        "noopener,noreferrer"
+                      );
+                    }}
+                    className={styles.sourceButton}
+                    title={clip.sourceUrl}
                   >
-                    {new URL(clip.sourceUrl).hostname}
-                  </a>
+                    <FaExternalLinkAlt className={styles.sourceIcon} />
+                    <span className={styles.sourceText}>
+                      {new URL(clip.sourceUrl).hostname}
+                    </span>
+                  </button>
                   <span className={styles.date}>
-                    {formatDate(clip.createdAt)}
+                    {new Date(clip.createdAt).toLocaleDateString(undefined, {
+                      month: "short",
+                      day: "numeric",
+                    })}
                   </span>
                 </div>
               </div>
-            ))}
-          </div>
-        )}
-      </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
-};
-
-export default ClipsWidget;
+}
