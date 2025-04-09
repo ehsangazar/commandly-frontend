@@ -1,123 +1,126 @@
 .container {
   display: flex;
   min-height: 100vh;
-  background: var(--background-color);
-  color: var(--text-primary);
+  background: #22272e;
 }
 
 .sidebar {
-  width: 280px;
-  background: var(--card-background);
-  border-right: 1px solid var(--border-color);
+  width: 240px;
+  background: #1c2128;
+  padding: 24px 0;
   display: flex;
   flex-direction: column;
-  padding: 1.5rem;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .sidebarHeader {
-  margin-bottom: 2rem;
+  padding: 0 24px;
+  margin-bottom: 24px;
 }
 
 .logo {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--primary-color);
+  font-size: 20px;
+  font-weight: 600;
+  color: #ffffff;
   margin: 0;
 }
 
 .nav {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: auto;
+  gap: 4px;
+  padding: 0 12px;
 }
 
 .navItem {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  border-radius: 8px;
+  gap: 12px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  color: #8b949e;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: var(--text-secondary);
+  font-size: 14px;
 }
 
 .navItem:hover {
-  background: var(--hover-background);
-  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
 .navItem.active {
-  background: var(--primary-color);
-  color: white;
-}
-
-.navItem.active:hover {
-  background: var(--primary-color-dark);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
 .navIcon {
-  font-size: 1.25rem;
+  font-size: 16px;
 }
 
 .userSection {
-  margin-top: auto;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border-color);
+  padding: 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .userInfo {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
 .userAvatar {
-  width: 40px;
-  height: 40px;
-  background: var(--primary-color);
-  color: white;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
+  color: #ffffff;
+  font-weight: 500;
 }
 
 .userDetails {
   display: flex;
   flex-direction: column;
+  gap: 4px;
 }
 
 .userEmail {
+  color: #ffffff;
+  font-size: 14px;
   font-weight: 500;
 }
 
 .userStatus {
-  font-size: 0.75rem;
-  color: var(--text-secondary);
+  color: #8b949e;
+  font-size: 12px;
 }
 
 .logoutButton {
   width: 100%;
-  padding: 0.75rem;
-  background: var(--button-background);
-  color: var(--button-text);
+  padding: 8px;
   border: none;
-  border-radius: 8px;
+  border-radius: 6px;
+  background: transparent;
+  color: #8b949e;
   cursor: pointer;
   transition: all 0.2s ease;
+  font-size: 14px;
+  text-align: center;
 }
 
 .logoutButton:hover {
-  background: var(--button-hover);
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
 }
 
 .mainContent {
   flex: 1;
-  padding: 2rem;
+  padding: 24px;
   overflow-y: auto;
 }
 
@@ -127,37 +130,27 @@
 }
 
 .mainHeader {
-  margin-bottom: 2rem;
+  margin-bottom: 24px;
 }
 
 .mainHeader h2 {
-  font-size: 1.5rem;
+  font-size: 24px;
   font-weight: 600;
+  color: #ffffff;
   margin: 0;
 }
 
 .widgetsContainer {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
-  gap: 2rem;
+  gap: 24px;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
 }
 
-.loading {
+.loading, .error {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh;
-  font-size: 1.25rem;
-  color: var(--text-secondary);
-}
-
-.error {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  color: var(--error-text);
-  background: var(--error-background);
-  padding: 2rem;
-  text-align: center;
+  height: 100vh;
+  color: #8b949e;
+  font-size: 16px;
 } 

@@ -6,30 +6,16 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
 
-interface DashboardStats {
-  totalTime: number;
-  topDomains: Array<{ domain: string; time: number }>;
-}
-
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
 
-// Mock data for testing
-const mockTopDomains = [
-  { domain: "github.com", time: 120 },
-  { domain: "google.com", time: 90 },
-  { domain: "stackoverflow.com", time: 60 },
-  { domain: "youtube.com", time: 45 },
-  { domain: "twitter.com", time: 30 },
-];
-
 const StatsWidget = () => {
-  const [stats, setStats] = useState<DashboardStats | null>(null);
   const [timeRange, setTimeRange] = useState<"today" | "week" | "month">(
     "today"
   );
   const [topDomains, setTopDomains] = useState<
     Array<{ domain: string; time: number }>
   >([]);
+  const [totalTime, setTotalTime] = useState<number>(0);
 
   useEffect(() => {
     const fetchDashboardStats = async () => {
@@ -48,7 +34,7 @@ const StatsWidget = () => {
 
         const data = await response.json();
         if (data.success) {
-          setStats(data.stats);
+          setTotalTime(data.totalTime);
           setTopDomains(
             data.stats
               .slice(0, 10)
@@ -69,8 +55,6 @@ const StatsWidget = () => {
   const formatTime = (time: number) => {
     return `${Math.round(time / 60)}m`;
   };
-
-  console.log(topDomains);
 
   return (
     <div className={styles.widget}>
@@ -108,7 +92,7 @@ const StatsWidget = () => {
         <div className={styles.statCard}>
           <h4>Total Time</h4>
           <p className={styles.statValue}>
-            {`${Math.round(stats?.totalTime || 0 / 60)} minutes`}
+            {`${Math.round(totalTime / 60)} minutes`}
           </p>
         </div>
       </div>
