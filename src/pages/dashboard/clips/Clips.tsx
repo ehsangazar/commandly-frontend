@@ -9,7 +9,7 @@ interface Clip {
   text: string;
   source_url: string;
   image_url?: string;
-  created_at: string;
+  createdAt: string;
 }
 
 const API_BASE_URL =
@@ -52,7 +52,7 @@ export default function Clips() {
       const data = await response.json();
       if (data.success) {
         setClips(data.clips);
-        setTotalPages(Math.ceil(data.total / ITEMS_PER_PAGE));
+        setTotalPages(Math.ceil(data.pagination.total / ITEMS_PER_PAGE));
       }
       setLoading(false);
     } catch (err) {
@@ -135,7 +135,7 @@ export default function Clips() {
                       })()}
                     </a>
                     <span className={styles.date}>
-                      {new Date(clip.created_at).toLocaleDateString()}
+                      {new Date(clip.createdAt).toLocaleDateString()}
                     </span>
                   </div>
                 </div>
