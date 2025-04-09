@@ -5,80 +5,103 @@
 
 .sidebar {
   width: 250px;
-  background-color: var(--sidebar-bg);
-  padding: 1.5rem;
+  background-color: var(--background-secondary);
+  border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  border-right: 1px solid var(--border-color);
+  height: 100vh;
+  position: sticky;
+  top: 0;
 }
 
 .sidebarHeader {
-  margin-bottom: 2rem;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .logo {
   font-size: 1.5rem;
   font-weight: bold;
   color: var(--text-primary);
+  margin: 0;
 }
 
 .nav {
+  padding: 1rem 0;
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.25rem;
 }
 
 .navItem {
+  padding: 0.75rem 1.5rem;
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.75rem 1rem;
-  border-radius: 0.5rem;
+  color: var(--text-primary);
   cursor: pointer;
-  color: var(--text-secondary);
-  transition: all 0.2s ease;
+  transition: background-color 0.2s;
 }
 
 .navItem:hover {
-  background-color: var(--hover-bg);
-  color: var(--text-primary);
+  background-color: var(--background-hover);
 }
 
 .navItem.active {
-  background-color: var(--active-bg);
-  color: var(--text-primary);
+  background-color: var(--background-active);
+  color: var(--text-active);
 }
 
 .navIcon {
-  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.navIcon svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
 }
 
 .userSection {
-  margin-top: auto;
-  padding-top: 1rem;
+  padding: 1rem;
   border-top: 1px solid var(--border-color);
+  margin-top: auto;
 }
 
 .logoutButton {
   width: 100%;
   padding: 0.75rem;
-  border-radius: 0.5rem;
-  background-color: var(--button-bg);
-  color: var(--button-text);
-  border: none;
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1rem;
 }
 
 .logoutButton:hover {
-  background-color: var(--button-hover-bg);
+  background-color: var(--background-hover);
 }
 
 .mainContent {
   flex: 1;
+  background-color: var(--background-primary);
+  min-height: 100vh;
+}
+
+.contentContainer {
   padding: 2rem;
-  background-color: var(--main-bg);
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .contentHeader {
@@ -89,4 +112,5 @@
   font-size: 1.5rem;
   font-weight: 600;
   color: var(--text-primary);
+  margin: 0;
 } 
