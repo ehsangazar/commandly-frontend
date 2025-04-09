@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Outlet, useLocation } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import styles from "../styles/Dashboard.module.css";
-import StatsWidget from "../components/StatsWidget";
+import StatsWidget from "../components/widgets/StatsWidget";
 import Cookies from "js-cookie";
 
 const API_BASE_URL =
@@ -21,6 +21,7 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const location = useLocation();
   const { theme } = useTheme();
 
   useEffect(() => {
@@ -48,7 +49,6 @@ const Dashboard = () => {
         setError(
           err instanceof Error ? err.message : "Failed to fetch user data"
         );
-        // Redirect to login if unauthorized
         if (
           err instanceof Error &&
           (err.message.includes("Unauthorized") ||
@@ -69,6 +69,10 @@ const Dashboard = () => {
     navigate("/login");
   };
 
+  const handleNavigation = (path: string) => {
+    navigate(path);
+  };
+
   if (loading) {
     return (
       <div className={styles.container} data-theme={theme}>
@@ -87,25 +91,65 @@ const Dashboard = () => {
 
   return (
     <div className={styles.container} data-theme={theme}>
-      <div className={styles.dashboard}>
-        <div className={styles.header}>
-          <div>
-            <h1 className={styles.welcome}>Welcome, {user?.email}!</h1>
-            <p className={styles.info}>
-              You joined Commandly on{" "}
-              {new Date(user?.createdAt || "").toLocaleDateString()}
-              {user?.isVerified
-                ? " and your account is verified."
-                : " but your account is not yet verified."}
-            </p>
+      <aside className={styles.sidebar}>
+        <div className={styles.sidebarHeader}>
+          <h1 className={styles.logo}>Commandly</h1>
+        </div>
+        <nav className={styles.nav}>
+          <div
+            className={`${styles.navItem} ${
+              location.pathname === "/dashboard" ? styles.active : ""
+            }`}
+            onClick={() => handleNavigation("/dashboard")}
+          >
+            <span className={styles.navIcon}>📊</span>
+            <span>Dashboard</span>
+          </div>
+          <div
+            className={`${styles.navItem} ${
+              location.pathname === "/dashboard/screen-time"
+                ? styles.active
+                : ""
+            }`}
+            onClick={() => handleNavigation("/dashboard/screen-time")}
+          >
+            <span className={styles.navIcon}>⏱️</span>
+            <span>Screen Time</span>
+          </div>
+        </nav>
+        <div className={styles.userSection}>
+          <div className={styles.userInfo}>
+            <div className={styles.userAvatar}>
+              {user?.email.charAt(0).toUpperCase()}
+            </div>
+            <div className={styles.userDetails}>
+              <span className={styles.userEmail}>{user?.email}</span>
+              <span className={styles.userStatus}>
+                {user?.isVerified ? "Verified" : "Not Verified"}
+              </span>
+            </div>
           </div>
           <button onClick={handleLogout} className={styles.logoutButton}>
             Logout
           </button>
         </div>
+      </aside>
 
-        <StatsWidget />
-      </div>
+      <main className={styles.mainContent}>
+        {location.pathname === "/dashboard" ? (
+          <div className={styles.dashboardContent}>
+            <header className={styles.mainHeader}>
+              <h2>Dashboard Overview</h2>
+            </header>
+            <div className={styles.widgetsContainer}>
+              <StatsWidget />
+              {/* Add more widgets here */}
+            </div>
+          </div>
+        ) : (
+          <Outlet />
+        )}
+      </main>
     </div>
   );
 };

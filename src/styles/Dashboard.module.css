@@ -1,89 +1,163 @@
 .container {
+  display: flex;
   min-height: 100vh;
+  background: var(--background-color);
+  color: var(--text-primary);
+}
+
+.sidebar {
+  width: 280px;
+  background: var(--card-background);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  padding: 1.5rem;
+}
+
+.sidebarHeader {
+  margin-bottom: 2rem;
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin: 0;
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: auto;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: var(--text-secondary);
+}
+
+.navItem:hover {
+  background: var(--hover-background);
+  color: var(--text-primary);
+}
+
+.navItem.active {
+  background: var(--primary-color);
+  color: white;
+}
+
+.navItem.active:hover {
+  background: var(--primary-color-dark);
+}
+
+.navIcon {
+  font-size: 1.25rem;
+}
+
+.userSection {
+  margin-top: auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.userInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.userAvatar {
+  width: 40px;
+  height: 40px;
+  background: var(--primary-color);
+  color: white;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem;
-  width: 100%;
-  background: var(--background-gradient);
+  font-weight: 600;
 }
 
-.dashboard {
-  width: 100%;
-  max-width: 1200px;
-  background: var(--card-background);
-  padding: 3rem;
-  border-radius: 16px;
-  box-shadow: var(--card-shadow);
-}
-
-.header {
+.userDetails {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 3rem;
+  flex-direction: column;
 }
 
-.welcome {
-  color: var(--text-primary);
-  font-size: 2.5rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
-  width: 100%;
-  background: var(--text-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+.userEmail {
+  font-weight: 500;
 }
 
-.info {
+.userStatus {
+  font-size: 0.75rem;
   color: var(--text-secondary);
-  font-size: 1.125rem;
-  margin-bottom: 2.5rem;
-  width: 100%;
-  line-height: 1.6;
 }
 
 .logoutButton {
-  background: var(--secondary-button-background);
-  color: var(--text-primary);
-  padding: 1rem 2rem;
-  border: 1.5px solid var(--border-color);
-  border-radius: 12px;
-  font-size: 1rem;
-  font-weight: 600;
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--button-background);
+  color: var(--button-text);
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-width: 140px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
 }
 
 .logoutButton:hover {
-  background: var(--secondary-button-hover);
-  border-color: var(--border-hover);
-  transform: translateY(-1px);
+  background: var(--button-hover);
 }
 
-.logoutButton:active {
-  transform: translateY(0);
+.mainContent {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.dashboardContent {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.mainHeader {
+  margin-bottom: 2rem;
+}
+
+.mainHeader h2 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.widgetsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(600px, 1fr));
+  gap: 2rem;
 }
 
 .loading {
-  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
   font-size: 1.25rem;
-  text-align: center;
-  padding: 2rem;
+  color: var(--text-secondary);
 }
 
 .error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
   color: var(--error-text);
-  font-size: 1.125rem;
-  text-align: center;
-  padding: 2rem;
   background: var(--error-background);
-  border-radius: 12px;
-  border: 1px solid var(--error-border);
-  margin: 2rem;
+  padding: 2rem;
+  text-align: center;
 } 

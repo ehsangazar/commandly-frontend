@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext";
 import Header from "./components/Header";
 import Home from "./pages/Home";
@@ -11,8 +16,9 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Login from "./pages/Login";
 import About from "./pages/About";
+import ScreenTime from "./pages/ScreenTime";
 
-function App() {
+const App = () => {
   return (
     <ThemeProvider>
       <Router>
@@ -25,11 +31,19 @@ function App() {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />}>
+            <Route
+              index
+              element={<Navigate to="/dashboard/screen-time" replace />}
+            />
+            <Route path="screen-time" element={<ScreenTime />} />
+            {/* Add more dashboard routes here */}
+          </Route>
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </Router>
     </ThemeProvider>
   );
-}
+};
 
 export default App;
