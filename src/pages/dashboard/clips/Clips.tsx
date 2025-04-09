@@ -197,9 +197,12 @@ export default function Clips() {
                       );
                     }}
                     className={styles.sourceButton}
-                    title="Open source"
+                    title={clip.sourceUrl}
                   >
                     <FaExternalLinkAlt className={styles.sourceIcon} />
+                    <span className={styles.sourceText}>
+                      {new URL(clip.sourceUrl).hostname}
+                    </span>
                   </button>
                   <div className={styles.actions}>
                     <button
