@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import styles from "./Clips.module.css";
 import { FaTrash, FaPencilAlt } from "react-icons/fa";
+import EditClipModal from "../../../components/Modals/EditClipModal";
 
 interface Clip {
   id: string;
@@ -22,6 +23,7 @@ export default function Clips() {
   const [error, setError] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [editingClip, setEditingClip] = useState<Clip | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -69,7 +71,7 @@ export default function Clips() {
 
     try {
       const token = Cookies.get("commandly_token");
-      const response = await fetch(`${API_BASE_URL}/api/clips/${clipId}`, {
+      const response = await fetch(`${API_BASE_URL}/clips/${clipId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -87,8 +89,54 @@ export default function Clips() {
     }
   };
 
-  const handleEdit = (clipId: string) => {
-    navigate(`/dashboard/clips/${clipId}/edit`);
+  const handleEdit = (clip: Clip) => {
+    setEditingClip(clip);
+  };
+
+  const handleSaveEdit = async (
+    clipId: string,
+    data: {
+      text?: string;
+      imageUrl?: string;
+      sourceUrl?: string;
+    }
+  ) => {
+    const token = Cookies.get("commandly_token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+
+    const response = await fetch(`${API_BASE_URL}/clips/${clipId}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || "Failed to update clip");
+    }
+
+    const responseData = await response.json();
+    if (responseData.success) {
+      // Update the clip in the local state
+      setClips(
+        clips.map((clip) =>
+          clip.id === clipId
+            ? {
+                ...clip,
+                text: data.text ?? clip.text,
+                image_url: data.imageUrl ?? clip.image_url,
+                source_url: data.sourceUrl ?? clip.source_url,
+              }
+            : clip
+        )
+      );
+    }
   };
 
   if (loading) {
@@ -135,13 +183,27 @@ export default function Clips() {
                       })()}
                     </a>
                     <span className={styles.date}>
-                      {new Date(clip.createdAt).toLocaleDateString()}
+                      {(() => {
+                        try {
+                          const date = new Date(clip.createdAt);
+                          if (isNaN(date.getTime())) {
+                            return "Invalid date";
+                          }
+                          return date.toLocaleDateString(undefined, {
+                            year: "numeric",
+                            month: "short",
+                            day: "numeric",
+                          });
+                        } catch {
+                          return "Invalid date";
+                        }
+                      })()}
                     </span>
                   </div>
                 </div>
                 <div className={styles.actions}>
                   <button
-                    onClick={() => handleEdit(clip.id)}
+                    onClick={() => handleEdit(clip)}
                     className={styles.editButton}
                     title="Edit clip"
                   >
@@ -179,6 +241,14 @@ export default function Clips() {
             </button>
           </div>
         </>
+      )}
+
+      {editingClip && (
+        <EditClipModal
+          clip={editingClip}
+          onClose={() => setEditingClip(null)}
+          onSave={handleSaveEdit}
+        />
       )}
     </div>
   );

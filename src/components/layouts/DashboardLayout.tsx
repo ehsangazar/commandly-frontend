@@ -77,6 +77,31 @@ const DashboardLayout = ({ title }: DashboardLayoutProps) => {
               </span>
               <span>Screen Time</span>
             </div>
+            <div
+              className={`${styles.navItem} ${
+                location.pathname === "/dashboard/clips" ? styles.active : ""
+              }`}
+              onClick={() => handleNavigation("/dashboard/clips")}
+            >
+              <span className={styles.navIcon}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect x="4" y="4" width="16" height="16" rx="2" />
+                  <path d="M8 7h8" />
+                  <path d="M8 11h4" />
+                  <path d="M16 15h-4" />
+                  <path d="M16 11l2 2-2 2" />
+                </svg>
+              </span>
+              <span>Clips</span>
+            </div>
           </nav>
           <div className={styles.userSection}>
             <button onClick={handleLogout} className={styles.logoutButton}>
