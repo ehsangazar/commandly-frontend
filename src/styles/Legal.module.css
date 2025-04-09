@@ -1,0 +1,63 @@
+.legal {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.content {
+    background: var(--background);
+    border-radius: 12px;
+    margin-top: 2rem;
+}
+
+.section {
+    margin-bottom: 3rem;
+}
+
+.section h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1rem;
+}
+
+.section p {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 1rem;
+    font-size: 1.125rem;
+}
+
+.section ul {
+    list-style: disc;
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.section li {
+    color: var(--text-secondary);
+    line-height: 1.7;
+    margin-bottom: 0.5rem;
+    font-size: 1.125rem;
+}
+
+.section a {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.section a:hover {
+    color: var(--primary-dark);
+    text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+    .section h2 {
+        font-size: 1.25rem;
+    }
+
+    .section p,
+    .section li {
+        font-size: 1rem;
+    }
+}

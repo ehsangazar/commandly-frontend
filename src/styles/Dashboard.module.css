@@ -1,0 +1,48 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: white;
+  padding: 48px 20px;
+  width: 100%;
+}
+
+.dashboard {
+  width: 100%;
+  max-width: 800px;
+}
+
+.welcome {
+  color: #1a1a1a;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.info {
+  color: #666;
+  font-size: 1rem;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.logoutButton {
+  background: white;
+  color: #1a1a1a;
+  padding: 0.75rem 1.5rem;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: auto;
+  min-width: 120px;
+}
+
+.logoutButton:hover {
+  background: #f5f5f5;
+  border-color: #d4d4d4;
+} 
