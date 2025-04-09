@@ -19,6 +19,7 @@ import About from "./pages/about/About";
 import ScreenTime from "./pages/dashboard/screen-time/ScreenTime";
 import DashboardLayout from "./components/layouts/DashboardLayout";
 import Dashboard from "./pages/dashboard/home/Dashboard";
+import Clips from "./pages/dashboard/clips/Clips";
 
 const AppContent = () => {
   const location = useLocation();
@@ -37,6 +38,7 @@ const AppContent = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<Dashboard />} />
+          <Route path="clips" element={<Clips />} />
           <Route path="screen-time" element={<ScreenTime />} />
         </Route>
       </Routes>
