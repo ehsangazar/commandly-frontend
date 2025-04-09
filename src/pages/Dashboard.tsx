@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../context/ThemeContext";
 import styles from "../styles/Dashboard.module.css";
+import StatsWidget from "../components/StatsWidget";
 import Cookies from "js-cookie";
 
 const API_BASE_URL =
@@ -87,17 +88,23 @@ const Dashboard = () => {
   return (
     <div className={styles.container} data-theme={theme}>
       <div className={styles.dashboard}>
-        <h1 className={styles.welcome}>Welcome, {user?.email}!</h1>
-        <p className={styles.info}>
-          You joined Commandly on{" "}
-          {new Date(user?.createdAt || "").toLocaleDateString()}
-          {user?.isVerified
-            ? " and your account is verified."
-            : " but your account is not yet verified."}
-        </p>
-        <button onClick={handleLogout} className={styles.logoutButton}>
-          Logout
-        </button>
+        <div className={styles.header}>
+          <div>
+            <h1 className={styles.welcome}>Welcome, {user?.email}!</h1>
+            <p className={styles.info}>
+              You joined Commandly on{" "}
+              {new Date(user?.createdAt || "").toLocaleDateString()}
+              {user?.isVerified
+                ? " and your account is verified."
+                : " but your account is not yet verified."}
+            </p>
+          </div>
+          <button onClick={handleLogout} className={styles.logoutButton}>
+            Logout
+          </button>
+        </div>
+
+        <StatsWidget />
       </div>
     </div>
   );
