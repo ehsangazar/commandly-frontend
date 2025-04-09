@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router-dom";
-import { useTheme } from "../context/ThemeContext";
-import styles from "../styles/Header.module.css";
+import { useTheme } from "../../context/ThemeContext";
+import styles from "./Header.module.css";
 import Cookies from "js-cookie";
 
 const Header = () => {

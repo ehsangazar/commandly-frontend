@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTheme } from "../context/ThemeContext";
-import styles from "../styles/Login.module.css";
+import { useTheme } from "../../context/ThemeContext";
+import styles from "./Login.module.css";
 import Cookies from "js-cookie";
 
 const API_BASE_URL =

@@ -129,17 +129,6 @@
   margin: 0 auto;
 }
 
-.mainHeader {
-  margin-bottom: 24px;
-}
-
-.mainHeader h2 {
-  font-size: 24px;
-  font-weight: 600;
-  color: #ffffff;
-  margin: 0;
-}
-
 .widgetsContainer {
   display: grid;
   gap: 24px;

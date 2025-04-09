@@ -1,21 +1,23 @@
 import { useEffect, useState } from "react";
-import styles from "../../styles/widgets/StatsWidget.module.css";
+import styles from "./StatsWidget.module.css";
 import Cookies from "js-cookie";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
 
+interface DashboardStats {
+  totalTime: number;
+  topDomains: Array<{ domain: string; time: number }>;
+}
+
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
 
 const StatsWidget = () => {
+  const [stats, setStats] = useState<DashboardStats | null>(null);
   const [timeRange, setTimeRange] = useState<"today" | "week" | "month">(
     "today"
   );
-  const [topDomains, setTopDomains] = useState<
-    Array<{ domain: string; time: number }>
-  >([]);
-  const [totalTime, setTotalTime] = useState<number>(0);
 
   useEffect(() => {
     const fetchDashboardStats = async () => {
@@ -34,15 +36,14 @@ const StatsWidget = () => {
 
         const data = await response.json();
         if (data.success) {
-          setTotalTime(data.totalTime);
-          setTopDomains(
-            data.stats
-              .slice(0, 10)
-              .map((item: { domain: string; totalTime: number }) => ({
-                domain: item.domain,
-                time: item.totalTime,
-              }))
-          );
+          // Sort domains by time in descending order
+          const sortedStats = {
+            ...data.stats,
+            topDomains: data.stats.topDomains.sort(
+              (a: { time: number }, b: { time: number }) => b.time - a.time
+            ),
+          };
+          setStats(sortedStats);
         }
       } catch (err) {
         console.error("Failed to fetch domain time stats:", err);
@@ -92,7 +93,7 @@ const StatsWidget = () => {
         <div className={styles.statCard}>
           <h4>Total Time</h4>
           <p className={styles.statValue}>
-            {`${Math.round(totalTime / 60)} minutes`}
+            {`${Math.round(stats?.totalTime || 0 / 60)} minutes`}
           </p>
         </div>
       </div>
@@ -104,7 +105,7 @@ const StatsWidget = () => {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={topDomains}
+                  data={stats?.topDomains || []}
                   dataKey="time"
                   nameKey="domain"
                   cx="50%"
@@ -114,7 +115,7 @@ const StatsWidget = () => {
                     `${domain} (${(percent * 100).toFixed(0)}%)`
                   }
                 >
-                  {topDomains.map((entry, index) => (
+                  {(stats?.topDomains || []).map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={COLORS[index % COLORS.length]}
