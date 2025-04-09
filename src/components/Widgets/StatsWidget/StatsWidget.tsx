@@ -20,6 +20,7 @@ const StatsWidget = () => {
   );
 
   useEffect(() => {
+    console.log("debug StatsWidget rendered");
     const fetchDashboardStats = async () => {
       try {
         const token = Cookies.get("commandly_token");
