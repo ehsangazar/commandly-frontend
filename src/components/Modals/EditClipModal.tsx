@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import Modal from "../Modal/Modal";
 import styles from "./EditClipModal.module.css";
 
 interface EditClipModalProps {
@@ -19,27 +21,42 @@ interface EditClipModalProps {
   ) => Promise<void>;
 }
 
+interface FormData {
+  text: string;
+  imageUrl: string;
+  sourceUrl: string;
+}
+
 export default function EditClipModal({
   clip,
   onClose,
   onSave,
 }: EditClipModalProps) {
-  const [text, setText] = useState(clip.text);
-  const [imageUrl, setImageUrl] = useState(clip.image_url || "");
-  const [sourceUrl, setSourceUrl] = useState(clip.source_url);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
+    defaultValues: {
+      text: clip.text,
+      imageUrl: clip.image_url || "",
+      sourceUrl: clip.source_url,
+    },
+  });
+
+  const onSubmit = async (data: FormData) => {
     setSaving(true);
     setError("");
 
     try {
       await onSave(clip.id, {
-        text: text !== clip.text ? text : undefined,
-        imageUrl: imageUrl !== clip.image_url ? imageUrl : undefined,
-        sourceUrl: sourceUrl !== clip.source_url ? sourceUrl : undefined,
+        text: data.text !== clip.text ? data.text : undefined,
+        imageUrl: data.imageUrl !== clip.image_url ? data.imageUrl : undefined,
+        sourceUrl:
+          data.sourceUrl !== clip.source_url ? data.sourceUrl : undefined,
       });
       onClose();
     } catch (err) {
@@ -50,73 +67,102 @@ export default function EditClipModal({
   };
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-        <div className={styles.header}>
-          <h2>Edit Clip</h2>
-          <button className={styles.closeButton} onClick={onClose}>
-            ×
-          </button>
+    <Modal isOpen={true} onClose={onClose} title="Edit Clip">
+      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+        <div className={styles.field}>
+          <label htmlFor="text">Text</label>
+          <textarea
+            id="text"
+            className={`${styles.input} ${
+              errors.text ? styles.inputError : ""
+            }`}
+            {...register("text", {
+              required: "Text is required",
+              maxLength: {
+                value: 100000,
+                message: "Text must be less than 100,000 characters",
+              },
+            })}
+            rows={4}
+          />
+          {errors.text && (
+            <span className={styles.errorMessage}>{errors.text.message}</span>
+          )}
         </div>
 
-        <form onSubmit={handleSubmit}>
-          <div className={styles.field}>
-            <label htmlFor="text">Text</label>
-            <textarea
-              id="text"
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              rows={4}
-              maxLength={100000}
-              required
-            />
-          </div>
+        <div className={styles.field}>
+          <label htmlFor="imageUrl">Image URL</label>
+          <input
+            type="url"
+            id="imageUrl"
+            className={`${styles.input} ${
+              errors.imageUrl ? styles.inputError : ""
+            }`}
+            placeholder="https://..."
+            {...register("imageUrl", {
+              pattern: {
+                value:
+                  /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/,
+                message: "Please enter a valid URL",
+              },
+              maxLength: {
+                value: 500,
+                message: "URL must be less than 500 characters",
+              },
+            })}
+          />
+          {errors.imageUrl && (
+            <span className={styles.errorMessage}>
+              {errors.imageUrl.message}
+            </span>
+          )}
+        </div>
 
-          <div className={styles.field}>
-            <label htmlFor="imageUrl">Image URL</label>
-            <input
-              type="url"
-              id="imageUrl"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              maxLength={500}
-              placeholder="https://..."
-            />
-          </div>
+        <div className={styles.field}>
+          <label htmlFor="sourceUrl">Source URL</label>
+          <input
+            type="url"
+            id="sourceUrl"
+            className={`${styles.input} ${
+              errors.sourceUrl ? styles.inputError : ""
+            }`}
+            placeholder="https://..."
+            {...register("sourceUrl", {
+              required: "Source URL is required",
+              pattern: {
+                value:
+                  /^(https?:\/\/)?([\da-z.-]+)\.([a-z.]{2,6})([/\w .-]*)*\/?$/,
+                message: "Please enter a valid URL",
+              },
+              maxLength: {
+                value: 500,
+                message: "URL must be less than 500 characters",
+              },
+            })}
+          />
+          {errors.sourceUrl && (
+            <span className={styles.errorMessage}>
+              {errors.sourceUrl.message}
+            </span>
+          )}
+        </div>
 
-          <div className={styles.field}>
-            <label htmlFor="sourceUrl">Source URL</label>
-            <input
-              type="url"
-              id="sourceUrl"
-              value={sourceUrl}
-              onChange={(e) => setSourceUrl(e.target.value)}
-              maxLength={500}
-              placeholder="https://..."
-            />
-          </div>
+        {error && <div className={styles.error}>{error}</div>}
 
-          {error && <div className={styles.error}>{error}</div>}
-
-          <div className={styles.actions}>
-            <button
-              type="button"
-              className={styles.cancelButton}
-              onClick={onClose}
-              disabled={saving}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className={styles.saveButton}
-              disabled={saving}
-            >
-              {saving ? "Saving..." : "Save Changes"}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <div className={styles.actions}>
+          <button
+            type="button"
+            className={styles.cancelButton}
+            onClick={onClose}
+            disabled={saving}
+          >
+            Cancel
+          </button>
+          <button type="submit" className={styles.saveButton} disabled={saving}>
+            {saving ? "Saving..." : "Save Changes"}
+          </button>
+        </div>
+      </form>
+    </Modal>
   );
 }

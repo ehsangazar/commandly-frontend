@@ -53,20 +53,25 @@
   color: var(--text-primary);
 }
 
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
 .field {
-  text-align: left;
-  margin-bottom: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .field label {
-  display: block;
-  margin-bottom: 0.5rem;
   color: var(--text-primary);
+  font-size: 0.875rem;
   font-weight: 500;
 }
 
-.field input,
-.field textarea {
+.input {
   width: 100%;
   padding: 0.75rem;
   border: 1px solid var(--border-color);
@@ -77,28 +82,43 @@
   transition: border-color 0.2s;
 }
 
-.field textarea {
-  resize: vertical;
-  min-height: 100px;
-}
-
-.field input:focus,
-.field textarea:focus {
+.input:focus {
   outline: none;
   border-color: var(--primary-color);
 }
 
+.inputError {
+  border-color: var(--error);
+}
+
+.inputError:focus {
+  border-color: var(--error);
+}
+
+textarea.input {
+  resize: vertical;
+  min-height: 100px;
+}
+
 .error {
   color: var(--error);
-  margin-bottom: 1rem;
   font-size: 0.875rem;
+  padding: 0.75rem;
+  background: var(--error-background);
+  border-radius: 6px;
+  border: 1px solid var(--error-border);
+}
+
+.errorMessage {
+  color: var(--error);
+  font-size: 0.75rem;
 }
 
 .actions {
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
-  margin-top: 2rem;
+  margin-top: 0.5rem;
 }
 
 .cancelButton,
