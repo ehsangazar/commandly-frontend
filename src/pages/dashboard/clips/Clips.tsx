@@ -2,14 +2,14 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import styles from "./Clips.module.css";
-import { FaTrash, FaPencilAlt } from "react-icons/fa";
+import { FaTrash, FaPencilAlt, FaExternalLinkAlt } from "react-icons/fa";
 import EditClipModal from "../../../components/Modals/EditClipModal";
 
 interface Clip {
   id: string;
   text: string;
-  source_url: string;
-  image_url?: string;
+  sourceUrl: string;
+  imageUrl?: string;
   createdAt: string;
 }
 
@@ -130,8 +130,8 @@ export default function Clips() {
             ? {
                 ...clip,
                 text: data.text ?? clip.text,
-                image_url: data.imageUrl ?? clip.image_url,
-                source_url: data.sourceUrl ?? clip.source_url,
+                imageUrl: data.imageUrl ?? clip.imageUrl,
+                sourceUrl: data.sourceUrl ?? clip.sourceUrl,
               }
             : clip
         )
@@ -160,28 +160,14 @@ export default function Clips() {
           <div className={styles.grid}>
             {clips.map((clip) => (
               <div key={clip.id} className={styles.clipCard}>
-                {clip.image_url && (
+                {clip.imageUrl && (
                   <div className={styles.imageContainer}>
-                    <img src={clip.image_url} alt="" className={styles.image} />
+                    <img src={clip.imageUrl} alt="" className={styles.image} />
                   </div>
                 )}
                 <div className={styles.content}>
                   <p className={styles.clipText}>{clip.text}</p>
                   <div className={styles.meta}>
-                    <a
-                      href={clip.source_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.sourceLink}
-                    >
-                      {(() => {
-                        try {
-                          return new URL(clip.source_url).hostname;
-                        } catch {
-                          return clip.source_url;
-                        }
-                      })()}
-                    </a>
                     <span className={styles.date}>
                       {(() => {
                         try {
@@ -201,21 +187,36 @@ export default function Clips() {
                     </span>
                   </div>
                 </div>
-                <div className={styles.actions}>
+                <div className={styles.cardFooter}>
                   <button
-                    onClick={() => handleEdit(clip)}
-                    className={styles.editButton}
-                    title="Edit clip"
+                    onClick={() => {
+                      window.open(
+                        clip.sourceUrl,
+                        "_blank",
+                        "noopener,noreferrer"
+                      );
+                    }}
+                    className={styles.sourceButton}
+                    title="Open source"
                   >
-                    <FaPencilAlt />
+                    <FaExternalLinkAlt className={styles.sourceIcon} />
                   </button>
-                  <button
-                    onClick={() => handleDelete(clip.id)}
-                    className={styles.deleteButton}
-                    title="Delete clip"
-                  >
-                    <FaTrash />
-                  </button>
+                  <div className={styles.actions}>
+                    <button
+                      onClick={() => handleEdit(clip)}
+                      className={styles.editButton}
+                      title="Edit clip"
+                    >
+                      <FaPencilAlt />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(clip.id)}
+                      className={styles.deleteButton}
+                      title="Delete clip"
+                    >
+                      <FaTrash />
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
