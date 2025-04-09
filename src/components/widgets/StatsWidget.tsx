@@ -36,12 +36,15 @@ const StatsWidget = () => {
 
         const data = await response.json();
         if (data.success) {
-          // Sort domains by time in descending order
           const sortedStats = {
             ...data.stats,
-            topDomains: data.stats.topDomains.sort(
-              (a: { time: number }, b: { time: number }) => b.time - a.time
-            ),
+            topDomains: data.stats
+              .slice(0, 10)
+              .map((item: { domain: string; totalTime: number }) => ({
+                domain: item.domain,
+                time: item.totalTime,
+              })),
+            totalTime: data.totalTime,
           };
           setStats(sortedStats);
         }
@@ -93,7 +96,7 @@ const StatsWidget = () => {
         <div className={styles.statCard}>
           <h4>Total Time</h4>
           <p className={styles.statValue}>
-            {`${Math.round(stats?.totalTime || 0 / 60)} minutes`}
+            {`${Math.round((stats?.totalTime || 0) / 60)} minutes`}
           </p>
         </div>
       </div>
