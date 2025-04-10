@@ -119,7 +119,7 @@ const StatsWidget = () => {
                     `${domain} (${(percent * 100).toFixed(0)}%)`
                   }
                 >
-                  {(stats?.topDomains || []).map((entry, index) => (
+                  {(stats?.topDomains || []).map((_, index) => (
                     <Cell
                       key={`cell-${index}`}
                       fill={COLORS[index % COLORS.length]}

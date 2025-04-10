@@ -1,0 +1,41 @@
+{
+  "formatOnSave": true,
+  "defaultFormatter": "prettier",
+  "typescript": {
+    "preferences": {
+      "importModuleSpecifier": "non-relative"
+    },
+    "format": {
+      "semicolons": true,
+      "singleQuote": true,
+      "trailingComma": "es5"
+    },
+    "diagnostics": {
+      "strict": true,
+      "noImplicitAny": true,
+      "strictNullChecks": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true
+    },
+    "suggestions": {
+      "completeFunctionCalls": true,
+      "enabled": true,
+      "includeCompletionsForModuleExports": true
+    }
+  },
+  "editor": {
+    "tabSize": 2,
+    "insertSpaces": true,
+    "rulers": [80, 100],
+    "wordWrap": "off",
+    "trimTrailingWhitespace": true,
+    "insertFinalNewline": true
+  },
+  "search": {
+    "exclude": {
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/.git": true
+    }
+  }
+}
