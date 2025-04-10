@@ -1,82 +1,151 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 import styles from "./Contact.module.css";
+import { useState } from "react";
+import {
+  FiMail,
+  FiMapPin,
+  FiAlertCircle,
+  FiCheckCircle,
+  FiXCircle,
+} from "react-icons/fi";
+
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
+
+interface ContactForm {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}
+
+interface ApiResponse {
+  success: boolean;
+  message?: string;
+  error?: string;
+}
+
+const schema = yup.object({
+  name: yup.string().required("Name is required").max(100),
+  email: yup
+    .string()
+    .email("Invalid email")
+    .required("Email is required")
+    .max(100),
+  subject: yup.string().required("Subject is required").max(200),
+  message: yup.string().required("Message is required").max(5000),
+});
 
 const Contact = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<ContactForm>({
+    resolver: yupResolver(schema),
   });
-  const [status, setStatus] = useState<
-    "idle" | "submitting" | "success" | "error"
-  >("idle");
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setStatus("submitting");
+  const [status, setStatus] = useState<{
+    type: "success" | "error" | null;
+    message: string;
+  }>({ type: null, message: "" });
 
+  const onSubmit = async (data: ContactForm) => {
     try {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setStatus("success");
-      setFormData({ name: "", email: "", subject: "", message: "" });
-    } catch (error) {
-      setStatus("error");
-    }
-  };
+      setStatus({ type: null, message: "" });
+      const response = await fetch(`${API_BASE_URL}/contact`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+      const result: ApiResponse = await response.json();
+
+      if (response.status === 201) {
+        reset();
+        setStatus({
+          type: "success",
+          message:
+            result.message ||
+            "Message sent successfully! We'll get back to you soon.",
+        });
+      } else {
+        throw new Error(result.error || "Something went wrong");
+      }
+    } catch (error) {
+      setStatus({
+        type: "error",
+        message:
+          error instanceof Error ? error.message : "Failed to send message",
+      });
+    }
   };
 
   return (
     <div className="page-container">
       <div className="content-container">
         <div className={styles.contact}>
-          <h1 className="section-title">Contact Us</h1>
+          <h1 className="section-title">Get in Touch</h1>
           <p className="section-subtitle">
-            Have questions? We'd love to hear from you. Send us a message and
-            we'll respond as soon as possible.
+            Have questions or feedback? We'd love to hear from you. Send us a
+            message and we'll respond as soon as possible.
           </p>
 
           <div className={styles.contactContent}>
             <div className={styles.contactInfo}>
               <div className={styles.infoItem}>
-                <h3 className={styles.infoTitle}>Email</h3>
-                <p className={styles.infoText}>support@commandly.app</p>
+                <h3 className={styles.infoTitle}>
+                  <FiMail size={20} />
+                  Email
+                </h3>
+                <p className={styles.infoText}>info@commandly.dev</p>
               </div>
               <div className={styles.infoItem}>
-                <h3 className={styles.infoTitle}>Office</h3>
-                <p className={styles.infoText}>
-                  123 Developer Way
-                  <br />
-                  Tech City, TC 12345
-                </p>
-              </div>
-              <div className={styles.infoItem}>
-                <h3 className={styles.infoTitle}>Phone</h3>
-                <p className={styles.infoText}>+1 (555) 123-4567</p>
+                <h3 className={styles.infoTitle}>
+                  <FiMapPin size={20} />
+                  Office
+                </h3>
+                <p className={styles.infoText}>London, UK</p>
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className={styles.form}>
+            <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
+              {status.type && (
+                <div
+                  className={`${styles.statusMessage} ${styles[status.type]}`}
+                >
+                  {status.type === "success" ? (
+                    <FiCheckCircle size={20} />
+                  ) : (
+                    <FiXCircle size={20} />
+                  )}
+                  {status.message}
+                </div>
+              )}
+
               <div className={styles.formGroup}>
                 <label htmlFor="name" className={styles.label}>
                   Name
                 </label>
                 <input
-                  type="text"
                   id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className={styles.input}
-                  required
+                  className={`${styles.input} ${
+                    errors.name ? styles.error : ""
+                  }`}
+                  placeholder="Your name"
+                  {...register("name")}
                 />
+                {errors.name && (
+                  <span className={styles.errorMessage}>
+                    <FiAlertCircle size={16} />
+                    {errors.name.message}
+                  </span>
+                )}
               </div>
 
               <div className={styles.formGroup}>
@@ -84,14 +153,19 @@ const Contact = () => {
                   Email
                 </label>
                 <input
-                  type="email"
                   id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className={styles.input}
-                  required
+                  className={`${styles.input} ${
+                    errors.email ? styles.error : ""
+                  }`}
+                  placeholder="your.email@example.com"
+                  {...register("email")}
                 />
+                {errors.email && (
+                  <span className={styles.errorMessage}>
+                    <FiAlertCircle size={16} />
+                    {errors.email.message}
+                  </span>
+                )}
               </div>
 
               <div className={styles.formGroup}>
@@ -99,14 +173,19 @@ const Contact = () => {
                   Subject
                 </label>
                 <input
-                  type="text"
                   id="subject"
-                  name="subject"
-                  value={formData.subject}
-                  onChange={handleChange}
-                  className={styles.input}
-                  required
+                  className={`${styles.input} ${
+                    errors.subject ? styles.error : ""
+                  }`}
+                  placeholder="What is this about?"
+                  {...register("subject")}
                 />
+                {errors.subject && (
+                  <span className={styles.errorMessage}>
+                    <FiAlertCircle size={16} />
+                    {errors.subject.message}
+                  </span>
+                )}
               </div>
 
               <div className={styles.formGroup}>
@@ -115,34 +194,28 @@ const Contact = () => {
                 </label>
                 <textarea
                   id="message"
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  className={styles.textarea}
+                  className={`${styles.textarea} ${
+                    errors.message ? styles.error : ""
+                  }`}
                   rows={5}
-                  required
+                  placeholder="Your message here..."
+                  {...register("message")}
                 />
+                {errors.message && (
+                  <span className={styles.errorMessage}>
+                    <FiAlertCircle size={16} />
+                    {errors.message.message}
+                  </span>
+                )}
               </div>
 
               <button
                 type="submit"
                 className={styles.submitButton}
-                disabled={status === "submitting"}
+                disabled={isSubmitting}
               >
-                {status === "submitting" ? "Sending..." : "Send Message"}
+                {isSubmitting ? "Sending..." : "Send Message"}
               </button>
-
-              {status === "success" && (
-                <p className={styles.successMessage}>
-                  Thank you for your message. We'll get back to you soon!
-                </p>
-              )}
-
-              {status === "error" && (
-                <p className={styles.errorMessage}>
-                  Something went wrong. Please try again later.
-                </p>
-              )}
             </form>
           </div>
         </div>
