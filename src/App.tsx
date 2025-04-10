@@ -5,7 +5,6 @@ import {
   useLocation,
 } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext";
-import Header from "./components/Header/Header";
 import Home from "./pages/home/Home";
 import "./styles/global.css";
 import "./App.css";
@@ -19,6 +18,7 @@ import ScreenTime from "./pages/dashboard/screen-time/ScreenTime";
 import DashboardLayout from "./components/layouts/DashboardLayout";
 import Dashboard from "./pages/dashboard/home/Dashboard";
 import Clips from "./pages/dashboard/clips/Clips";
+import Header from "./components/Header/Header";
 
 const AppContent = () => {
   const location = useLocation();
