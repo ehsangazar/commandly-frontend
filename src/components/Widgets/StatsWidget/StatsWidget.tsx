@@ -2,6 +2,15 @@ import { useEffect, useState } from "react";
 import styles from "./StatsWidget.module.css";
 import Cookies from "js-cookie";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import {
+  endOfDay,
+  endOfMonth,
+  endOfWeek,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
+  intervalToDuration,
+} from "date-fns";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
@@ -20,14 +29,32 @@ const StatsWidget = () => {
   );
 
   useEffect(() => {
-    console.log("debug StatsWidget rendered");
     const fetchDashboardStats = async () => {
       try {
         const token = Cookies.get("commandly_token");
         if (!token) return;
 
+        let startDate: Date | null = null;
+        let endDate: Date | null = null;
+
+        if (timeRange === "today") {
+          startDate = startOfDay(new Date());
+          endDate = endOfDay(new Date());
+        } else if (timeRange === "week") {
+          startDate = startOfWeek(new Date());
+          endDate = endOfWeek(new Date());
+        } else if (timeRange === "month") {
+          startDate = startOfMonth(new Date());
+          endDate = endOfMonth(new Date());
+        }
+
+        const params = new URLSearchParams({
+          startDate: startDate?.toISOString() || "",
+          endDate: endDate?.toISOString() || "",
+        });
+
         const response = await fetch(
-          `${API_BASE_URL}/domain-time/stats?timeRange=${timeRange}`,
+          `${API_BASE_URL}/domain-time/stats?${params.toString()}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -57,8 +84,23 @@ const StatsWidget = () => {
     fetchDashboardStats();
   }, [timeRange]);
 
-  const formatTime = (time: number) => {
-    return `${Math.round(time / 60)}m`;
+  const formatTime = (seconds: number) => {
+    const duration = intervalToDuration({ start: 0, end: seconds * 1000 });
+    const { hours, minutes, seconds: secondsDuration } = duration;
+
+    let formattedDuration = ``;
+    if (hours && hours > 0) {
+      formattedDuration += `${hours}h`;
+    }
+    if (minutes && minutes > 0) {
+      formattedDuration += ` ${minutes}m`;
+    }
+
+    if (secondsDuration && secondsDuration > 0) {
+      formattedDuration += ` ${secondsDuration}s`;
+    }
+
+    return formattedDuration;
   };
 
   return (
@@ -97,7 +139,7 @@ const StatsWidget = () => {
         <div className={styles.statCard}>
           <h4>Total Time</h4>
           <p className={styles.statValue}>
-            {`${Math.round((stats?.totalTime || 0) / 60)} minutes`}
+            {formatTime(stats?.totalTime || 0)}
           </p>
         </div>
       </div>
