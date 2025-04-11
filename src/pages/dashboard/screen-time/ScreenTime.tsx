@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import styles from "./ScreenTime.module.css";
 import Cookies from "js-cookie";
+import {
+  startOfDay,
+  endOfDay,
+  parseISO,
+  format,
+  intervalToDuration,
+} from "date-fns";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
@@ -22,8 +29,8 @@ const ScreenTime = () => {
   const [entries, setEntries] = useState<ScreenTimeEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<Filters>({
-    startDate: new Date().toISOString(),
-    endDate: new Date().toISOString(),
+    startDate: startOfDay(new Date()).toISOString(),
+    endDate: endOfDay(new Date()).toISOString(),
     domain: "",
     minTime: 0,
   });
@@ -65,15 +72,41 @@ const ScreenTime = () => {
   }, [filters]);
 
   const formatTime = (seconds: number) => {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    if (hours === 0) {
-      return `${minutes}m`;
+    const duration = intervalToDuration({ start: 0, end: seconds * 1000 });
+    const { hours, minutes, seconds: secondsDuration } = duration;
+
+    let formattedDuration = ``;
+    if (hours && hours > 0) {
+      formattedDuration += `${hours}h`;
     }
-    return `${hours}h ${minutes}m`;
+    if (minutes && minutes > 0) {
+      formattedDuration += ` ${minutes}m`;
+    }
+
+    if (secondsDuration && secondsDuration > 0) {
+      formattedDuration += ` ${secondsDuration}s`;
+    }
+
+    return formattedDuration;
   };
 
-  const handleFilterChange = (key: keyof Filters, value: string | number) => {
+  const handleDateChange = (
+    key: "startDate" | "endDate",
+    dateString: string
+  ) => {
+    setLoading(true);
+    const date = new Date(dateString);
+    const isoString =
+      key === "startDate"
+        ? startOfDay(date).toISOString()
+        : endOfDay(date).toISOString();
+    setFilters((prev) => ({ ...prev, [key]: isoString }));
+  };
+
+  const handleFilterChange = (
+    key: "domain" | "minTime",
+    value: string | number
+  ) => {
     setLoading(true);
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
@@ -86,8 +119,8 @@ const ScreenTime = () => {
           <input
             type="date"
             id="startDate"
-            value={filters.startDate.split("T")[0]}
-            onChange={(e) => handleFilterChange("startDate", e.target.value)}
+            value={format(parseISO(filters.startDate), "yyyy-MM-dd")}
+            onChange={(e) => handleDateChange("startDate", e.target.value)}
           />
         </div>
         <div className={styles.filterGroup}>
@@ -95,8 +128,8 @@ const ScreenTime = () => {
           <input
             type="date"
             id="endDate"
-            value={filters.endDate.split("T")[0]}
-            onChange={(e) => handleFilterChange("endDate", e.target.value)}
+            value={format(parseISO(filters.endDate), "yyyy-MM-dd")}
+            onChange={(e) => handleDateChange("endDate", e.target.value)}
           />
         </div>
         <div className={styles.filterGroup}>
