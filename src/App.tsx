@@ -19,6 +19,7 @@ import DashboardLayout from "./components/layouts/DashboardLayout";
 import Dashboard from "./pages/dashboard/home/Dashboard";
 import Clips from "./pages/dashboard/clips/Clips";
 import Header from "./components/Header/Header";
+import Success from "./pages/subscription/Success";
 
 const AppContent = () => {
   const location = useLocation();
@@ -40,6 +41,7 @@ const AppContent = () => {
           <Route path="clips" element={<Clips />} />
           <Route path="screen-time" element={<ScreenTime />} />
         </Route>
+        <Route path="/subscription/success" element={<Success />} />
       </Routes>
     </>
   );
