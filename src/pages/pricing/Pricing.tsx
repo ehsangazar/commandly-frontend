@@ -1,53 +1,101 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./Pricing.module.css";
+import Cookies from "js-cookie";
 
-const pricingPlans = [
-  {
-    name: "Free",
-    price: "0",
-    description: "Perfect for getting started",
-    features: [
-      "Basic command-line tools",
-      "Community support",
-      "Up to 3 saved commands",
-      "Basic documentation",
-    ],
-    buttonText: "Get Started",
-    popular: false,
-  },
-  {
-    name: "Pro",
-    price: "12",
-    description: "Best for professionals",
-    features: [
-      "Everything in Free",
-      "Unlimited saved commands",
-      "Custom command creation",
-      "Priority support",
-      "Advanced documentation",
-      "Team collaboration",
-    ],
-    buttonText: "Start Free Trial",
-    popular: true,
-  },
-  {
-    name: "Enterprise",
-    price: "Custom",
-    description: "For large organizations",
-    features: [
-      "Everything in Pro",
-      "Custom integrations",
-      "Dedicated support",
-      "SLA guarantees",
-      "Security features",
-      "Team training",
-    ],
-    buttonText: "Contact Sales",
-    popular: false,
-  },
-];
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
+
+interface SubscriptionPlan {
+  id: string;
+  name: string;
+  price: number;
+  interval: string;
+  features: string[];
+}
 
 const Pricing = () => {
+  const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchPlans = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/subscription/plans`);
+        const data = await response.json();
+        if (data.success) {
+          setPlans(data.plans);
+        } else {
+          setError("Failed to load subscription plans");
+        }
+      } catch (err) {
+        setError("Error loading subscription plans");
+        console.error("Error fetching plans:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPlans();
+  }, []);
+
+  const handleCheckout = async (planId: string) => {
+    try {
+      const token = Cookies.get("commandly_token");
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
+      const response = await fetch(`${API_BASE_URL}/subscription/checkout`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ planId }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        // Redirect to Stripe Checkout
+        window.location.href = data.checkoutUrl;
+      } else {
+        setError(data.error || "Failed to create checkout session");
+      }
+    } catch (err) {
+      setError("Error creating checkout session");
+      console.error("Error during checkout:", err);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="page-container">
+        <div className="content-container">
+          <div className={styles.pricing}>
+            <h1 className="section-title">Loading Plans...</h1>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="page-container">
+        <div className="content-container">
+          <div className={styles.pricing}>
+            <h1 className="section-title">Error</h1>
+            <p className={styles.error}>{error}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="page-container">
       <div className="content-container">
@@ -58,29 +106,22 @@ const Pricing = () => {
           </p>
 
           <div className={styles.pricingGrid}>
-            {pricingPlans.map((plan) => (
+            {plans.map((plan) => (
               <div
-                key={plan.name}
+                key={plan.id}
                 className={`${styles.pricingCard} ${
-                  plan.popular ? styles.popular : ""
+                  plan.name === "Pro" ? styles.popular : ""
                 }`}
               >
-                {plan.popular && (
+                {plan.name === "Pro" && (
                   <div className={styles.popularBadge}>Most Popular</div>
                 )}
                 <h3 className={styles.planName}>{plan.name}</h3>
                 <div className={styles.planPrice}>
-                  {plan.price === "Custom" ? (
-                    plan.price
-                  ) : (
-                    <>
-                      <span className={styles.currency}>$</span>
-                      {plan.price}
-                      <span className={styles.period}>/mo</span>
-                    </>
-                  )}
+                  <span className={styles.currency}>$</span>
+                  {plan.price}
+                  <span className={styles.period}>/{plan.interval}</span>
                 </div>
-                <p className={styles.planDescription}>{plan.description}</p>
                 <ul className={styles.features}>
                   {plan.features.map((feature) => (
                     <li key={feature} className={styles.feature}>
@@ -89,14 +130,14 @@ const Pricing = () => {
                     </li>
                   ))}
                 </ul>
-                <Link
-                  to={plan.name === "Enterprise" ? "/contact" : "/login"}
+                <button
+                  onClick={() => handleCheckout(plan.id)}
                   className={`${styles.planButton} ${
-                    plan.popular ? styles.popularButton : ""
+                    plan.name === "Pro" ? styles.popularButton : ""
                   }`}
                 >
-                  {plan.buttonText}
-                </Link>
+                  {plan.name === "Free" ? "Get Started" : "Subscribe Now"}
+                </button>
               </div>
             ))}
           </div>

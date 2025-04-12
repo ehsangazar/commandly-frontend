@@ -26,7 +26,9 @@ const DashboardLayout = ({ title }: DashboardLayoutProps) => {
       <div className={styles.dashboardLayout}>
         <aside className={styles.sidebar}>
           <div className={styles.sidebarHeader}>
-            <h1 className={styles.logo}>Commandly</h1>
+            <a href="/">
+              <h1 className={styles.logo}>Commandly</h1>
+            </a>
           </div>
           <nav className={styles.nav}>
             <div
