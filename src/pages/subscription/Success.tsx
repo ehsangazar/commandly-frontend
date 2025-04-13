@@ -42,10 +42,6 @@ const Success = () => {
         const data = await response.json();
         if (data.success) {
           setStatus("success");
-          // Redirect to dashboard after 3 seconds
-          setTimeout(() => {
-            navigate("/dashboard");
-          }, 3000);
         } else {
           setStatus("error");
           setError(data.error || "Failed to verify subscription");

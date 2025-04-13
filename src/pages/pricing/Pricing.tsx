@@ -14,31 +14,76 @@ interface SubscriptionPlan {
   features: string[];
 }
 
+interface Plan {
+  id: string;
+  name: string;
+  price: number;
+  interval: string;
+  features: string[];
+}
+
+interface Subscription {
+  id: string;
+  planId: string;
+  status: string;
+  currentPeriodStart: string;
+  currentPeriodEnd: string;
+  plan: Plan;
+}
+
+interface SubscriptionStatus {
+  success: boolean;
+  subscription: Subscription | null;
+}
+
 const Pricing = () => {
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [subscriptionStatus, setSubscriptionStatus] =
+    useState<SubscriptionStatus | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchPlans = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch(`${API_BASE_URL}/subscription/plans`);
-        const data = await response.json();
-        if (data.success) {
-          setPlans(data.plans);
+        const token = Cookies.get("commandly_token");
+        if (!token) {
+          setLoading(false);
+          return;
+        }
+
+        // Fetch subscription status
+        const statusResponse = await fetch(
+          `${API_BASE_URL}/subscription/status`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const statusData = await statusResponse.json();
+        if (statusData.success) {
+          setSubscriptionStatus(statusData);
+        }
+
+        // Fetch plans
+        const plansResponse = await fetch(`${API_BASE_URL}/subscription/plans`);
+        const plansData = await plansResponse.json();
+        if (plansData.success) {
+          setPlans(plansData.plans);
         } else {
           setError("Failed to load subscription plans");
         }
       } catch (err) {
         setError("Error loading subscription plans");
-        console.error("Error fetching plans:", err);
+        console.error("Error fetching data:", err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPlans();
+    fetchData();
   }, []);
 
   const handleCheckout = async (planId: string) => {
@@ -90,6 +135,56 @@ const Pricing = () => {
           <div className={styles.pricing}>
             <h1 className="section-title">Error</h1>
             <p className={styles.error}>{error}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (subscriptionStatus?.success && subscriptionStatus?.subscription?.plan) {
+    const { subscription } = subscriptionStatus;
+    const startDate = subscription?.currentPeriodStart
+      ? new Date(subscription.currentPeriodStart).toLocaleDateString()
+      : "N/A";
+    const endDate = subscription?.currentPeriodEnd
+      ? new Date(subscription.currentPeriodEnd).toLocaleDateString()
+      : "N/A";
+
+    return (
+      <div className="page-container">
+        <div className="content-container">
+          <div className={styles.pricing}>
+            <h1 className="section-title">Your Current Subscription</h1>
+            <div className={styles.currentPlan}>
+              <h2>{subscription.plan?.name || "Unknown Plan"}</h2>
+              <p className={styles.price}>
+                ${subscription.plan?.price || 0}/
+                {subscription.plan?.interval || "month"}
+              </p>
+              <p className={styles.status}>
+                Status: {subscription.status || "Unknown"}
+              </p>
+              <p className={styles.period}>
+                Current Period: {startDate} - {endDate}
+              </p>
+              {subscription.plan?.features &&
+                subscription.plan.features.length > 0 && (
+                  <ul className={styles.features}>
+                    {subscription.plan.features.map((feature) => (
+                      <li key={feature} className={styles.feature}>
+                        <span className={styles.checkmark}>✓</span>
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              <button
+                className={styles.manageButton}
+                onClick={() => navigate("/dashboard")}
+              >
+                Go to Dashboard
+              </button>
+            </div>
           </div>
         </div>
       </div>
