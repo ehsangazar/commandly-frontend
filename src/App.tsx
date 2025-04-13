@@ -20,6 +20,7 @@ import Dashboard from "./pages/dashboard/home/Dashboard";
 import Clips from "./pages/dashboard/clips/Clips";
 import Header from "./components/Header/Header";
 import Success from "./pages/subscription/Success";
+import CancelSubscription from "./pages/subscription/Cancel";
 
 const AppContent = () => {
   const location = useLocation();
@@ -42,6 +43,7 @@ const AppContent = () => {
           <Route path="screen-time" element={<ScreenTime />} />
         </Route>
         <Route path="/subscription/success" element={<Success />} />
+        <Route path="/subscription/cancel" element={<CancelSubscription />} />
       </Routes>
     </>
   );
