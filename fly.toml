@@ -3,45 +3,42 @@
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = "commandly-frontend"
-primary_region = "sin"
+app = 'commandly-frontend'
+primary_region = 'sin'
 
 [build]
-  dockerfile = "Dockerfile"
+  [build.args]
+    NODE_ENV = "production"
 
 [http_service]
-  internal_port = 8080
+  internal_port = 80
   force_https = true
-  auto_stop_machines = true
+  auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 1
-  processes = ["app"]
+  processes = ['app']
 
-[[services]]
-  internal_port = 8080
-  protocol = "tcp"
-  auto_stop_machines = "stop"
-  auto_start_machines = true
-  min_machines_running = 1
-
-  [[services.ports]]
+  [[http_service.ports]]
     port = 80
     handlers = ["http"]
-    force_https = true
-
-  [[services.ports]]
+  [[http_service.ports]]
     port = 443
     handlers = ["tls", "http"]
 
-  [services.concurrency]
-    type = "connections"
-    hard_limit = 25
-    soft_limit = 20
+  [[http_service.headers]]
+    for = "/**"
+    [http_service.headers.values]
+      X-Frame-Options = "DENY"
+      X-Content-Type-Options = "nosniff"
+      Referrer-Policy = "strict-origin-when-cross-origin"
+      Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+      Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://commandly-backend.fly.dev;"
 
-  [[services.tcp_checks]]
-    interval = "15s"
-    timeout = "2s"
-    grace_period = "1s"
+  # Catch-all route for all paths
+  [[http_service.routes]]
+    from = "/**"
+    to = "/index.html"
+    methods = ["GET"]
 
 [[vm]]
   memory = '512mb'
