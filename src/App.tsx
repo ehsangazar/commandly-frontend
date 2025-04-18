@@ -22,13 +22,18 @@ import Header from "./components/Header/Header";
 import Success from "./pages/subscription/Success";
 import CancelSubscription from "./pages/subscription/Cancel";
 
+const withoutHeader = [
+  '/login',
+  '/dashboard'
+]
+
 const AppContent = () => {
   const location = useLocation();
-  const isDashboard = location.pathname.startsWith("/dashboard");
+  const shouldHideHeader = withoutHeader.some(path => location.pathname.startsWith(path));
 
   return (
     <>
-      {!isDashboard && <Header />}
+      {!shouldHideHeader && <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />

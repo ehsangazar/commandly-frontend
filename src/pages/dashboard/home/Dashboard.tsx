@@ -60,12 +60,15 @@ const Dashboard = () => {
   }
 
   return (
-    <div className={styles.dashboard}>
-      <div className={styles.widgetsContainer}>
+    <div className="grid grid-cols-4 gap-1 p-4 w-[calc(100%-2rem)] mx-auto">
+      <div className="col-span-1">
         <StatsWidget />
+      </div>
+      <div className="col-span-2">
         <ClipsWidget />
       </div>
     </div>
+
   );
 };
 

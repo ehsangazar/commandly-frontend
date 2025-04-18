@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import styles from "./ClipsWidget.module.css";
-import { FaExternalLinkAlt } from "react-icons/fa";
+import ClipsCard from "./ClipCard";
 
 interface Clip {
   id: string;
@@ -61,7 +61,7 @@ export default function ClipsWidget() {
   }
 
   return (
-    <div className={styles.widget}>
+    <div className="bg-gray-900 rounded-lg p-4 shadow-md">
       <div className={styles.header}>
         <h2>Recent Clips</h2>
         <Link to="/dashboard/clips" className={styles.viewAll}>
@@ -72,37 +72,45 @@ export default function ClipsWidget() {
       {clips.length === 0 ? (
         <div className={styles.empty}>No clips found</div>
       ) : (
-        <div className={styles.clipsList}>
+        <div className="flex flex-col gap-2">
           {clips.map((clip) => (
-            <div key={clip.id} className={styles.clipItem}>
-              <div className={styles.clipContent}>
-                <p className={styles.clipText}>{clip.text}</p>
-                <div className={styles.clipMeta}>
-                  <button
-                    onClick={() => {
-                      window.open(
-                        clip.sourceUrl,
-                        "_blank",
-                        "noopener,noreferrer"
-                      );
-                    }}
-                    className={styles.sourceButton}
-                    title={clip.sourceUrl}
-                  >
-                    <FaExternalLinkAlt className={styles.sourceIcon} />
-                    <span className={styles.sourceText}>
-                      {new URL(clip.sourceUrl).hostname}
-                    </span>
-                  </button>
-                  <span className={styles.date}>
-                    {new Date(clip.createdAt).toLocaleDateString(undefined, {
-                      month: "short",
-                      day: "numeric",
-                    })}
-                  </span>
-                </div>
-              </div>
-            </div>
+            <ClipsCard
+              key={clip.id}
+              id={clip.id}
+              sourceUrl={clip.sourceUrl}
+              createdAt={clip.createdAt}
+              text={clip.text}
+              imageUrl={clip.imageUrl}
+            ></ClipsCard>
+            // <div key={clip.id} className={styles.clipItem}>
+            //   <div className={styles.clipContent}>
+            //     <p className={styles.clipText}>{clip.text}</p>
+            //     <div className={styles.clipMeta}>
+            //       <button
+            //         onClick={() => {
+            //           window.open(
+            //             clip.sourceUrl,
+            //             "_blank",
+            //             "noopener,noreferrer"
+            //           );
+            //         }}
+            //         className={styles.sourceButton}
+            //         title={clip.sourceUrl}
+            //       >
+            //         <FaExternalLinkAlt className={styles.sourceIcon} />
+            //         <span className={styles.sourceText}>
+            //           {new URL(clip.sourceUrl).hostname}
+            //         </span>
+            //       </button>
+            //       <span className={styles.date}>
+            //         {new Date(clip.createdAt).toLocaleDateString(undefined, {
+            //           month: "short",
+            //           day: "numeric",
+            //         })}
+            //       </span>
+            //     </div>
+            //   </div>
+            // </div>
           ))}
         </div>
       )}

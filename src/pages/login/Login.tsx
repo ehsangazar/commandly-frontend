@@ -94,7 +94,7 @@ const Login = () => {
       });
 
       // Redirect to dashboard
-      navigate("/");
+      navigate("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to verify code");
     } finally {
