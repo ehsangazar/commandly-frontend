@@ -11,17 +11,40 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   const [theme, setTheme] = useState<Theme>(() => {
+    // Check localStorage first
     const savedTheme = localStorage.getItem("theme");
-    return (savedTheme as Theme) || "dark";
+    if (savedTheme) return savedTheme as Theme;
+
+    // Then check system preference
+    if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+      return "dark";
+    }
+    return "light";
   });
 
   useEffect(() => {
+    // Save to localStorage
     localStorage.setItem("theme", theme);
-    document.documentElement.setAttribute("data-theme", theme);
+
+    // Update document class for Tailwind
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
   }, [theme]);
 
   const toggleTheme = () => {
-    setTheme((prev) => (prev === "light" ? "dark" : "light"));
+    setTheme((prevTheme) => {
+      const newTheme = prevTheme === "light" ? "dark" : "light";
+      // Immediately update the class to prevent flicker
+      if (newTheme === "dark") {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+      return newTheme;
+    });
   };
 
   return (

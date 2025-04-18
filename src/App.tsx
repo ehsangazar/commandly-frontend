@@ -6,7 +6,6 @@ import {
 } from "react-router-dom";
 import { ThemeProvider } from "./context/ThemeContext";
 import Home from "./pages/home/Home";
-import "./styles/global.css";
 import "./App.css";
 import Contact from "./pages/contact/Contact";
 import Pricing from "./pages/pricing/Pricing";
@@ -22,14 +21,13 @@ import Header from "./components/Header/Header";
 import Success from "./pages/subscription/Success";
 import CancelSubscription from "./pages/subscription/Cancel";
 
-const withoutHeader = [
-  '/login',
-  '/dashboard'
-]
+const withoutHeader = ["/login", "/dashboard"];
 
 const AppContent = () => {
   const location = useLocation();
-  const shouldHideHeader = withoutHeader.some(path => location.pathname.startsWith(path));
+  const shouldHideHeader = withoutHeader.some((path) =>
+    location.pathname.startsWith(path)
+  );
 
   return (
     <>

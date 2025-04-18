@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import styles from "./Pricing.module.css";
 import Cookies from "js-cookie";
 
 const API_BASE_URL =
@@ -105,7 +104,6 @@ const Pricing = () => {
 
       const data = await response.json();
       if (data.success) {
-        // Redirect to Stripe Checkout
         window.location.href = data.checkoutUrl;
       } else {
         setError(data.error || "Failed to create checkout session");
@@ -118,11 +116,9 @@ const Pricing = () => {
 
   if (loading) {
     return (
-      <div className="page-container">
-        <div className="content-container">
-          <div className={styles.pricing}>
-            <h1 className="section-title">Loading Plans...</h1>
-          </div>
+      <div className="min-h-[calc(100vh-4rem)] bg-[var(--commandly-background)] flex items-center justify-center">
+        <div className="text-[var(--commandly-text-primary)]">
+          Loading Plans...
         </div>
       </div>
     );
@@ -130,13 +126,8 @@ const Pricing = () => {
 
   if (error) {
     return (
-      <div className="page-container">
-        <div className="content-container">
-          <div className={styles.pricing}>
-            <h1 className="section-title">Error</h1>
-            <p className={styles.error}>{error}</p>
-          </div>
-        </div>
+      <div className="min-h-[calc(100vh-4rem)] bg-[var(--commandly-background)] flex items-center justify-center">
+        <div className="text-[var(--commandly-text-primary)]">{error}</div>
       </div>
     );
   }
@@ -151,36 +142,67 @@ const Pricing = () => {
       : "N/A";
 
     return (
-      <div className="page-container">
-        <div className="content-container">
-          <div className={styles.pricing}>
-            <h1 className="section-title">Your Current Subscription</h1>
-            <div className={styles.currentPlan}>
-              <h2>{subscription.plan?.name || "Unknown Plan"}</h2>
-              <p className={styles.price}>
-                ${subscription.plan?.price || 0}/
-                {subscription.plan?.interval || "month"}
-              </p>
-              <p className={styles.status}>
-                Status: {subscription.status || "Unknown"}
-              </p>
-              <p className={styles.period}>
-                Current Period: {startDate} - {endDate}
-              </p>
+      <div className="min-h-[calc(100vh-4rem)] bg-[var(--commandly-background)]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-[var(--commandly-text-primary)] mb-4">
+              Your Current Subscription
+            </h1>
+            <p className="text-[var(--commandly-text-secondary)]">
+              Manage your subscription and billing details
+            </p>
+          </div>
+
+          <div className="max-w-2xl mx-auto bg-[var(--commandly-hover)] rounded-lg p-8">
+            <div className="text-center">
+              <h2 className="text-2xl font-bold text-[var(--commandly-text-primary)] mb-2">
+                {subscription.plan?.name || "Unknown Plan"}
+              </h2>
+              <div className="text-3xl font-bold text-[var(--commandly-primary)] mb-4">
+                ${subscription.plan?.price || 0}
+                <span className="text-lg text-[var(--commandly-text-secondary)]">
+                  /{subscription.plan?.interval || "month"}
+                </span>
+              </div>
+              <div className="mb-6">
+                <span className="px-3 py-1 rounded-full text-sm font-medium bg-[var(--commandly-primary)] text-white">
+                  {subscription.status || "Unknown"}
+                </span>
+              </div>
+              <div className="text-[var(--commandly-text-secondary)] mb-6">
+                <p>
+                  Current Period: {startDate} - {endDate}
+                </p>
+              </div>
               {subscription.plan?.features &&
                 subscription.plan.features.length > 0 && (
-                  <ul className={styles.features}>
+                  <ul className="space-y-2 mb-8">
                     {subscription.plan.features.map((feature) => (
-                      <li key={feature} className={styles.feature}>
-                        <span className={styles.checkmark}>✓</span>
+                      <li
+                        key={feature}
+                        className="flex items-center text-[var(--commandly-text-secondary)]"
+                      >
+                        <svg
+                          className="w-5 h-5 mr-2 text-[var(--commandly-primary)]"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M5 13l4 4L19 7"
+                          />
+                        </svg>
                         {feature}
                       </li>
                     ))}
                   </ul>
                 )}
               <button
-                className={styles.manageButton}
                 onClick={() => navigate("/dashboard")}
+                className="bg-[var(--commandly-primary)] hover:bg-[var(--commandly-primary-hover)] text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200"
               >
                 Go to Dashboard
               </button>
@@ -192,56 +214,88 @@ const Pricing = () => {
   }
 
   return (
-    <div className="page-container">
-      <div className="content-container">
-        <div className={styles.pricing}>
-          <h1 className="section-title">Simple, Transparent Pricing</h1>
-          <p className="section-subtitle">
+    <div className="min-h-[calc(100vh-4rem)] bg-[var(--commandly-background)]">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-[var(--commandly-text-primary)] mb-4">
+            Simple, Transparent Pricing
+          </h1>
+          <p className="text-xl text-[var(--commandly-text-secondary)]">
             Choose the plan that's right for you or your team
           </p>
+        </div>
 
-          <div className={styles.pricingGrid}>
-            {plans.map((plan) => (
-              <div
-                key={plan.id}
-                className={`${styles.pricingCard} ${
-                  plan.name === "Pro" ? styles.popular : ""
-                }`}
-              >
-                {plan.name === "Pro" && (
-                  <div className={styles.popularBadge}>Most Popular</div>
-                )}
-                <h3 className={styles.planName}>{plan.name}</h3>
-                <div className={styles.planPrice}>
-                  <span className={styles.currency}>$</span>
-                  {plan.price}
-                  <span className={styles.period}>/{plan.interval}</span>
+        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          {plans.map((plan) => (
+            <div
+              key={plan.id}
+              className={`bg-[var(--commandly-hover)] rounded-lg p-8 relative ${
+                plan.name === "Pro"
+                  ? "ring-2 ring-[var(--commandly-primary)]"
+                  : ""
+              }`}
+            >
+              {plan.name === "Pro" && (
+                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                  <span className="bg-[var(--commandly-primary)] text-white text-sm font-semibold px-3 py-1 rounded-full">
+                    Most Popular
+                  </span>
                 </div>
-                <ul className={styles.features}>
+              )}
+              <div className="text-center">
+                <h3 className="text-2xl font-bold text-[var(--commandly-text-primary)] mb-2">
+                  {plan.name}
+                </h3>
+                <div className="text-4xl font-bold text-[var(--commandly-primary)] mb-4">
+                  ${plan.price}
+                  <span className="text-lg text-[var(--commandly-text-secondary)]">
+                    /{plan.interval}
+                  </span>
+                </div>
+                <ul className="space-y-3 mb-8">
                   {plan.features.map((feature) => (
-                    <li key={feature} className={styles.feature}>
-                      <span className={styles.checkmark}>✓</span>
+                    <li
+                      key={feature}
+                      className="flex items-center text-[var(--commandly-text-secondary)]"
+                    >
+                      <svg
+                        className="w-5 h-5 mr-2 text-[var(--commandly-primary)]"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
                       {feature}
                     </li>
                   ))}
                 </ul>
                 <button
                   onClick={() => handleCheckout(plan.id)}
-                  className={`${styles.planButton} ${
-                    plan.name === "Pro" ? styles.popularButton : ""
+                  className={`w-full py-3 px-6 rounded-lg font-semibold transition-colors duration-200 ${
+                    plan.name === "Pro"
+                      ? "bg-[var(--commandly-primary)] hover:bg-[var(--commandly-primary-hover)] text-white"
+                      : "bg-[var(--commandly-hover)] hover:bg-[var(--commandly-hover)] text-[var(--commandly-text-primary)] border border-[var(--commandly-border)]"
                   }`}
                 >
                   {plan.name === "Free" ? "Get Started" : "Subscribe Now"}
                 </button>
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
+        </div>
 
-          <div className={styles.guarantee}>
-            <h3 className={styles.guaranteeTitle}>
+        <div className="mt-16 text-center">
+          <div className="inline-block bg-[var(--commandly-hover)] rounded-lg p-8 max-w-2xl">
+            <h3 className="text-2xl font-bold text-[var(--commandly-text-primary)] mb-4">
               100% Satisfaction Guarantee
             </h3>
-            <p className={styles.guaranteeText}>
+            <p className="text-[var(--commandly-text-secondary)]">
               Try Commandly risk-free for 14 days. If you're not completely
               satisfied, let us know and we'll refund your payment.
             </p>

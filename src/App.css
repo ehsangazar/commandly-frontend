@@ -1,45 +1,134 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800');
+
+:root {
+  /* Light theme variables */
+  --commandly-text: #111827;
+  --commandly-hover: #F3F4F6;
+  --commandly-primary: #7C3AED;
+  --commandly-primary-hover: #6D28D9;
+  --commandly-primary-active: #5B21B6;
+  --commandly-secondary: #930000;
+  --commandly-secondary-hover: #7A0000;
+  --commandly-secondary-active: #520000;
+  --commandly-text-primary: #111827;
+  --commandly-text-secondary: #4B5563;
+  --commandly-background: #FFFFFF;
+  --commandly-border: #E5E7EB;
+  --commandly-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --commandly-radius: 8px;
+  --commandly-spacing-xs: 4px;
+  --commandly-spacing-sm: 8px;
+  --commandly-spacing-md: 16px;
+  --commandly-spacing-lg: 24px;
+  --commandly-spacing-xl: 32px;
+  --commandly-transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --commandly-font-family: 'Inter', sans-serif;
+  --commandly-font-weight-bold: 800;
+  --commandly-font-weight-medium: 600;
+  --commandly-font-weight-normal: 400;
+
+  --commandly-line-height-h1: 1.1;
+  --commandly-line-height-h2: 1.2;
+  --commandly-line-height-h3: 1.3;
+  --commandly-line-height-body: 1.5;
+  --commandly-line-height-small: 1.5;
+
+  --commandly-tooltip-bg: #111827;
+  --commandly-tooltip-text: #F9FAFB;
+
+  /* Typography */
+  --commandly-font-h1: 800 48px/1.1 var(--commandly-font-family);
+  --commandly-font-h2: 700 32px/1.2 var(--commandly-font-family);
+  --commandly-font-h3: 600 24px/1.3 var(--commandly-font-family);
+  --commandly-font-body: 400 16px/1.5 var(--commandly-font-family);
+  --commandly-font-body-bold: 600 16px/1.5 var(--commandly-font-family);
+  --commandly-font-small: 400 14px/1.5 var(--commandly-font-family);
+  --commandly-font-size-small: 11px;
+}
+
+/* Dark theme variables */
+.dark {
+  --commandly-text: #F9FAFB;
+  --commandly-hover: #374151;
+  --commandly-primary: #8B5CF6;
+  --commandly-primary-hover: #7C3AED;
+  --commandly-primary-active: #6D28D9;
+  --commandly-secondary: #EF4444;
+  --commandly-secondary-hover: #DC2626;
+  --commandly-secondary-active: #B91C1C;
+  --commandly-text-primary: #F9FAFB;
+  --commandly-text-secondary: #D1D5DB;
+  --commandly-background: #111827;
+  --commandly-border: #374151;
+  --commandly-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --commandly-tooltip-bg: #F9FAFB;
+  --commandly-tooltip-text: #111827;
+}
+
+/* Base styles */
+body {
+  font-family: var(--commandly-font-family);
+  background-color: var(--commandly-background);
+  color: var(--commandly-text);
+  transition: var(--commandly-transition);
+}
+
+/* Typography */
+h1 {
+  font: var(--commandly-font-h1);
+  color: var(--commandly-text-primary);
+}
+
+h2 {
+  font: var(--commandly-font-h2);
+  color: var(--commandly-text-primary);
+}
+
+h3 {
+  font: var(--commandly-font-h3);
+  color: var(--commandly-text-primary);
+}
+
+p {
+  font: var(--commandly-font-body);
+  color: var(--commandly-text-secondary);
+}
+
+/* Utility classes */
+.commandly-button {
+  background-color: var(--commandly-primary);
+  color: white;
+  padding: var(--commandly-spacing-sm) var(--commandly-spacing-md);
+  border-radius: var(--commandly-radius);
+  transition: var(--commandly-transition);
+}
+
+.commandly-button:hover {
+  background-color: var(--commandly-primary-hover);
+}
+
+.commandly-button:active {
+  background-color: var(--commandly-primary-active);
+}
+
+.commandly-card {
+  background-color: var(--commandly-background);
+  border: 1px solid var(--commandly-border);
+  border-radius: var(--commandly-radius);
+  box-shadow: var(--commandly-shadow);
+  padding: var(--commandly-spacing-md);
+  transition: var(--commandly-transition);
+}
+
+/* Dark mode specific styles */
+.dark .commandly-card {
+  border-color: var(--commandly-border);
+}
+
+/* Transitions */
 * {
-  box-sizing: border-box;
-}
-#root {
-  margin: 0 auto;
-  padding: 0px;
-  text-align: center;
-  width: 100%;
-}
-
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
-}
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
 }
