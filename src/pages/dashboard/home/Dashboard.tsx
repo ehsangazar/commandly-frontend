@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import StatsWidget from "../../../components/Widgets/StatsWidget/StatsWidget";
 import ClipsWidget from "../../../components/Widgets/ClipsWidget/ClipsWidget";
 import Cookies from "js-cookie";
-import styles from "./Dashboard.module.css";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
@@ -52,23 +51,37 @@ const Dashboard = () => {
   }, [navigate]);
 
   if (loading) {
-    return <div className={styles.loading}>Loading your dashboard...</div>;
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
+        <div className="text-center space-y-4">
+          <div className="h-8 w-8 animate-spin rounded-full border-4 border-[var(--commandly-primary)] border-t-transparent mx-auto"></div>
+          <p className="text-[var(--commandly-text-secondary)]">
+            Loading your dashboard...
+          </p>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className={styles.error}>{error}</div>;
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-4rem)]">
+        <div className="text-center space-y-4">
+          <p className="text-red-500">{error}</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="grid grid-cols-4 gap-1 p-4 w-[calc(100%-2rem)] mx-auto">
-      <div className="col-span-1">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-6">
+      <div className="md:col-span-1">
         <StatsWidget />
       </div>
-      <div className="col-span-2">
+      <div className="md:col-span-2">
         <ClipsWidget />
       </div>
     </div>
-
   );
 };
 

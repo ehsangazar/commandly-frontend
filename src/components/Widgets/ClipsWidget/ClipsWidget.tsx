@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
-import styles from "./ClipsWidget.module.css";
+import { FiExternalLink } from "react-icons/fi";
 import ClipsCard from "./ClipCard";
 
 interface Clip {
@@ -53,26 +53,42 @@ export default function ClipsWidget() {
   }, []);
 
   if (loading) {
-    return <div className={styles.loading}>Loading recent clips...</div>;
+    return (
+      <div className="flex items-center justify-center p-6 text-[var(--commandly-text-secondary)]">
+        Loading recent clips...
+      </div>
+    );
   }
 
   if (error) {
-    return <div className={styles.error}>{error}</div>;
+    return (
+      <div className="flex items-center justify-center p-6 text-red-500">
+        {error}
+      </div>
+    );
   }
 
   return (
-    <div className="bg-gray-900 rounded-lg p-4 shadow-md">
-      <div className={styles.header}>
-        <h2>Recent Clips</h2>
-        <Link to="/dashboard/clips" className={styles.viewAll}>
-          View All
+    <div className="bg-[var(--commandly-hover)] rounded-lg p-6 shadow-sm">
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-xl font-semibold text-[var(--commandly-text-primary)]">
+          Recent Clips
+        </h2>
+        <Link
+          to="/dashboard/clips"
+          className="flex items-center space-x-2 text-[var(--commandly-primary)] hover:text-[var(--commandly-primary-hover)] transition-colors duration-200"
+        >
+          <span>View All</span>
+          <FiExternalLink className="w-4 h-4" />
         </Link>
       </div>
 
       {clips.length === 0 ? (
-        <div className={styles.empty}>No clips found</div>
+        <div className="text-center py-8 text-[var(--commandly-text-secondary)]">
+          No clips found
+        </div>
       ) : (
-        <div className="flex flex-col gap-2">
+        <div className="space-y-4">
           {clips.map((clip) => (
             <ClipsCard
               key={clip.id}
@@ -81,36 +97,7 @@ export default function ClipsWidget() {
               createdAt={clip.createdAt}
               text={clip.text}
               imageUrl={clip.imageUrl}
-            ></ClipsCard>
-            // <div key={clip.id} className={styles.clipItem}>
-            //   <div className={styles.clipContent}>
-            //     <p className={styles.clipText}>{clip.text}</p>
-            //     <div className={styles.clipMeta}>
-            //       <button
-            //         onClick={() => {
-            //           window.open(
-            //             clip.sourceUrl,
-            //             "_blank",
-            //             "noopener,noreferrer"
-            //           );
-            //         }}
-            //         className={styles.sourceButton}
-            //         title={clip.sourceUrl}
-            //       >
-            //         <FaExternalLinkAlt className={styles.sourceIcon} />
-            //         <span className={styles.sourceText}>
-            //           {new URL(clip.sourceUrl).hostname}
-            //         </span>
-            //       </button>
-            //       <span className={styles.date}>
-            //         {new Date(clip.createdAt).toLocaleDateString(undefined, {
-            //           month: "short",
-            //           day: "numeric",
-            //         })}
-            //       </span>
-            //     </div>
-            //   </div>
-            // </div>
+            />
           ))}
         </div>
       )}

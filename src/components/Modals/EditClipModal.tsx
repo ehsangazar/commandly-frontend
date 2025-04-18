@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import Modal from "../Modal/Modal";
-import styles from "./EditClipModal.module.css";
+import { FiX, FiSave } from "react-icons/fi";
 
 interface EditClipModalProps {
   clip: {
@@ -68,15 +68,18 @@ export default function EditClipModal({
 
   return (
     <Modal isOpen={true} onClose={onClose} title="Edit Clip">
-      <form onSubmit={handleSubmit(onSubmit)} className={styles.form}>
-        <div className={styles.field}>
-          <label htmlFor="text" data-required="true">
-            Text
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <div className="space-y-2">
+          <label
+            htmlFor="text"
+            className="block text-sm font-medium text-[var(--commandly-text-secondary)]"
+          >
+            Text <span className="text-red-500">*</span>
           </label>
           <textarea
             id="text"
-            className={`${styles.input} ${
-              errors.text ? styles.inputError : ""
+            className={`w-full rounded-md border border-[var(--commandly-border)] bg-[var(--commandly-background)] px-3 py-2 text-[var(--commandly-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--commandly-primary)] ${
+              errors.text ? "border-red-500" : ""
             }`}
             {...register("text", {
               required: "Text is required",
@@ -88,17 +91,22 @@ export default function EditClipModal({
             rows={4}
           />
           {errors.text && (
-            <span className={styles.errorMessage}>{errors.text.message}</span>
+            <span className="text-sm text-red-500">{errors.text.message}</span>
           )}
         </div>
 
-        <div className={styles.field}>
-          <label htmlFor="imageUrl">Image URL</label>
+        <div className="space-y-2">
+          <label
+            htmlFor="imageUrl"
+            className="block text-sm font-medium text-[var(--commandly-text-secondary)]"
+          >
+            Image URL
+          </label>
           <input
             type="url"
             id="imageUrl"
-            className={`${styles.input} ${
-              errors.imageUrl ? styles.inputError : ""
+            className={`w-full rounded-md border border-[var(--commandly-border)] bg-[var(--commandly-background)] px-3 py-2 text-[var(--commandly-text-primary)] focus:outline-none focus:ring-2 focus:ring-[var(--commandly-primary)] ${
+              errors.imageUrl ? "border-red-500" : ""
             }`}
             placeholder="https://..."
             {...register("imageUrl", {
@@ -114,22 +122,25 @@ export default function EditClipModal({
             })}
           />
           {errors.imageUrl && (
-            <span className={styles.errorMessage}>
+            <span className="text-sm text-red-500">
               {errors.imageUrl.message}
             </span>
           )}
         </div>
 
-        <div className={styles.field}>
-          <label htmlFor="sourceUrl" data-required="true">
-            Source URL
+        <div className="space-y-2">
+          <label
+            htmlFor="sourceUrl"
+            className="block text-sm font-medium text-[var(--commandly-text-secondary)]"
+          >
+            Source URL <span className="text-red-500">*</span>
           </label>
           <input
             type="url"
             id="sourceUrl"
             disabled={true}
-            className={`${styles.input} ${
-              errors.sourceUrl ? styles.inputError : ""
+            className={`w-full rounded-md border border-[var(--commandly-border)] bg-[var(--commandly-background)] px-3 py-2 text-[var(--commandly-text-secondary)] focus:outline-none focus:ring-2 focus:ring-[var(--commandly-primary)] ${
+              errors.sourceUrl ? "border-red-500" : ""
             }`}
             placeholder="https://..."
             {...register("sourceUrl", {
@@ -146,24 +157,32 @@ export default function EditClipModal({
             })}
           />
           {errors.sourceUrl && (
-            <span className={styles.errorMessage}>
+            <span className="text-sm text-red-500">
               {errors.sourceUrl.message}
             </span>
           )}
         </div>
 
-        {error && <div className={styles.error}>{error}</div>}
+        {error && (
+          <div className="rounded-md bg-red-50 p-4 text-red-500">{error}</div>
+        )}
 
-        <div className={styles.actions}>
+        <div className="flex justify-end gap-3">
           <button
             type="button"
-            className={styles.cancelButton}
             onClick={onClose}
             disabled={saving}
+            className="inline-flex items-center gap-2 rounded-md border border-[var(--commandly-border)] bg-[var(--commandly-background)] px-4 py-2 text-sm font-medium text-[var(--commandly-text-primary)] hover:bg-[var(--commandly-hover)] disabled:opacity-50"
           >
+            <FiX className="h-4 w-4" />
             Cancel
           </button>
-          <button type="submit" className={styles.saveButton} disabled={saving}>
+          <button
+            type="submit"
+            disabled={saving}
+            className="inline-flex items-center gap-2 rounded-md bg-[var(--commandly-primary)] px-4 py-2 text-sm font-medium text-white hover:bg-[var(--commandly-primary-hover)] disabled:opacity-50"
+          >
+            <FiSave className="h-4 w-4" />
             {saving ? "Saving..." : "Save Changes"}
           </button>
         </div>

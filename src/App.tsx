@@ -45,6 +45,11 @@ const AppContent = () => {
           <Route path="clips" element={<Clips />} />
           <Route path="screen-time" element={<ScreenTime />} />
         </Route>
+        <Route path="/dashboard.html" element={<DashboardLayout />}>
+          <Route index element={<Dashboard />} />
+          <Route path="clips" element={<Clips />} />
+          <Route path="screen-time" element={<ScreenTime />} />
+        </Route>
         <Route path="/subscription/success" element={<Success />} />
         <Route path="/subscription/cancel" element={<CancelSubscription />} />
       </Routes>

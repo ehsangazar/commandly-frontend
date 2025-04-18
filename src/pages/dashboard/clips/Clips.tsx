@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import styles from "./Clips.module.css";
 import { FaTrash, FaPencilAlt, FaExternalLinkAlt } from "react-icons/fa";
 import EditClipModal from "../../../components/Modals/EditClipModal";
+import { FiLoader } from "react-icons/fi";
 
 interface Clip {
   id: string;
@@ -140,106 +140,117 @@ export default function Clips() {
   };
 
   if (loading) {
-    return <div className={styles.loading}>Loading clips...</div>;
+    return (
+      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
+        <div className="text-center">
+          <FiLoader className="mx-auto h-8 w-8 animate-spin text-[var(--commandly-primary)]" />
+          <p className="mt-2 text-[var(--commandly-text-secondary)]">
+            Loading clips...
+          </p>
+        </div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className={styles.error}>{error}</div>;
+    return (
+      <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-500">
+          {error}
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <h1>My Clips</h1>
+    <div className="space-y-6 p-6">
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold text-[var(--commandly-text-primary)]">
+          My Clips
+        </h1>
       </div>
 
       {clips.length === 0 ? (
-        <div className={styles.empty}>No clips found</div>
+        <div className="flex min-h-[calc(100vh-12rem)] items-center justify-center rounded-lg border border-[var(--commandly-border)] bg-[var(--commandly-background)]">
+          <p className="text-[var(--commandly-text-secondary)]">
+            No clips found
+          </p>
+        </div>
       ) : (
         <>
-          <div className={styles.grid}>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {clips.map((clip) => (
-              <div key={clip.id} className={styles.clipCard}>
+              <div
+                key={clip.id}
+                className="flex flex-col overflow-hidden rounded-lg border border-[var(--commandly-border)] bg-[var(--commandly-background)]"
+              >
                 {clip.imageUrl && (
-                  <div className={styles.imageContainer}>
-                    <img src={clip.imageUrl} alt="" className={styles.image} />
+                  <div className="aspect-video overflow-hidden">
+                    <img
+                      src={clip.imageUrl}
+                      alt=""
+                      className="h-full w-full object-cover"
+                    />
                   </div>
                 )}
-                <div className={styles.content}>
-                  <p className={styles.clipText}>{clip.text}</p>
-                  <div className={styles.meta}>
-                    <span className={styles.date}>
-                      {(() => {
-                        try {
-                          const date = new Date(clip.createdAt);
-                          if (isNaN(date.getTime())) {
-                            return "Invalid date";
-                          }
-                          return date.toLocaleDateString(undefined, {
-                            year: "numeric",
-                            month: "short",
-                            day: "numeric",
-                          });
-                        } catch {
-                          return "Invalid date";
-                        }
-                      })()}
-                    </span>
-                  </div>
-                </div>
-                <div className={styles.cardFooter}>
-                  <button
-                    onClick={() => {
-                      window.open(
-                        clip.sourceUrl,
-                        "_blank",
-                        "noopener,noreferrer"
-                      );
-                    }}
-                    className={styles.sourceButton}
-                    title={clip.sourceUrl}
-                  >
-                    <FaExternalLinkAlt className={styles.sourceIcon} />
-                    <span className={styles.sourceText}>
-                      {new URL(clip.sourceUrl).hostname}
-                    </span>
-                  </button>
-                  <div className={styles.actions}>
+                <div className="flex flex-1 flex-col p-4">
+                  <p className="mb-4 flex-1 text-[var(--commandly-text-primary)]">
+                    {clip.text}
+                  </p>
+                  <div className="mt-4 flex items-center justify-between border-t border-[var(--commandly-border)] pt-4">
                     <button
-                      onClick={() => handleEdit(clip)}
-                      className={styles.editButton}
-                      title="Edit clip"
+                      onClick={() => {
+                        window.open(
+                          clip.sourceUrl,
+                          "_blank",
+                          "noopener,noreferrer"
+                        );
+                      }}
+                      className="flex items-center gap-2 text-sm text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-primary)]"
+                      title={clip.sourceUrl}
                     >
-                      <FaPencilAlt />
+                      <FaExternalLinkAlt className="h-4 w-4" />
+                      <span className="truncate max-w-[150px]">
+                        {new URL(clip.sourceUrl).hostname}
+                      </span>
                     </button>
-                    <button
-                      onClick={() => handleDelete(clip.id)}
-                      className={styles.deleteButton}
-                      title="Delete clip"
-                    >
-                      <FaTrash />
-                    </button>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => handleEdit(clip)}
+                        className="rounded-md p-2 text-[var(--commandly-text-secondary)] hover:bg-[var(--commandly-hover)]"
+                        title="Edit clip"
+                      >
+                        <FaPencilAlt className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDelete(clip.id)}
+                        className="rounded-md p-2 text-red-500 hover:bg-red-50"
+                        title="Delete clip"
+                      >
+                        <FaTrash className="h-4 w-4" />
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
             ))}
           </div>
 
-          <div className={styles.pagination}>
+          <div className="flex items-center justify-between border-t border-[var(--commandly-border)] pt-4">
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className={styles.pageButton}
+              className="rounded-md border border-[var(--commandly-border)] bg-[var(--commandly-background)] px-4 py-2 text-sm font-medium text-[var(--commandly-text-primary)] hover:bg-[var(--commandly-hover)] disabled:opacity-50"
             >
               Previous
             </button>
-            <span className={styles.pageInfo}>
+            <span className="text-sm text-[var(--commandly-text-secondary)]">
               Page {currentPage} of {totalPages}
             </span>
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className={styles.pageButton}
+              className="rounded-md border border-[var(--commandly-border)] bg-[var(--commandly-background)] px-4 py-2 text-sm font-medium text-[var(--commandly-text-primary)] hover:bg-[var(--commandly-hover)] disabled:opacity-50"
             >
               Next
             </button>
