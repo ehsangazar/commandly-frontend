@@ -50,11 +50,11 @@ const Login = () => {
 
       const responseData = await response.json();
 
-      if (!responseData.success) {
-        throw new Error(responseData.error);
+      if (responseData.success) {
+        setStep("code");
+      } else {
+        setError(responseData.error || "Failed to send verification code");
       }
-
-      setStep("code");
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to send verification code"
@@ -79,18 +79,26 @@ const Login = () => {
 
       const responseData = await response.json();
 
-      if (!responseData.success) {
-        throw new Error(responseData.error);
+      if (responseData.success) {
+        // Set cookie with 1 year expiration
+        Cookies.set("commandly_token", responseData.token, {
+          expires: 365,
+          path: "/",
+          secure: true,
+          sameSite: "strict",
+        });
+
+        // Set localStorage with 1 year expiration
+        const tokenData = {
+          token: responseData.token,
+          expires: new Date().getTime() + 365 * 24 * 60 * 60 * 1000, // 1 year from now
+        };
+        localStorage.setItem("commandly_token", JSON.stringify(tokenData));
+
+        navigate("/dashboard");
+      } else {
+        setError(responseData.error || "Failed to verify code");
       }
-
-      Cookies.set("commandly_token", responseData.token, {
-        expires: 7,
-        path: "/",
-        secure: true,
-        sameSite: "strict",
-      });
-
-      navigate("/dashboard");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to verify code");
     } finally {
