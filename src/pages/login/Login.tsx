@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import Cookies from "js-cookie";
 import { FiMail, FiKey, FiArrowLeft, FiAlertCircle } from "react-icons/fi";
+import { setAuthToken } from "../../utils/auth";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
@@ -80,21 +80,7 @@ const Login = () => {
       const responseData = await response.json();
 
       if (responseData.success) {
-        // Set cookie with 1 year expiration
-        Cookies.set("commandly_token", responseData.token, {
-          expires: 365,
-          path: "/",
-          secure: true,
-          sameSite: "strict",
-        });
-
-        // Set localStorage with 1 year expiration
-        const tokenData = {
-          token: responseData.token,
-          expires: new Date().getTime() + 365 * 24 * 60 * 60 * 1000, // 1 year from now
-        };
-        localStorage.setItem("commandly_token", JSON.stringify(tokenData));
-
+        setAuthToken(responseData.token);
         navigate("/dashboard");
       } else {
         setError(responseData.error || "Failed to verify code");

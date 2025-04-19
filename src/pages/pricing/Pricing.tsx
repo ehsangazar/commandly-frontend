@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
+import { getAuthToken } from "../../utils/auth";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
@@ -46,7 +46,7 @@ const Pricing = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const token = Cookies.get("commandly_token");
+        const token = getAuthToken();
         if (!token) {
           setLoading(false);
           return;
@@ -87,7 +87,7 @@ const Pricing = () => {
 
   const handleCheckout = async (planId: string) => {
     try {
-      const token = Cookies.get("commandly_token");
+      const token = getAuthToken();
       if (!token) {
         navigate("/login");
         return;

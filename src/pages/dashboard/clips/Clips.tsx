@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
 import { FaTrash, FaPencilAlt, FaExternalLinkAlt } from "react-icons/fa";
 import EditClipModal from "../../../components/Modals/EditClipModal";
 import { FiLoader } from "react-icons/fi";
+import { getAuthToken } from "@/utils/auth";
 
 interface Clip {
   id: string;
@@ -32,7 +32,7 @@ export default function Clips() {
 
   const fetchClips = async () => {
     try {
-      const token = Cookies.get("commandly_token");
+      const token = getAuthToken();
       if (!token) {
         navigate("/login");
         return;
@@ -70,7 +70,12 @@ export default function Clips() {
     }
 
     try {
-      const token = Cookies.get("commandly_token");
+      const token = getAuthToken();
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
       const response = await fetch(`${API_BASE_URL}/clips/${clipId}`, {
         method: "DELETE",
         headers: {
@@ -101,7 +106,7 @@ export default function Clips() {
       sourceUrl?: string;
     }
   ) => {
-    const token = Cookies.get("commandly_token");
+    const token = getAuthToken();
     if (!token) {
       navigate("/login");
       return;

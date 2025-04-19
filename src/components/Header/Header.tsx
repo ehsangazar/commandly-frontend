@@ -1,11 +1,11 @@
 import { Link, useLocation } from "react-router-dom";
 import { useTheme } from "../../context/ThemeContext";
-import Cookies from "js-cookie";
+import { getAuthToken } from "@/utils/auth";
 
 const Header = () => {
   const { theme, toggleTheme } = useTheme();
   const location = useLocation();
-  const token = Cookies.get("commandly_token");
+  const token = getAuthToken();
 
   const isActive = (path: string) => location.pathname === path;
 

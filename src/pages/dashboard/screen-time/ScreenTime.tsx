@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
+import { getAuthToken } from "../../../utils/auth";
 import {
   startOfDay,
   endOfDay,
@@ -34,12 +35,16 @@ const ScreenTime = () => {
     domain: "",
     minTime: 0,
   });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchScreenTime = async () => {
       try {
-        const token = Cookies.get("commandly_token");
-        if (!token) return;
+        const token = getAuthToken();
+        if (!token) {
+          navigate("/login");
+          return;
+        }
 
         const queryParams = new URLSearchParams({
           startDate: filters.startDate,
@@ -69,7 +74,7 @@ const ScreenTime = () => {
     };
 
     fetchScreenTime();
-  }, [filters]);
+  }, [filters, navigate]);
 
   const formatTime = (seconds: number) => {
     const duration = intervalToDuration({ start: 0, end: seconds * 1000 });

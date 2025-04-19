@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie";
+import { getAuthToken } from "../../utils/auth";
 import { FiLoader, FiCheck, FiArrowLeft } from "react-icons/fi";
 
 const API_BASE_URL =
@@ -15,7 +15,7 @@ const CancelSubscription = () => {
   useEffect(() => {
     const cancelSubscription = async () => {
       try {
-        const token = Cookies.get("commandly_token");
+        const token = getAuthToken();
         if (!token) {
           navigate("/login");
           return;

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import Cookies from "js-cookie";
+import { getAuthToken } from "../../utils/auth";
 import { FiCheck, FiArrowLeft } from "react-icons/fi";
 
 const API_BASE_URL =
@@ -15,18 +15,18 @@ const Success = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const verifySubscription = async () => {
-      const sessionId = searchParams.get("session_id");
-      if (!sessionId) {
-        setStatus("error");
-        setError("No session ID found");
-        return;
-      }
-
+    const fetchSubscriptionStatus = async () => {
       try {
-        const token = Cookies.get("commandly_token");
+        const token = getAuthToken();
         if (!token) {
           navigate("/login");
+          return;
+        }
+
+        const sessionId = searchParams.get("session_id");
+        if (!sessionId) {
+          setStatus("error");
+          setError("No session ID found");
           return;
         }
 
@@ -53,7 +53,7 @@ const Success = () => {
       }
     };
 
-    verifySubscription();
+    fetchSubscriptionStatus();
   }, [searchParams, navigate]);
 
   return (
