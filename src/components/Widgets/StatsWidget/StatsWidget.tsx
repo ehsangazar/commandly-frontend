@@ -1,6 +1,17 @@
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+import {
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  Legend,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+} from "recharts";
 import {
   endOfDay,
   endOfMonth,
@@ -10,7 +21,8 @@ import {
   startOfWeek,
   intervalToDuration,
 } from "date-fns";
-import { FiClock } from "react-icons/fi";
+import { FiClock, FiPieChart, FiTrendingUp, FiBarChart2 } from "react-icons/fi";
+import ClipsWidget from "../ClipsWidget/ClipsWidget";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
@@ -24,9 +36,8 @@ const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
 
 const StatsWidget = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
-  const [timeRange, setTimeRange] = useState<"today" | "week" | "month">(
-    "today"
-  );
+  const [timeRange, setTimeRange] = useState<"today" | "week" | "month">("today");
+  const [chartType, setChartType] = useState<"pie" | "bar">("pie");
 
   useEffect(() => {
     const fetchDashboardStats = async () => {
@@ -64,6 +75,7 @@ const StatsWidget = () => {
 
         const data = await response.json();
         if (data.success) {
+          console.log(data);
           const sortedStats = {
             ...data.stats,
             topDomains: data.stats
@@ -95,7 +107,6 @@ const StatsWidget = () => {
     if (minutes && minutes > 0) {
       formattedDuration += ` ${minutes}m`;
     }
-
     if (secondsDuration && secondsDuration > 0) {
       formattedDuration += ` ${secondsDuration}s`;
     }
@@ -103,38 +114,62 @@ const StatsWidget = () => {
     return formattedDuration;
   };
 
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div className="rounded-lg border border-[var(--commandly-border)] bg-[var(--commandly-background)] p-3 shadow-lg">
+          <p className="font-medium text-[var(--commandly-text-primary)]">
+            {payload[0].name}
+          </p>
+          <p className="text-sm text-[var(--commandly-text-secondary)]">
+            Time: {formatTime(payload[0].value)}
+          </p>
+          <p className="text-sm text-[var(--commandly-text-secondary)]">
+            {((payload[0].value / (stats?.totalTime || 1)) * 100).toFixed(1)}% of total
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
-    <div className="rounded-lg border border-[var(--commandly-border)] bg-[var(--commandly-background)] p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-[var(--commandly-text-primary)]">
-          Screen Time Statistics
-        </h3>
-        <div className="flex gap-2">
+    <div className="rounded-xl border border-[var(--commandly-border)] bg-[var(--commandly-background)] p-6 shadow-sm">
+      <div className="mb-8 flex items-center justify-between">
+        <div>
+          <h3 className="text-xl font-semibold text-[var(--commandly-text-primary)]">
+            Screen Time Statistics
+          </h3>
+          <p className="mt-1 text-sm text-[var(--commandly-text-secondary)]">
+            Track your browsing habits and productivity
+          </p>
+        </div>
+        <div className="flex gap-2 rounded-lg bg-[var(--commandly-hover)] p-1">
           <button
-            className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+            className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${
               timeRange === "today"
-                ? "bg-[var(--commandly-primary)] text-white"
-                : "text-[var(--commandly-text-secondary)] hover:bg-[var(--commandly-hover)]"
+                ? "bg-white text-[var(--commandly-primary)] shadow-sm"
+                : "text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)]"
             }`}
             onClick={() => setTimeRange("today")}
           >
             Today
           </button>
           <button
-            className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+            className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${
               timeRange === "week"
-                ? "bg-[var(--commandly-primary)] text-white"
-                : "text-[var(--commandly-text-secondary)] hover:bg-[var(--commandly-hover)]"
+                ? "bg-white text-[var(--commandly-primary)] shadow-sm"
+                : "text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)]"
             }`}
             onClick={() => setTimeRange("week")}
           >
             This Week
           </button>
           <button
-            className={`rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+            className={`rounded-md px-4 py-2 text-sm font-medium transition-all ${
               timeRange === "month"
-                ? "bg-[var(--commandly-primary)] text-white"
-                : "text-[var(--commandly-text-secondary)] hover:bg-[var(--commandly-hover)]"
+                ? "bg-white text-[var(--commandly-primary)] shadow-sm"
+                : "text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)]"
             }`}
             onClick={() => setTimeRange("month")}
           >
@@ -143,8 +178,8 @@ const StatsWidget = () => {
         </div>
       </div>
 
-      <div className="mb-6">
-        <div className="flex items-center gap-4 rounded-lg border border-[var(--commandly-border)] bg-[var(--commandly-background)] p-4">
+      <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div className="flex items-center gap-4 rounded-xl border border-[var(--commandly-border)] bg-[var(--commandly-background)] p-4 transition-all hover:border-[var(--commandly-primary)]">
           <div className="rounded-full bg-[var(--commandly-primary)] p-3">
             <FiClock className="h-6 w-6 text-white" />
           </div>
@@ -157,43 +192,126 @@ const StatsWidget = () => {
             </p>
           </div>
         </div>
+        <div className="flex items-center gap-4 rounded-xl border border-[var(--commandly-border)] bg-[var(--commandly-background)] p-4 transition-all hover:border-[var(--commandly-primary)]">
+          <div className="rounded-full bg-[var(--commandly-primary)] p-3">
+            <FiPieChart className="h-6 w-6 text-white" />
+          </div>
+          <div>
+            <h4 className="text-sm font-medium text-[var(--commandly-text-secondary)]">
+              Top Domain
+            </h4>
+            <p className="text-2xl font-semibold text-[var(--commandly-text-primary)]">
+              {stats?.topDomains[0]?.domain || "No data"}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-4 rounded-xl border border-[var(--commandly-border)] bg-[var(--commandly-background)] p-4 transition-all hover:border-[var(--commandly-primary)]">
+          <div className="rounded-full bg-[var(--commandly-primary)] p-3">
+            <FiTrendingUp className="h-6 w-6 text-white" />
+          </div>
+          <div>
+            <h4 className="text-sm font-medium text-[var(--commandly-text-secondary)]">
+              Active Domains
+            </h4>
+            <p className="text-2xl font-semibold text-[var(--commandly-text-primary)]">
+              {stats?.topDomains.length || 0}
+            </p>
+          </div>
+        </div>
       </div>
 
-      <div className="h-[300px]">
-        <h4 className="mb-4 text-sm font-medium text-[var(--commandly-text-secondary)]">
-          Top Domains
-        </h4>
-        <ResponsiveContainer width="100%" height="100%">
-          <PieChart>
-            <Pie
-              data={stats?.topDomains || []}
-              dataKey="time"
-              nameKey="domain"
-              cx="50%"
-              cy="50%"
-              outerRadius={80}
-              label={({ domain, percent }) =>
-                `${domain} (${(percent * 100).toFixed(0)}%)`
-              }
+      <div className="rounded-xl border border-[var(--commandly-border)] bg-[var(--commandly-background)] p-6">
+        <div className="mb-6 flex items-center justify-between">
+          <h4 className="text-lg font-medium text-[var(--commandly-text-primary)]">
+            Domain Distribution
+          </h4>
+          <div className="flex gap-2 rounded-lg bg-[var(--commandly-hover)] p-1">
+            <button
+              className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-all ${
+                chartType === "pie"
+                  ? "bg-white text-[var(--commandly-primary)] shadow-sm"
+                  : "text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)]"
+              }`}
+              onClick={() => setChartType("pie")}
             >
-              {(stats?.topDomains || []).map((_, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
+              <FiPieChart className="h-4 w-4" />
+              Pie Chart
+            </button>
+            <button
+              className={`flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium transition-all ${
+                chartType === "bar"
+                  ? "bg-white text-[var(--commandly-primary)] shadow-sm"
+                  : "text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)]"
+              }`}
+              onClick={() => setChartType("bar")}
+            >
+              <FiBarChart2 className="h-4 w-4" />
+              Bar Chart
+            </button>
+          </div>
+        </div>
+
+        <div className="h-[400px]">
+          <ResponsiveContainer width="100%" height="100%">
+            {chartType === "pie" ? (
+              <PieChart>
+                <Pie
+                  data={stats?.topDomains || []}
+                  dataKey="time"
+                  nameKey="domain"
+                  cx="50%"
+                  cy="50%"
+                  outerRadius={150}
+                  innerRadius={60}
+                  paddingAngle={2}
+                  label={({ percent }) =>
+                    percent > 0.05 ? `${(percent * 100).toFixed(0)}%` : ""
+                  }
+                >
+                  {(stats?.topDomains || []).map((_, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+                </Pie>
+                <Tooltip content={<CustomTooltip />} />
+                <Legend
+                  verticalAlign="bottom"
+                  height={36}
+                  formatter={(value) => (
+                    <span className="text-sm text-[var(--commandly-text-secondary)]">
+                      {value}
+                    </span>
+                  )}
                 />
-              ))}
-            </Pie>
-            <Tooltip
-              formatter={(value: number) => formatTime(value)}
-              contentStyle={{
-                backgroundColor: "var(--commandly-background)",
-                border: "1px solid var(--commandly-border)",
-                borderRadius: "0.375rem",
-                color: "var(--commandly-text-primary)",
-              }}
-            />
-          </PieChart>
-        </ResponsiveContainer>
+              </PieChart>
+            ) : (
+              <BarChart
+                data={stats?.topDomains || []}
+                margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
+              >
+                <XAxis
+                  dataKey="domain"
+                  angle={-45}
+                  textAnchor="end"
+                  height={60}
+                  tick={{ fill: "var(--commandly-text-secondary)", fontSize: 12 }}
+                />
+                <YAxis
+                  tick={{ fill: "var(--commandly-text-secondary)", fontSize: 12 }}
+                  tickFormatter={(value) => formatTime(value)}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Bar
+                  dataKey="time"
+                  fill="var(--commandly-primary)"
+                  radius={[4, 4, 0, 0]}
+                />
+              </BarChart>
+            )}
+          </ResponsiveContainer>
+        </div>
       </div>
     </div>
   );
