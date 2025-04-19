@@ -22,7 +22,6 @@ import {
   intervalToDuration,
 } from "date-fns";
 import { FiClock, FiPieChart, FiTrendingUp, FiBarChart2 } from "react-icons/fi";
-import ClipsWidget from "../ClipsWidget/ClipsWidget";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
