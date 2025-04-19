@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Cookies from "js-cookie";
 import { FiExternalLink } from "react-icons/fi";
 import ClipsCard from "./ClipCard";
+import { getAuthToken } from "@/utils/auth";
 
 interface Clip {
   id: string;
@@ -23,10 +24,7 @@ export default function ClipsWidget() {
   useEffect(() => {
     const fetchRecentClips = async () => {
       try {
-        const token = Cookies.get("commandly_token");
-        if (!token) {
-          throw new Error("No authentication token found");
-        }
+        const token = getAuthToken();
 
         const response = await fetch(`${API_BASE_URL}/clips?page=1&limit=3`, {
           headers: {
