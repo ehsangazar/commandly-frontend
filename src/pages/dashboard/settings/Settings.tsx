@@ -1,6 +1,4 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { getAuthToken } from "../../../utils/auth";
+import { useState } from "react";
 
 interface Settings {
   notifications: boolean;
@@ -9,35 +7,11 @@ interface Settings {
 }
 
 export const Settings = () => {
-  const navigate = useNavigate();
   const [settings, setSettings] = useState<Settings>({
     notifications: true,
     theme: "system",
     language: "en",
   });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchSettings = async () => {
-      try {
-        const token = getAuthToken();
-        if (!token) {
-          navigate("/login");
-          return;
-        }
-
-        // TODO: Fetch settings from API
-        setLoading(false);
-      } catch (error) {
-        console.error("Failed to load settings:", error);
-        setError("Failed to load settings");
-        setLoading(false);
-      }
-    };
-
-    fetchSettings();
-  }, [navigate]);
 
   const handleSettingChange = (
     key: keyof Settings,
@@ -45,14 +19,6 @@ export const Settings = () => {
   ) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
   };
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>{error}</div>;
-  }
 
   return (
     <div className="max-w-2xl mx-auto p-6">

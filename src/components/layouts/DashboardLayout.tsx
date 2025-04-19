@@ -1,14 +1,47 @@
+import { useEffect } from "react";
 import { useNavigate, Outlet } from "react-router-dom";
 import Cookies from "js-cookie";
 import { FiHome, FiClock, FiScissors, FiLogOut } from "react-icons/fi";
 import Header from "../Header/Header";
+import { getAuthToken } from "@/utils/auth";
 
 interface DashboardLayoutProps {
   title?: string;
 }
 
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
+
 const DashboardLayout = ({ title }: DashboardLayoutProps) => {
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const token = getAuthToken();
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/auth/me`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await response.json();
+        if (!data.success) {
+          throw new Error("Invalid token");
+        }
+      } catch (err) {
+        console.error("Failed to validate token:", err);
+        navigate("/login");
+      }
+    };
+
+    checkAuth();
+  }, [navigate]);
 
   const handleLogout = () => {
     Cookies.remove("commandly_token", { path: "/" });

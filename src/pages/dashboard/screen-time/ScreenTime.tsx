@@ -41,11 +41,6 @@ const ScreenTime = () => {
     const fetchScreenTime = async () => {
       try {
         const token = getAuthToken();
-        if (!token) {
-          navigate("/login");
-          return;
-        }
-
         const queryParams = new URLSearchParams({
           startDate: filters.startDate,
           endDate: filters.endDate,

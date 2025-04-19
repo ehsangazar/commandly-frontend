@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState, useCallback } from "react";
 import { FaTrash, FaPencilAlt, FaExternalLinkAlt } from "react-icons/fa";
 import EditClipModal from "../../../components/Modals/EditClipModal";
 import { FiLoader } from "react-icons/fi";
@@ -24,20 +23,10 @@ export default function Clips() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [editingClip, setEditingClip] = useState<Clip | null>(null);
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchClips();
-  }, [currentPage]);
-
-  const fetchClips = async () => {
+  const fetchClips = useCallback(async () => {
     try {
       const token = getAuthToken();
-      if (!token) {
-        navigate("/login");
-        return;
-      }
-
       const response = await fetch(
         `${API_BASE_URL}/clips?page=${currentPage}&limit=${ITEMS_PER_PAGE}`,
         {
@@ -62,7 +51,11 @@ export default function Clips() {
       setError(err instanceof Error ? err.message : "Failed to fetch clips");
       setLoading(false);
     }
-  };
+  }, [currentPage]);
+
+  useEffect(() => {
+    fetchClips();
+  }, [fetchClips]);
 
   const handleDelete = async (clipId: string) => {
     if (!confirm("Are you sure you want to delete this clip?")) {
@@ -71,11 +64,6 @@ export default function Clips() {
 
     try {
       const token = getAuthToken();
-      if (!token) {
-        navigate("/login");
-        return;
-      }
-
       const response = await fetch(`${API_BASE_URL}/clips/${clipId}`, {
         method: "DELETE",
         headers: {
@@ -107,11 +95,6 @@ export default function Clips() {
     }
   ) => {
     const token = getAuthToken();
-    if (!token) {
-      navigate("/login");
-      return;
-    }
-
     const response = await fetch(`${API_BASE_URL}/clips/${clipId}`, {
       method: "PUT",
       headers: {

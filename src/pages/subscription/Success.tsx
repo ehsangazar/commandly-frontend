@@ -18,11 +18,6 @@ const Success = () => {
     const fetchSubscriptionStatus = async () => {
       try {
         const token = getAuthToken();
-        if (!token) {
-          navigate("/login");
-          return;
-        }
-
         const sessionId = searchParams.get("session_id");
         if (!sessionId) {
           setStatus("error");

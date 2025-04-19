@@ -16,11 +16,6 @@ const CancelSubscription = () => {
     const cancelSubscription = async () => {
       try {
         const token = getAuthToken();
-        if (!token) {
-          navigate("/login");
-          return;
-        }
-
         const response = await fetch(`${API_BASE_URL}/subscription/cancel`, {
           method: "POST",
           headers: {
