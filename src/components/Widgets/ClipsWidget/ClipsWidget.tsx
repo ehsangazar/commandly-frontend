@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Cookies from "js-cookie";
 import { FiExternalLink } from "react-icons/fi";
 import ClipsCard from "./ClipCard";
 import { getAuthToken } from "@/utils/auth";
