@@ -24,6 +24,7 @@ import Footer from "./components/Footer";
 import Cookies from "./pages/cookies/Cookies";
 import Security from "./pages/security/Security";
 import Careers from "./pages/careers/Careers";
+import JobDetail from "./pages/careers/[id]";
 
 const withoutHeader = ["/login", "/dashboard"];
 const withoutFooter = ["/login", "/dashboard"];
@@ -50,6 +51,7 @@ const AppContent = () => {
         <Route path="/cookies" element={<Cookies />} />
         <Route path="/security" element={<Security />} />
         <Route path="/careers" element={<Careers />} />
+        <Route path="/careers/:id" element={<JobDetail />} />
         <Route path="/login" element={<Login />} />
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<Dashboard />} />
