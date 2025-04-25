@@ -61,6 +61,16 @@ const Header = () => {
             >
               Contact
             </Link>
+            <Link
+              to="/careers"
+              className={`text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-primary)] transition-colors duration-200 ${
+                isActive("/careers")
+                  ? "text-[var(--commandly-primary)] font-medium"
+                  : ""
+              }`}
+            >
+              Careers
+            </Link>
           </nav>
 
           <div className="flex items-center space-x-4">
