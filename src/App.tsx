@@ -20,12 +20,17 @@ import Clips from "./pages/dashboard/clips/Clips";
 import Header from "./components/Header/Header";
 import Success from "./pages/subscription/Success";
 import CancelSubscription from "./pages/subscription/Cancel";
+import Footer from "./components/Footer";
 
 const withoutHeader = ["/login", "/dashboard"];
+const withoutFooter = ["/login", "/dashboard"];
 
 const AppContent = () => {
   const location = useLocation();
   const shouldHideHeader = withoutHeader.some((path) =>
+    location.pathname.startsWith(path)
+  );
+  const shouldHideFooter = withoutFooter.some((path) =>
     location.pathname.startsWith(path)
   );
 
@@ -53,6 +58,7 @@ const AppContent = () => {
         <Route path="/subscription/success" element={<Success />} />
         <Route path="/subscription/cancel" element={<CancelSubscription />} />
       </Routes>
+      {!shouldHideFooter && <Footer />}
     </>
   );
 };
