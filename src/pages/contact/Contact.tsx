@@ -138,16 +138,16 @@ const Contact = () => {
               <div
                 className={`p-4 rounded-lg flex items-center space-x-3 ${
                   status.type === "success"
-                    ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                    : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200"
+                    ? "bg-[var(--commandly-success-bg)] text-[var(--commandly-success-text)] border border-[var(--commandly-success-border)]"
+                    : "bg-[var(--commandly-error-bg)] text-[var(--commandly-error-text)] border border-[var(--commandly-error-border)]"
                 }`}
               >
                 {status.type === "success" ? (
-                  <FiCheckCircle className="w-5 h-5" />
+                  <FiCheckCircle className="w-5 h-5 flex-shrink-0" />
                 ) : (
-                  <FiXCircle className="w-5 h-5" />
+                  <FiXCircle className="w-5 h-5 flex-shrink-0" />
                 )}
-                <p>{status.message}</p>
+                <p className="text-sm font-medium">{status.message}</p>
               </div>
             )}
 
