@@ -131,7 +131,11 @@ const Pricing = () => {
     );
   }
 
-  if (subscriptionStatus?.success && subscriptionStatus?.subscription?.plan) {
+  if (
+    subscriptionStatus?.success &&
+    subscriptionStatus?.subscription?.plan &&
+    subscriptionStatus.subscription.status === "active"
+  ) {
     const { subscription } = subscriptionStatus;
     const startDate = subscription?.currentPeriodStart
       ? new Date(subscription.currentPeriodStart).toLocaleDateString()
@@ -238,11 +242,14 @@ const Pricing = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center mb-16">
           <h1 className="text-4xl font-bold text-[var(--commandly-text-primary)] mb-4">
-            Simple, Transparent Pricing
+            {subscriptionStatus?.subscription?.status === "cancelled"
+              ? "Choose a New Plan"
+              : "Simple, Transparent Pricing"}
           </h1>
           <p className="text-xl text-[var(--commandly-text-secondary)] max-w-2xl mx-auto">
-            Choose the plan that's right for you or your team. All plans include
-            a 14-day free trial.
+            {subscriptionStatus?.subscription?.status === "cancelled"
+              ? "Select a new plan to continue enjoying Commandly's features."
+              : "Choose the plan that's right for you or your team. All plans include a 14-day free trial."}
           </p>
         </div>
 
