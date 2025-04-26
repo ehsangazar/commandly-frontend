@@ -9,6 +9,7 @@ import {
   FiTag,
 } from "react-icons/fi";
 import postsData from "../../data/posts.json";
+import { useState } from "react";
 
 type ContentBlock = {
   type: "paragraph" | "heading" | "list";
@@ -31,6 +32,7 @@ type BlogPost = {
 
 const BlogPost = () => {
   const { id } = useParams();
+  const [showCopied, setShowCopied] = useState(false);
   const post = postsData.posts.find((post) => post.slug === id) as
     | BlogPost
     | undefined;
@@ -101,6 +103,48 @@ const BlogPost = () => {
     });
   };
 
+  const handleShare = async () => {
+    const url = window.location.href;
+    const title = post?.title || "";
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: title,
+          url: url,
+        });
+      } catch (err) {
+        console.error("Error sharing:", err);
+      }
+    } else {
+      // Fallback to copying URL to clipboard
+      try {
+        await navigator.clipboard.writeText(url);
+        setShowCopied(true);
+        setTimeout(() => setShowCopied(false), 2000);
+      } catch (err) {
+        console.error("Error copying to clipboard:", err);
+      }
+    }
+  };
+
+  const handleTwitterShare = () => {
+    const url = window.location.href;
+    const text = encodeURIComponent(post?.title || "");
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${text}&url=${encodeURIComponent(
+      url
+    )}`;
+    window.open(twitterUrl, "_blank");
+  };
+
+  const handleLinkedInShare = () => {
+    const url = window.location.href;
+    const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(
+      url
+    )}`;
+    window.open(linkedInUrl, "_blank");
+  };
+
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-[var(--commandly-background)]">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
@@ -153,15 +197,34 @@ const BlogPost = () => {
                 Share this post
               </h2>
               <div className="flex items-center gap-4">
-                <button className="p-2 rounded-lg hover:bg-[var(--commandly-hover)] transition-colors duration-200">
+                <button
+                  onClick={handleTwitterShare}
+                  className="p-2 rounded-lg hover:bg-[var(--commandly-hover)] transition-colors duration-200"
+                  aria-label="Share on Twitter"
+                >
                   <FiTwitter className="w-5 h-5 text-[var(--commandly-text-secondary)]" />
                 </button>
-                <button className="p-2 rounded-lg hover:bg-[var(--commandly-hover)] transition-colors duration-200">
+                <button
+                  onClick={handleLinkedInShare}
+                  className="p-2 rounded-lg hover:bg-[var(--commandly-hover)] transition-colors duration-200"
+                  aria-label="Share on LinkedIn"
+                >
                   <FiLinkedin className="w-5 h-5 text-[var(--commandly-text-secondary)]" />
                 </button>
-                <button className="p-2 rounded-lg hover:bg-[var(--commandly-hover)] transition-colors duration-200">
-                  <FiShare2 className="w-5 h-5 text-[var(--commandly-text-secondary)]" />
-                </button>
+                <div className="relative">
+                  <button
+                    onClick={handleShare}
+                    className="p-2 rounded-lg hover:bg-[var(--commandly-hover)] transition-colors duration-200"
+                    aria-label="Share post"
+                  >
+                    <FiShare2 className="w-5 h-5 text-[var(--commandly-text-secondary)]" />
+                  </button>
+                  {showCopied && (
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-1 bg-[var(--commandly-primary)] text-white text-sm rounded-lg whitespace-nowrap">
+                      URL copied!
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
 
