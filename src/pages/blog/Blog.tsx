@@ -72,7 +72,7 @@ const Blog = () => {
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {posts.map((post) => (
-              <Link to={`/blog/${post.id}`} key={post.id} className="group">
+              <Link to={`/blog/${post.slug}`} key={post.id} className="group">
                 <div className="bg-[var(--commandly-hover)] rounded-lg overflow-hidden transition-transform duration-300 group-hover:scale-[1.02]">
                   <div className="aspect-w-16 aspect-h-9">
                     <img
