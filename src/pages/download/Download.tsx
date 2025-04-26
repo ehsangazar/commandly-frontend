@@ -1,4 +1,4 @@
-import { FiDownload, FiChrome, FiCheck, FiArrowRight } from "react-icons/fi";
+import { FiChrome, FiCheck, FiArrowRight } from "react-icons/fi";
 
 const Download = () => {
   const features = [
