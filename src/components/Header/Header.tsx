@@ -91,12 +91,20 @@ const Header = () => {
             </button>
 
             {token ? (
-              <Link
-                to="/dashboard"
-                className="bg-[var(--commandly-primary)] hover:bg-[var(--commandly-primary-hover)] text-white px-4 py-2 rounded-lg transition-colors duration-200"
-              >
-                Dashboard
-              </Link>
+              <>
+                <Link
+                  to="/dashboard"
+                  className="bg-[var(--commandly-primary)] hover:bg-[var(--commandly-primary-hover)] text-white px-4 py-2 rounded-lg transition-colors duration-200"
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  to="/profile"
+                  className="text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-primary)] transition-colors duration-200"
+                >
+                  Profile
+                </Link>
+              </>
             ) : (
               <Link
                 to="/login"

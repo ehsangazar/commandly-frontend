@@ -29,6 +29,7 @@ import Blog from "./pages/blog/Blog";
 import BlogPost from "./pages/blog/[id]";
 import Download from "./pages/download/Download";
 import Features from "./pages/features/Features";
+import Profile from "./pages/profile/Profile";
 
 const withoutHeader = ["/login", "/dashboard"];
 const withoutFooter = ["/login", "/dashboard"];
@@ -61,6 +62,7 @@ const AppContent = () => {
         <Route path="/blog/:id" element={<BlogPost />} />
         <Route path="/download" element={<Download />} />
         <Route path="/features" element={<Features />} />
+        <Route path="/profile" element={<Profile />} />
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="clips" element={<Clips />} />
