@@ -1,11 +1,18 @@
+import { FiFileText } from "react-icons/fi";
+
 const Privacy = () => {
   return (
     <div className="min-h-screen bg-[var(--commandly-background)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="bg-[var(--commandly-hover)] rounded-lg p-8 shadow-sm">
-          <h1 className="text-3xl font-bold text-[var(--commandly-text-primary)] mb-8">
-            Privacy Policy for Commandly.dev
-          </h1>
+          <div className="mb-8 flex items-center gap-3">
+            <div className="rounded-full bg-[var(--commandly-primary)] p-3">
+              <FiFileText className="h-6 w-6 text-white" />
+            </div>
+            <h1 className="text-3xl font-bold text-[var(--commandly-text-primary)]">
+              Privacy Policy
+            </h1>
+          </div>
           <p className="text-[var(--commandly-text-secondary)] mb-8">
             <strong>Last Updated: April 23, 2025</strong>
           </p>
