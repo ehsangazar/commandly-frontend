@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { FiZap, FiShield, FiCommand, FiClock } from "react-icons/fi";
 
 const About = () => {
   return (
@@ -7,10 +8,11 @@ const About = () => {
         {/* Hero Section */}
         <div className="text-center mb-20">
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-[var(--commandly-text-primary)] mb-6 leading-tight">
-            About Commandly
+            Browse Smarter with AI
           </h1>
           <p className="text-xl sm:text-2xl text-[var(--commandly-text-secondary)] max-w-3xl mx-auto leading-relaxed">
-            Empowering developers with intelligent productivity tools
+            Commandly puts the power of AI in your hands, helping you browse
+            faster, work smarter, and achieve more in less time.
           </p>
         </div>
 
@@ -19,48 +21,112 @@ const About = () => {
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div>
               <h2 className="text-3xl font-bold text-[var(--commandly-text-primary)] mb-6">
-                Our Story
+                Our Vision
               </h2>
               <p className="text-[var(--commandly-text-secondary)] mb-4">
-                Founded in 2024, Commandly emerged from a simple observation:
-                developers spend too much time managing tools instead of writing
-                code. What began as a solution to track and optimize
-                command-line usage has evolved into a comprehensive platform
-                that helps developers work smarter.
+                In a world where information overload is the norm, we saw an
+                opportunity to revolutionize how people interact with the web.
+                Commandly was born from a simple idea: what if your browser
+                could think for itself?
               </p>
               <p className="text-[var(--commandly-text-secondary)]">
-                Today, Commandly is used by thousands of developers worldwide,
-                helping them understand and improve their development workflows
-                through intelligent analytics and automation.
+                We're building the future of intelligent browsing, where AI
+                works alongside you to make every web interaction more
+                productive and meaningful.
               </p>
             </div>
             <div className="bg-[var(--commandly-hover)] rounded-lg p-8">
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 gap-6">
                 <div className="text-center">
                   <div className="text-3xl font-bold text-[var(--commandly-primary)]">
-                    10K+
+                    50%
                   </div>
                   <div className="text-[var(--commandly-text-secondary)]">
-                    Active Users
+                    Faster Browsing
                   </div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-[var(--commandly-primary)]">
-                    1M+
+                    10x
                   </div>
                   <div className="text-[var(--commandly-text-secondary)]">
-                    Commands Analyzed
+                    More Productive
                   </div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-[var(--commandly-primary)]">
-                    30%
+                    24/7
                   </div>
                   <div className="text-[var(--commandly-text-secondary)]">
-                    Time Saved
+                    AI Assistance
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-3xl font-bold text-[var(--commandly-primary)]">
+                    100%
+                  </div>
+                  <div className="text-[var(--commandly-text-secondary)]">
+                    Privacy Focused
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="mb-20">
+          <h2 className="text-3xl font-bold text-[var(--commandly-text-primary)] mb-12 text-center">
+            Why Choose Commandly?
+          </h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="bg-[var(--commandly-hover)] rounded-lg p-6">
+              <div className="w-12 h-12 rounded-full bg-[var(--commandly-primary)] bg-opacity-10 flex items-center justify-center mb-4">
+                <FiZap className="w-6 h-6 text-[var(--commandly-primary)]" />
+              </div>
+              <h3 className="text-xl font-semibold text-[var(--commandly-text-primary)] mb-2">
+                AI-Powered Browsing
+              </h3>
+              <p className="text-[var(--commandly-text-secondary)]">
+                Our AI learns from your browsing patterns to predict your needs
+                and automate routine tasks.
+              </p>
+            </div>
+            <div className="bg-[var(--commandly-hover)] rounded-lg p-6">
+              <div className="w-12 h-12 rounded-full bg-[var(--commandly-primary)] bg-opacity-10 flex items-center justify-center mb-4">
+                <FiCommand className="w-6 h-6 text-[var(--commandly-primary)]" />
+              </div>
+              <h3 className="text-xl font-semibold text-[var(--commandly-text-primary)] mb-2">
+                Smart Commands
+              </h3>
+              <p className="text-[var(--commandly-text-secondary)]">
+                Control your browser with natural language commands and keyboard
+                shortcuts.
+              </p>
+            </div>
+            <div className="bg-[var(--commandly-hover)] rounded-lg p-6">
+              <div className="w-12 h-12 rounded-full bg-[var(--commandly-primary)] bg-opacity-10 flex items-center justify-center mb-4">
+                <FiClock className="w-6 h-6 text-[var(--commandly-primary)]" />
+              </div>
+              <h3 className="text-xl font-semibold text-[var(--commandly-text-primary)] mb-2">
+                Time Management
+              </h3>
+              <p className="text-[var(--commandly-text-secondary)]">
+                Track and optimize your browsing time with intelligent insights
+                and suggestions.
+              </p>
+            </div>
+            <div className="bg-[var(--commandly-hover)] rounded-lg p-6">
+              <div className="w-12 h-12 rounded-full bg-[var(--commandly-primary)] bg-opacity-10 flex items-center justify-center mb-4">
+                <FiShield className="w-6 h-6 text-[var(--commandly-primary)]" />
+              </div>
+              <h3 className="text-xl font-semibold text-[var(--commandly-text-primary)] mb-2">
+                Privacy First
+              </h3>
+              <p className="text-[var(--commandly-text-secondary)]">
+                Your data stays on your device. We never sell or share your
+                browsing information.
+              </p>
             </div>
           </div>
         </section>
@@ -72,91 +138,57 @@ const About = () => {
               <h2 className="text-3xl font-bold text-[var(--commandly-text-primary)] mb-6">
                 Our Mission
               </h2>
+              <p className="text-[var(--commandly-text-secondary)] mb-4">
+                We believe that the future of browsing is intelligent,
+                personalized, and efficient. Our mission is to empower users
+                with AI tools that make their online experience more productive
+                and enjoyable.
+              </p>
               <p className="text-[var(--commandly-text-secondary)]">
-                We believe that great software is built when developers can
-                focus on what matters most: solving problems. Our mission is to
-                eliminate the friction in development workflows by providing
-                intelligent insights and automation.
+                By combining cutting-edge AI with user-friendly design, we're
+                creating a browsing experience that adapts to you, not the other
+                way around.
               </p>
             </div>
             <div className="order-1 md:order-2">
-              <div className="bg-[var(--commandly-hover)] rounded-lg p-8 h-full">
+              <div className="bg-[var(--commandly-hover)] rounded-lg p-8">
                 <div className="space-y-6">
                   <div className="flex items-center space-x-4">
                     <div className="w-12 h-12 rounded-full bg-[var(--commandly-primary)] flex items-center justify-center text-white">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M13 10V3L4 14h7v7l9-11h-7z"
-                        />
-                      </svg>
+                      <FiZap className="w-6 h-6" />
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-[var(--commandly-text-primary)]">
                         Speed
                       </h3>
                       <p className="text-[var(--commandly-text-secondary)]">
-                        Accelerate your development workflow
+                        AI-powered browsing that's 50% faster
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
                     <div className="w-12 h-12 rounded-full bg-[var(--commandly-primary)] flex items-center justify-center text-white">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                        />
-                      </svg>
+                      <FiCommand className="w-6 h-6" />
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-[var(--commandly-text-primary)]">
-                        Security
+                        Intelligence
                       </h3>
                       <p className="text-[var(--commandly-text-secondary)]">
-                        Enterprise-grade security features
+                        Smart suggestions and automation
                       </p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-4">
                     <div className="w-12 h-12 rounded-full bg-[var(--commandly-primary)] flex items-center justify-center text-white">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-6 w-6"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-                        />
-                      </svg>
+                      <FiShield className="w-6 h-6" />
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-[var(--commandly-text-primary)]">
-                        Customization
+                        Privacy
                       </h3>
                       <p className="text-[var(--commandly-text-secondary)]">
-                        Tailor the experience to your needs
+                        Your data stays on your device
                       </p>
                     </div>
                   </div>
@@ -169,11 +201,11 @@ const About = () => {
         {/* CTA Section */}
         <section className="text-center">
           <h2 className="text-3xl font-bold text-[var(--commandly-text-primary)] mb-6">
-            Ready to Get Started?
+            Ready to Browse Smarter?
           </h2>
           <p className="text-[var(--commandly-text-secondary)] mb-8 max-w-2xl mx-auto">
-            Join thousands of developers who are already using Commandly to
-            enhance their productivity and streamline their workflows.
+            Join thousands of users who are already experiencing the future of
+            intelligent browsing with Commandly.
           </p>
           <div className="flex justify-center gap-6">
             <Link
