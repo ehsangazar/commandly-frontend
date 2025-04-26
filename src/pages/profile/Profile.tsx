@@ -7,6 +7,7 @@ import {
   FiAlertCircle,
   FiCheckCircle,
   FiCreditCard,
+  FiX,
 } from "react-icons/fi";
 import { useNavigate, Link } from "react-router-dom";
 import { removeAuthToken, getAuthToken } from "../../utils/auth";
@@ -46,6 +47,9 @@ const Profile = () => {
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [cancelLoading, setCancelLoading] = useState(false);
+  const [cancelError, setCancelError] = useState("");
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -105,6 +109,52 @@ const Profile = () => {
       month: "long",
       day: "numeric",
     });
+  };
+
+  const handleCancelSubscription = async () => {
+    setCancelLoading(true);
+    setCancelError("");
+    try {
+      const token = getAuthToken();
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
+      const response = await fetch(`${API_BASE_URL}/subscription/cancel`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        // Refresh subscription data
+        const statusResponse = await fetch(
+          `${API_BASE_URL}/subscription/status`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const statusData = await statusResponse.json();
+        if (statusData.success) {
+          setSubscription(statusData.subscription || null);
+        }
+        setShowCancelDialog(false);
+      } else {
+        setCancelError(data.error || "Failed to cancel subscription");
+      }
+    } catch (err) {
+      setCancelError(
+        err instanceof Error ? err.message : "Failed to cancel subscription"
+      );
+    } finally {
+      setCancelLoading(false);
+    }
   };
 
   if (isLoading) {
@@ -279,6 +329,17 @@ const Profile = () => {
                           ))}
                         </div>
                       </div>
+
+                      {subscription.status === "active" && (
+                        <div className="flex justify-end">
+                          <button
+                            onClick={() => setShowCancelDialog(true)}
+                            className="px-4 py-2 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors duration-200"
+                          >
+                            Cancel Subscription
+                          </button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ) : (
@@ -316,6 +377,54 @@ const Profile = () => {
           </div>
         </div>
       </div>
+
+      {/* Cancel Subscription Dialog */}
+      {showCancelDialog && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-[var(--commandly-hover)] rounded-2xl p-6 max-w-md w-full shadow-xl">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-lg font-semibold text-[var(--commandly-text-primary)]">
+                Cancel Subscription
+              </h3>
+              <button
+                onClick={() => setShowCancelDialog(false)}
+                className="text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)]"
+              >
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+
+            {cancelError && (
+              <div className="mb-4 p-3 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-lg flex items-center space-x-2">
+                <FiAlertCircle className="w-5 h-5" />
+                <p>{cancelError}</p>
+              </div>
+            )}
+
+            <p className="text-[var(--commandly-text-secondary)] mb-6">
+              Are you sure you want to cancel your subscription? You'll continue
+              to have access until the end of your current billing period.
+            </p>
+
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={() => setShowCancelDialog(false)}
+                className="px-4 py-2 text-[var(--commandly-text-primary)] bg-[var(--commandly-background)] rounded-lg hover:bg-[var(--commandly-hover)] transition-colors duration-200"
+                disabled={cancelLoading}
+              >
+                Keep Subscription
+              </button>
+              <button
+                onClick={handleCancelSubscription}
+                className="px-4 py-2 text-white bg-red-600 rounded-lg hover:bg-red-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={cancelLoading}
+              >
+                {cancelLoading ? "Canceling..." : "Yes, Cancel Subscription"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
