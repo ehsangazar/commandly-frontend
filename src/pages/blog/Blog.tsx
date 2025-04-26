@@ -1,127 +1,107 @@
 import { Link } from "react-router-dom";
-import { FiCalendar, FiClock, FiArrowRight } from "react-icons/fi";
-
-const blogPosts = [
-  {
-    id: 1,
-    title: "The Future of Developer Productivity Tools",
-    excerpt:
-      "Exploring how AI and automation are transforming the way developers work and how Commandly is leading the charge.",
-    date: "2024-04-15",
-    readTime: "5 min read",
-    category: "Product",
-    featured: true,
-    image:
-      "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-  },
-];
+import { FiCalendar, FiClock, FiTag } from "react-icons/fi";
+import postsData from "../../data/posts.json";
 
 const Blog = () => {
-  const featuredPost = blogPosts.find((post) => post.featured);
-  const recentPosts = blogPosts.filter((post) => !post.featured);
+  const { posts } = postsData;
 
   return (
     <div className="min-h-[calc(100vh-4rem)] bg-[var(--commandly-background)]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Hero Section */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-[var(--commandly-text-primary)] mb-6 leading-tight">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl sm:text-5xl font-bold text-[var(--commandly-text-primary)] mb-4">
             Blog
           </h1>
-          <p className="text-xl sm:text-2xl text-[var(--commandly-text-secondary)] max-w-3xl mx-auto leading-relaxed">
-            Insights, stories, and updates from the Commandly team
+          <p className="text-xl text-[var(--commandly-text-secondary)] max-w-2xl mx-auto">
+            Insights, updates, and stories about intelligent browsing and
+            AI-powered productivity.
           </p>
         </div>
 
-        {/* Featured Post */}
-        {featuredPost && (
-          <div className="mb-16">
-            <h2 className="text-2xl font-bold text-[var(--commandly-text-primary)] mb-8">
-              Featured Post
-            </h2>
-            <Link to={`/blog/${featuredPost.id}`}>
-              <div className="bg-[var(--commandly-hover)] rounded-lg overflow-hidden">
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div className="relative h-64 md:h-auto">
-                    <img
-                      src={featuredPost.image}
-                      alt={featuredPost.title}
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="p-8">
-                    <div className="flex items-center gap-4 text-[var(--commandly-text-secondary)] mb-4">
-                      <span className="px-3 py-1 rounded-full bg-[var(--commandly-primary)] bg-opacity-10 text-[var(--commandly-primary)] text-sm">
-                        {featuredPost.category}
-                      </span>
-                      <div className="flex items-center">
-                        <FiCalendar className="w-4 h-4 mr-1" />
-                        {new Date(featuredPost.date).toLocaleDateString()}
-                      </div>
-                      <div className="flex items-center">
-                        <FiClock className="w-4 h-4 mr-1" />
-                        {featuredPost.readTime}
-                      </div>
+        {/* Featured Posts */}
+        <div className="mb-12">
+          <h2 className="text-2xl font-semibold text-[var(--commandly-text-primary)] mb-6">
+            Featured Posts
+          </h2>
+          <div className="grid md:grid-cols-2 gap-8">
+            {posts
+              .filter((post) => post.featured)
+              .map((post) => (
+                <Link to={`/blog/${post.slug}`} key={post.id} className="group">
+                  <div className="bg-[var(--commandly-hover)] rounded-lg overflow-hidden transition-transform duration-300 group-hover:scale-[1.02]">
+                    <div className="aspect-w-16 aspect-h-9">
+                      <img
+                        src={post.image}
+                        alt={post.title}
+                        className="object-cover w-full h-full"
+                      />
                     </div>
-                    <h3 className="text-2xl font-bold text-[var(--commandly-text-primary)] mb-4">
-                      {featuredPost.title}
-                    </h3>
-                    <p className="text-[var(--commandly-text-secondary)] mb-6">
-                      {featuredPost.excerpt}
-                    </p>
-                    <div className="inline-flex items-center text-[var(--commandly-primary)] hover:text-[var(--commandly-primary-hover)]">
-                      Read More
-                      <FiArrowRight className="ml-2" />
+                    <div className="p-6">
+                      <div className="flex items-center gap-4 text-sm text-[var(--commandly-text-secondary)] mb-3">
+                        <span className="flex items-center gap-1">
+                          <FiCalendar className="w-4 h-4" />
+                          {post.date}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <FiClock className="w-4 h-4" />
+                          {post.readTime}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <FiTag className="w-4 h-4" />
+                          {post.category}
+                        </span>
+                      </div>
+                      <h3 className="text-xl font-semibold text-[var(--commandly-text-primary)] mb-2 group-hover:text-[var(--commandly-primary)] transition-colors">
+                        {post.title}
+                      </h3>
+                      <p className="text-[var(--commandly-text-secondary)]">
+                        {post.excerpt}
+                      </p>
                     </div>
                   </div>
-                </div>
-              </div>
-            </Link>
+                </Link>
+              ))}
           </div>
-        )}
+        </div>
 
-        {/* Recent Posts */}
+        {/* All Posts */}
         <div>
-          <h2 className="text-2xl font-bold text-[var(--commandly-text-primary)] mb-8">
-            Recent Posts
+          <h2 className="text-2xl font-semibold text-[var(--commandly-text-primary)] mb-6">
+            All Posts
           </h2>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {recentPosts.map((post) => (
-              <Link key={post.id} to={`/blog/${post.id}`}>
-                <div className="bg-[var(--commandly-hover)] rounded-lg overflow-hidden h-full">
-                  <div className="relative h-48">
+            {posts.map((post) => (
+              <Link to={`/blog/${post.id}`} key={post.id} className="group">
+                <div className="bg-[var(--commandly-hover)] rounded-lg overflow-hidden transition-transform duration-300 group-hover:scale-[1.02]">
+                  <div className="aspect-w-16 aspect-h-9">
                     <img
                       src={post.image}
                       alt={post.title}
-                      className="absolute inset-0 w-full h-full object-cover"
+                      className="object-cover w-full h-full"
                     />
                   </div>
                   <div className="p-6">
-                    <div className="flex items-center gap-4 text-[var(--commandly-text-secondary)] mb-4">
-                      <span className="px-3 py-1 rounded-full bg-[var(--commandly-primary)] bg-opacity-10 text-[var(--commandly-primary)] text-sm">
+                    <div className="flex items-center gap-4 text-sm text-[var(--commandly-text-secondary)] mb-3">
+                      <span className="flex items-center gap-1">
+                        <FiCalendar className="w-4 h-4" />
+                        {post.date}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <FiClock className="w-4 h-4" />
+                        {post.readTime}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <FiTag className="w-4 h-4" />
                         {post.category}
                       </span>
-                      <div className="flex items-center">
-                        <FiCalendar className="w-4 h-4 mr-1" />
-                        {new Date(post.date).toLocaleDateString()}
-                      </div>
                     </div>
-                    <h3 className="text-xl font-bold text-[var(--commandly-text-primary)] mb-4">
+                    <h3 className="text-xl font-semibold text-[var(--commandly-text-primary)] mb-2 group-hover:text-[var(--commandly-primary)] transition-colors">
                       {post.title}
                     </h3>
-                    <p className="text-[var(--commandly-text-secondary)] mb-4">
+                    <p className="text-[var(--commandly-text-secondary)]">
                       {post.excerpt}
                     </p>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center text-[var(--commandly-text-secondary)]">
-                        <FiClock className="w-4 h-4 mr-1" />
-                        {post.readTime}
-                      </div>
-                      <div className="inline-flex items-center text-[var(--commandly-primary)] hover:text-[var(--commandly-primary-hover)]">
-                        Read More
-                        <FiArrowRight className="ml-2" />
-                      </div>
-                    </div>
                   </div>
                 </div>
               </Link>
