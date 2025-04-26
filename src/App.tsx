@@ -27,6 +27,7 @@ import Careers from "./pages/careers/Careers";
 import JobDetail from "./pages/careers/[id]";
 import Blog from "./pages/blog/Blog";
 import BlogPost from "./pages/blog/[id]";
+import Download from "./pages/download/Download";
 
 const withoutHeader = ["/login", "/dashboard"];
 const withoutFooter = ["/login", "/dashboard"];
@@ -57,6 +58,7 @@ const AppContent = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/blog" element={<Blog />} />
         <Route path="/blog/:id" element={<BlogPost />} />
+        <Route path="/download" element={<Download />} />
         <Route path="/dashboard" element={<DashboardLayout />}>
           <Route index element={<Dashboard />} />
           <Route path="clips" element={<Clips />} />
