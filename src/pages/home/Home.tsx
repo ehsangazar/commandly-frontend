@@ -132,21 +132,35 @@ const Home = () => {
       </div>
 
       {/* CTA Section */}
-      <div className="py-20 bg-[var(--commandly-primary)]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-6">
-            Ready to Transform Your Browsing Experience?
+      <div className="relative py-24 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--commandly-primary)] via-[var(--commandly-primary)] to-[var(--commandly-primary-hover)] opacity-90"></div>
+        <div className="absolute inset-0 bg-black/30"></div>
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik0zNiAzNGM2LjYyNyAwIDEyLTUuMzczIDEyLTEyUzQyLjYyNyAxMCAzNiAxMGMtNi42MjggMC0xMiA1LjM3My0xMiAxMnM1LjM3MiAxMiAxMiAxMnptMC0yYy01LjUyMyAwLTEwLTQuNDc3LTEwLTEwUzMwLjQ3NyAxMiAzNiAxMnMxMCA0LjQ3NyAxMCAxMC00LjQ3NyAxMC0xMCAxMHoiIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iLjA1Ii8+PC9nPjwvc3ZnPg==')] opacity-10"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl sm:text-5xl font-bold text-white mb-6 leading-tight">
+            Transform Your Browsing Experience Today
           </h2>
-          <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl sm:text-2xl text-white mb-10 max-w-3xl mx-auto leading-relaxed">
             Join thousands of users who have already enhanced their productivity
-            with Commandly
+            with Commandly. Start your journey to smarter browsing now.
           </p>
-          <Link
-            to="/download"
-            className="bg-white text-[var(--commandly-primary)] hover:bg-white/90 font-semibold py-3 px-8 rounded-lg transition-colors duration-200 text-lg inline-block"
-          >
-            Install Commandly Now
-          </Link>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link
+              to="/download"
+              className="bg-white text-[var(--commandly-primary)] hover:bg-white/95 font-bold py-4 px-8 rounded-lg transition-all duration-200 text-lg inline-block shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            >
+              Install Commandly Now
+            </Link>
+            <Link
+              to="/features"
+              className="bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white font-bold hover:bg-white/20 py-4 px-8 rounded-lg transition-all duration-200 text-lg inline-block"
+            >
+              Explore Features
+            </Link>
+          </div>
+          <p className="mt-6 text-white text-sm font-medium">
+            Free to install • No credit card required
+          </p>
         </div>
       </div>
     </div>

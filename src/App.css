@@ -79,22 +79,18 @@ body {
 /* Typography */
 h1 {
   font: var(--commandly-font-h1);
-  color: var(--commandly-text-primary);
 }
 
 h2 {
   font: var(--commandly-font-h2);
-  color: var(--commandly-text-primary);
 }
 
 h3 {
   font: var(--commandly-font-h3);
-  color: var(--commandly-text-primary);
 }
 
 p {
   font: var(--commandly-font-body);
-  color: var(--commandly-text-secondary);
 }
 
 /* Utility classes */
