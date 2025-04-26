@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import {
   FiMail,
@@ -106,10 +106,12 @@ const Login = () => {
       {/* Left side - Branding */}
       <div className="hidden lg:flex w-1/2 bg-[var(--commandly-primary)] items-center justify-center p-12">
         <div className="max-w-md">
-          <div className="flex items-center gap-2 mb-8">
-            <FiCommand className="w-8 h-8 text-white" />
-            <span className="text-2xl font-bold text-white">Commandly</span>
-          </div>
+          <Link to="/">
+            <div className="flex items-center gap-2 mb-8">
+              <FiCommand className="w-8 h-8 text-white" />
+              <span className="text-2xl font-bold text-white">Commandly</span>
+            </div>
+          </Link>
           <h1 className="text-4xl font-bold text-white mb-6">
             Welcome to the Future of Browsing
           </h1>
@@ -134,12 +136,15 @@ const Login = () => {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
           <div className="text-center mb-8 lg:hidden">
-            <div className="flex items-center justify-center gap-2 mb-4">
+            <Link
+              to="/"
+              className="flex items-center justify-center gap-2 mb-4"
+            >
               <FiCommand className="w-8 h-8 text-[var(--commandly-primary)]" />
               <span className="text-2xl font-bold text-[var(--commandly-text-primary)]">
                 Commandly
               </span>
-            </div>
+            </Link>
             <h1 className="text-3xl font-bold text-[var(--commandly-text-primary)] mb-2">
               Welcome Back
             </h1>

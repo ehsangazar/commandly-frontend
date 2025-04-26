@@ -45,6 +45,7 @@ const DashboardLayout = ({ title }: DashboardLayoutProps) => {
 
   const handleLogout = () => {
     Cookies.remove("commandly_token", { path: "/" });
+    localStorage.removeItem("commandly_token");
     navigate("/login");
   };
 
