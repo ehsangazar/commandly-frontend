@@ -156,6 +156,31 @@ const Pricing = () => {
             </p>
           </div>
 
+          {subscription.plan?.price === 0 && (
+            <div className="max-w-3xl mx-auto mb-12 bg-gradient-to-r from-[var(--commandly-primary)] to-[var(--commandly-primary-hover)] rounded-2xl p-8 text-white shadow-lg">
+              <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="text-center md:text-left">
+                  <h2 className="text-2xl font-bold mb-2">
+                    Ready to Unlock More Features?
+                  </h2>
+                  <p className="text-white/90">
+                    Upgrade to a paid plan to access advanced features, priority
+                    support, and more. Start with a 14-day free trial - no
+                    credit card required.
+                  </p>
+                </div>
+                <button
+                  onClick={() =>
+                    handleCheckout(plans.find((p) => p.price > 0)?.id || "")
+                  }
+                  className="whitespace-nowrap px-6 py-3 bg-white text-[var(--commandly-primary)] rounded-xl font-semibold hover:bg-white/90 transition-colors duration-200"
+                >
+                  Upgrade to Pro
+                </button>
+              </div>
+            </div>
+          )}
+
           <div className="max-w-2xl mx-auto bg-white dark:bg-[var(--commandly-hover)] rounded-2xl shadow-lg overflow-hidden">
             <div className="bg-gradient-to-r from-[var(--commandly-primary)] to-[var(--commandly-primary-hover)] p-6 text-center">
               <h2 className="text-2xl font-bold text-white mb-2">
