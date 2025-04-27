@@ -30,6 +30,7 @@ import BlogPost from "./pages/blog/[id]";
 import Download from "./pages/download/Download";
 import Features from "./pages/features/Features";
 import Profile from "./pages/profile/Profile";
+import NotFound from "./pages/NotFound";
 
 const withoutHeader = ["/login", "/dashboard"];
 const withoutFooter = ["/login", "/dashboard"];
@@ -75,6 +76,7 @@ const AppContent = () => {
         </Route>
         <Route path="/subscription/success" element={<Success />} />
         <Route path="/subscription/cancel" element={<CancelSubscription />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       {!shouldHideFooter && <Footer />}
     </>
