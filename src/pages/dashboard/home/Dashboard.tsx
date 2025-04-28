@@ -4,7 +4,7 @@ import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import GlassmorphismBackground from "@/components/GlassmorphismBackground";
 import StatsWidget from "@/components/Widgets/StatsWidget/StatsWidget";
-import { FiEdit2, FiCheck } from "react-icons/fi";
+import Sidebar from "@/components/Sidebar/Sidebar";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -30,55 +30,36 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="w-full overflow-auto h-full">
-      <GlassmorphismBackground>
-        <div className="p-4">
-          <div className="mb-4 flex justify-end">
-            <button
-              onClick={() => setIsModifyMode(!isModifyMode)}
-              className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all ${
-                isModifyMode
-                  ? "bg-[var(--commandly-primary)] text-white"
-                  : "bg-[var(--commandly-hover)] text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)]"
-              }`}
+    <div className="w-full h-full flex items-center gap-4">
+      <Sidebar isModifyMode={isModifyMode} onModifyModeChange={setIsModifyMode} />
+      <div className="flex-1 overflow-auto h-full">
+        <GlassmorphismBackground>
+          <div className="p-4">
+            <ResponsiveGridLayout
+              className="layout"
+              layouts={layouts}
+              breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480 }}
+              cols={{ lg: 12, md: 9, sm: 6, xs: 3 }}
+              rowHeight={100}
+              onLayoutChange={onLayoutChange}
+              isDraggable={isModifyMode}
+              isResizable={false}
+              margin={[16, 16]}
+              containerPadding={[0, 0]}
+              useCSSTransforms
             >
-              {isModifyMode ? (
-                <>
-                  <FiCheck className="h-4 w-4" />
-                  Done
-                </>
-              ) : (
-                <>
-                  <FiEdit2 className="h-4 w-4" />
-                  Modify Layout
-                </>
-              )}
-            </button>
+              <div 
+                key="stats" 
+                className={`h-full transition-all ${
+                  isModifyMode ? "cursor-move" : "cursor-default"
+                }`}
+              >
+                <StatsWidget />
+              </div>
+            </ResponsiveGridLayout>
           </div>
-          <ResponsiveGridLayout
-            className="layout"
-            layouts={layouts}
-            breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480 }}
-            cols={{ lg: 12, md: 9, sm: 6, xs: 3 }}
-            rowHeight={100}
-            onLayoutChange={onLayoutChange}
-            isDraggable={isModifyMode}
-            isResizable={false}
-            margin={[16, 16]}
-            containerPadding={[0, 0]}
-            useCSSTransforms
-          >
-            <div 
-              key="stats" 
-              className={`h-full transition-all ${
-                isModifyMode ? "cursor-move" : "cursor-default"
-              }`}
-            >
-              <StatsWidget />
-            </div>
-          </ResponsiveGridLayout>
-        </div>
-      </GlassmorphismBackground>
+        </GlassmorphismBackground>
+      </div>
     </div>
   );
 };
