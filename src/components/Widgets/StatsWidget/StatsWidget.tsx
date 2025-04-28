@@ -95,11 +95,11 @@ const StatsWidget = () => {
   };
 
   return (
-    <div className="h-full w-full rounded-xl bg-white/10 backdrop-blur-md border border-white/20 shadow-lg p-4">
-      <div className="mb-4 flex items-center justify-between">
+    <div className="h-full w-full rounded-xl bg-white/10 backdrop-blur-md border border-white/20 shadow-lg p-2 sm:p-3 md:p-4">
+      <div className="mb-2 sm:mb-3 md:mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <FiGlobe className="h-5 w-5 text-[var(--commandly-primary)]" />
-          <h3 className="text-lg font-semibold text-white/90">
+          <FiGlobe className="h-4 w-4 sm:h-5 sm:w-5 text-[var(--commandly-primary)]" />
+          <h3 className="text-base sm:text-lg font-semibold text-white/90">
             Top Websites
           </h3>
         </div>
@@ -107,7 +107,7 @@ const StatsWidget = () => {
           {(["daily", "weekly", "monthly"] as const).map((period) => (
             <button
               key={period}
-              className={`rounded-md px-2 py-1 text-xs font-medium transition-all ${
+              className={`rounded-md px-1.5 sm:px-2 py-1 text-xs font-medium transition-all ${
                 activePeriod === period
                   ? "bg-white/20 text-white shadow-sm backdrop-blur-sm"
                   : "text-white/70 hover:text-white hover:bg-white/10"
@@ -120,32 +120,32 @@ const StatsWidget = () => {
         </div>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-2 sm:space-y-3">
         {stats[activePeriod].map((item, index) => (
           <div
             key={item.domain}
-            className="flex items-center justify-between rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-3 hover:bg-white/10 transition-all duration-200"
+            className="flex items-center justify-between rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 p-2 sm:p-3 hover:bg-white/10 transition-all duration-200"
           >
-            <div className="flex items-center gap-3">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--commandly-primary)]/80 text-white backdrop-blur-sm">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="flex h-6 w-6 sm:h-8 sm:w-8 items-center justify-center rounded-full bg-[var(--commandly-primary)]/80 text-white backdrop-blur-sm text-xs sm:text-sm">
                 {index + 1}
               </div>
               <div>
-                <p className="font-medium text-white/90">
+                <p className="font-medium text-white/90 text-sm sm:text-base truncate max-w-[120px] sm:max-w-[150px] md:max-w-[200px]">
                   {item.domain}
                 </p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
-              <FiClock className="h-4 w-4 text-white/70" />
-              <span className="text-sm text-white/70">
+            <div className="flex items-center gap-1 sm:gap-2">
+              <FiClock className="h-3 w-3 sm:h-4 sm:w-4 text-white/70" />
+              <span className="text-xs sm:text-sm text-white/70">
                 {formatTime(item.time)}
               </span>
             </div>
           </div>
         ))}
         {stats[activePeriod].length === 0 && (
-          <div className="flex h-24 items-center justify-center text-white/50">
+          <div className="flex h-16 sm:h-24 items-center justify-center text-white/50 text-sm sm:text-base">
             No data available
           </div>
         )}
