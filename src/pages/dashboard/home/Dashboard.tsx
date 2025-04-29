@@ -12,6 +12,8 @@ import StatsWidget from "@/components/Widgets/StatsWidget/StatsWidget";
 import ClipsWidget from "@/components/Widgets/ClipsWidget/ClipsWidget";
 import ClockWidget from "@/components/Widgets/ClockWidget/ClockWidget";
 import Sidebar from "@/components/Sidebar/Sidebar";
+import { FiRefreshCw } from "react-icons/fi";
+import { backgrounds, saveBackgroundIndex } from "@/utils/backgrounds";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
@@ -26,9 +28,15 @@ interface Widget {
 }
 
 const STORAGE_KEY = "dashboard-widgets";
+const BACKGROUND_KEY = "dashboard-background-index";
 
 const Dashboard = () => {
   const [isModifyMode, setIsModifyMode] = useState(false);
+  const [backgroundIndex, setBackgroundIndex] = useState(() => {
+    // Load the last selected background or default to the first one
+    const saved = localStorage.getItem(BACKGROUND_KEY);
+    return saved ? parseInt(saved, 10) : 0;
+  });
   const [widgets, setWidgets] = useState<Widget[]>(() => {
     // Load widgets from localStorage on initial render
     try {
@@ -48,6 +56,14 @@ const Dashboard = () => {
       console.error("Failed to save widgets to localStorage:", error);
     }
   }, [widgets]);
+
+  const handleChangeBackground = () => {
+    const newIndex = (backgroundIndex + 1) % backgrounds.length;
+    setBackgroundIndex(newIndex);
+    saveBackgroundIndex(newIndex);
+  };
+
+  const currentBackground = backgrounds[backgroundIndex];
 
   const onLayoutChange = (_layout: Layout[], allLayouts: ReactGridLayouts) => {
     // Update widget positions
@@ -131,14 +147,38 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="w-full h-full flex items-center gap-6 p-6">
+    <div
+      className="w-full h-full flex items-center gap-6 p-6"
+      style={{
+        backgroundImage: `url(${currentBackground.url})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+      }}
+    >
+      <div
+        className={`absolute inset-0 bg-gradient-to-br ${currentBackground.color} mix-blend-overlay`}
+      />
+
+      <button
+        onClick={handleChangeBackground}
+        className="absolute bottom-6 right-6 z-10 p-3 bg-black/30 hover:bg-black/40 rounded-full text-white/80 hover:text-white backdrop-blur-sm transition-all duration-200 shadow-lg group"
+        title="Change background"
+      >
+        <FiRefreshCw className="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" />
+      </button>
+
+      <div className="absolute bottom-6 left-6 z-10 text-sm text-white/50">
+        {currentBackground.credit}
+      </div>
+
       <Sidebar
         isModifyMode={isModifyMode}
         onModifyModeChange={setIsModifyMode}
         onAddWidget={handleAddWidget}
+        onChangeBackground={handleChangeBackground}
       />
-      <div className="flex-1 overflow-auto h-full">
-        <GlassmorphismBackground className="!backdrop-blur-2xl !bg-white/10">
+      <div className="relative flex-1 overflow-auto h-full">
+        <GlassmorphismBackground className="!backdrop-blur-2xl !bg-black/10">
           <div className="p-6">
             <ResponsiveGridLayout
               className="layout"
@@ -162,9 +202,7 @@ const Dashboard = () => {
                 >
                   <div
                     className={`relative h-full rounded-2xl backdrop-blur-xl border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 ${
-                      widget.type === "clock"
-                        ? "bg-white/20" // Higher contrast for clock
-                        : "bg-white/10"
+                      widget.type === "clock" ? "bg-white/20" : "bg-black/20"
                     }`}
                   >
                     {isModifyMode && (

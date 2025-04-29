@@ -1,6 +1,5 @@
 import {
   FiSettings,
-  FiLayout,
   FiPlus,
   FiUser,
   FiMail,
@@ -9,6 +8,10 @@ import {
   FiCreditCard,
   FiX,
   FiAlertCircle,
+  FiGrid,
+  FiClock,
+  FiBarChart2,
+  FiImage,
 } from "react-icons/fi";
 import GlassmorphismBackground from "../GlassmorphismBackground";
 import { useState, useEffect, useRef } from "react";
@@ -22,7 +25,8 @@ const API_BASE_URL =
 interface SidebarProps {
   isModifyMode: boolean;
   onModifyModeChange: (value: boolean) => void;
-  onAddWidget: (widgetType: string) => void;
+  onAddWidget: (type: string) => void;
+  onChangeBackground: () => void;
 }
 
 interface User {
@@ -276,6 +280,7 @@ const Sidebar = ({
   isModifyMode,
   onModifyModeChange,
   onAddWidget,
+  onChangeBackground,
 }: SidebarProps) => {
   const [isWidgetSidebarOpen, setIsWidgetSidebarOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -291,10 +296,45 @@ const Sidebar = ({
                 ? "bg-[var(--commandly-primary)] text-white shadow-lg"
                 : "bg-white/10 text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)] hover:bg-white/20"
             }`}
-            title={isModifyMode ? "Done" : "Modify Layout"}
+            title={isModifyMode ? "Exit modify mode" : "Enter modify mode"}
           >
-            <FiLayout className="w-5 h-5" />
+            <FiGrid className="w-5 h-5" />
           </button>
+
+          {isModifyMode && (
+            <>
+              <div className="w-8 h-px bg-white/20" />
+              <button
+                onClick={() => onAddWidget("stats")}
+                className="p-3 text-white/70 hover:bg-white/10 hover:text-white/90 rounded-xl transition-colors duration-200"
+                title="Add stats widget"
+              >
+                <FiBarChart2 className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => onAddWidget("clips")}
+                className="p-3 text-white/70 hover:bg-white/10 hover:text-white/90 rounded-xl transition-colors duration-200"
+                title="Add clips widget"
+              >
+                <FiPlus className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => onAddWidget("clock")}
+                className="p-3 text-white/70 hover:bg-white/10 hover:text-white/90 rounded-xl transition-colors duration-200"
+                title="Add clock widget"
+              >
+                <FiClock className="w-5 h-5" />
+              </button>
+
+              <button
+                onClick={onChangeBackground}
+                className="p-3.5 rounded-xl bg-white/10 text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)] hover:bg-white/20 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg"
+                title="Change background"
+              >
+                <FiImage className="w-5 h-5" />
+              </button>
+            </>
+          )}
 
           <button
             onClick={() => setIsWidgetSidebarOpen((prevState) => !prevState)}
