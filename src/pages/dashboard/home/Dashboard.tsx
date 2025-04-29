@@ -55,14 +55,14 @@ const Dashboard = () => {
     // Find the highest y position to place the new widget below existing ones
     const maxY = Math.max(...widgets.map((w) => w.y + w.h), 0);
 
-    // Create the new widget
+    // Create the new widget with different default sizes based on type
     const newWidget: Widget = {
       id: newId,
       type: widgetType as Widget["type"],
       x: 0,
       y: maxY,
-      w: 4,
-      h: 3,
+      w: widgetType === "clock" ? 2 : 4, // Smaller width for clock
+      h: widgetType === "clock" ? 2 : 3, // Smaller height for clock
       staticH: true,
     };
 
@@ -136,7 +136,13 @@ const Dashboard = () => {
                     isModifyMode ? "cursor-move" : "cursor-default"
                   }`}
                 >
-                  <div className="h-full rounded-2xl backdrop-blur-xl bg-white/10 border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
+                  <div
+                    className={`h-full rounded-2xl backdrop-blur-xl border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 ${
+                      widget.type === "clock"
+                        ? "bg-white/20" // Higher contrast for clock
+                        : "bg-white/10"
+                    }`}
+                  >
                     {widget.type === "stats" && <StatsWidget />}
                     {widget.type === "clips" && <ClipsWidget />}
                     {widget.type === "clock" && <ClockWidget />}

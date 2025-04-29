@@ -23,33 +23,33 @@ const ClockWidget = () => {
 
   // Format time as HH:MM:SS
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
+    return date.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false,
     });
   };
 
   // Format date as Day, Month Date
   const formatDate = (date: Date) => {
-    return date.toLocaleDateString('en-US', {
-      weekday: 'long',
-      month: 'long',
-      day: 'numeric'
+    return date.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
     });
   };
 
   return (
-    <div className="h-full w-full rounded-xl bg-black/80 backdrop-blur-md border border-white/10 shadow-lg p-4 flex flex-col justify-center items-center">
-      <div className="text-4xl sm:text-5xl md:text-6xl font-light text-white tracking-tight">
+    <div className="h-full w-full rounded-2xl bg-white/15 backdrop-blur-2xl border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 p-4 flex flex-col justify-center items-center">
+      <div className="text-2xl sm:text-3xl font-medium text-white/95">
         {formatTime(time)}
       </div>
-      <div className="text-sm sm:text-base text-white/70 mt-2">
+      <div className="text-xs sm:text-sm text-white/85 mt-1.5 font-medium">
         {formatDate(date)}
       </div>
     </div>
   );
 };
 
-export default ClockWidget; 
+export default ClockWidget;
