@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Responsive,
   WidthProvider,
@@ -25,9 +25,29 @@ interface Widget {
   staticH: boolean;
 }
 
+const STORAGE_KEY = "dashboard-widgets";
+
 const Dashboard = () => {
   const [isModifyMode, setIsModifyMode] = useState(false);
-  const [widgets, setWidgets] = useState<Widget[]>([]);
+  const [widgets, setWidgets] = useState<Widget[]>(() => {
+    // Load widgets from localStorage on initial render
+    try {
+      const savedWidgets = localStorage.getItem(STORAGE_KEY);
+      return savedWidgets ? JSON.parse(savedWidgets) : [];
+    } catch (error) {
+      console.error("Failed to load widgets from localStorage:", error);
+      return [];
+    }
+  });
+
+  // Save widgets to localStorage whenever they change
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(widgets));
+    } catch (error) {
+      console.error("Failed to save widgets to localStorage:", error);
+    }
+  }, [widgets]);
 
   const onLayoutChange = (_layout: Layout[], allLayouts: ReactGridLayouts) => {
     // Update widget positions
@@ -68,6 +88,10 @@ const Dashboard = () => {
 
     // Add the new widget to the state
     setWidgets([...widgets, newWidget]);
+  };
+
+  const handleRemoveWidget = (widgetId: string) => {
+    setWidgets(widgets.filter((widget) => widget.id !== widgetId));
   };
 
   // Create layouts object from widgets
@@ -137,12 +161,21 @@ const Dashboard = () => {
                   }`}
                 >
                   <div
-                    className={`h-full rounded-2xl backdrop-blur-xl border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 ${
+                    className={`relative h-full rounded-2xl backdrop-blur-xl border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 ${
                       widget.type === "clock"
                         ? "bg-white/20" // Higher contrast for clock
                         : "bg-white/10"
                     }`}
                   >
+                    {isModifyMode && (
+                      <button
+                        onClick={() => handleRemoveWidget(widget.id)}
+                        className="absolute -top-2 -right-2 z-10 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors duration-200"
+                        title="Remove widget"
+                      >
+                        ×
+                      </button>
+                    )}
                     {widget.type === "stats" && <StatsWidget />}
                     {widget.type === "clips" && <ClipsWidget />}
                     {widget.type === "clock" && <ClockWidget />}
