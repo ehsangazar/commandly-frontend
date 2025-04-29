@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { Responsive, WidthProvider } from "react-grid-layout";
+import {
+  Responsive,
+  WidthProvider,
+  Layout,
+  Layouts as ReactGridLayouts,
+} from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
 import GlassmorphismBackground from "@/components/GlassmorphismBackground";
@@ -10,91 +15,102 @@ import Sidebar from "@/components/Sidebar/Sidebar";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
+interface Widget {
+  id: string;
+  type: "stats" | "clips" | "clock";
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  staticH: boolean;
+}
+
 const Dashboard = () => {
   const [isModifyMode, setIsModifyMode] = useState(false);
-  const [widgets, setWidgets] = useState<any[]>([]);
+  const [widgets, setWidgets] = useState<Widget[]>([]);
 
-  const onLayoutChange = (_layout: any, layouts: any) => {
-    
+  const onLayoutChange = (_layout: Layout[], allLayouts: ReactGridLayouts) => {
     // Update widget positions
-    const updatedWidgets = widgets.map((widget: any) => {
-      const layoutItem = layouts.lg.find((item: any) => item.i === widget.id);
+    const updatedWidgets = widgets.map((widget) => {
+      const layoutItem = allLayouts.lg.find((item) => item.i === widget.id);
       if (layoutItem) {
         return {
           ...widget,
           x: layoutItem.x,
-          y: layoutItem.y
+          y: layoutItem.y,
         };
       }
       return widget;
     });
-    
+
     setWidgets(updatedWidgets);
   };
 
   const handleAddWidget = (widgetType: string) => {
+    if (!["stats", "clips", "clock"].includes(widgetType)) return;
+
     // Generate a unique ID for the new widget
     const newId = `${widgetType}-${Date.now()}`;
-    
+
     // Find the highest y position to place the new widget below existing ones
-    const maxY = Math.max(...widgets.map(w => w.y + w.h), 0);
-    
+    const maxY = Math.max(...widgets.map((w) => w.y + w.h), 0);
+
     // Create the new widget
-    const newWidget = {
+    const newWidget: Widget = {
       id: newId,
-      type: widgetType,
+      type: widgetType as Widget["type"],
       x: 0,
       y: maxY,
       w: 4,
       h: 3,
-      staticH: true
+      staticH: true,
     };
-    
+
     // Add the new widget to the state
     setWidgets([...widgets, newWidget]);
   };
 
   // Create layouts object from widgets
-  const layouts = {
-    lg: widgets.map(widget => ({
+  const layouts: ReactGridLayouts = {
+    lg: widgets.map((widget) => ({
       i: widget.id,
       x: widget.x,
       y: widget.y,
       w: widget.w,
       h: widget.h,
-      staticH: widget.staticH
+      staticH: widget.staticH,
     })),
-    md: widgets.map(widget => ({
+    md: widgets.map((widget) => ({
       i: widget.id,
       x: widget.x,
       y: widget.y,
       w: Math.min(widget.w, 3),
       h: widget.h,
-      staticH: widget.staticH
+      staticH: widget.staticH,
     })),
-    sm: widgets.map(widget => ({
+    sm: widgets.map((widget) => ({
       i: widget.id,
       x: widget.x,
       y: widget.y,
       w: Math.min(widget.w, 2),
       h: widget.h,
-      staticH: widget.staticH
+      staticH: widget.staticH,
     })),
-    xs: widgets.map(widget => ({
+    xs: widgets.map((widget) => ({
       i: widget.id,
       x: widget.x,
       y: widget.y,
       w: Math.min(widget.w, 1),
       h: widget.h,
-      staticH: widget.staticH
-    }))
+      staticH: widget.staticH,
+    })),
   };
 
   return (
     <div className="w-full h-full flex items-center gap-4">
-      <Sidebar 
-        isModifyMode={isModifyMode} 
-        onModifyModeChange={setIsModifyMode} 
+      <Sidebar
+        isModifyMode={isModifyMode}
+        onModifyModeChange={setIsModifyMode}
         onAddWidget={handleAddWidget}
       />
       <div className="flex-1 overflow-auto h-full">
@@ -113,16 +129,16 @@ const Dashboard = () => {
               containerPadding={[0, 0]}
               useCSSTransforms
             >
-              {widgets.map(widget => (
-                <div 
-                  key={widget.id} 
+              {widgets.map((widget) => (
+                <div
+                  key={widget.id}
                   className={`h-full transition-all ${
                     isModifyMode ? "cursor-move" : "cursor-default"
                   }`}
                 >
-                  {widget.type === 'stats' && <StatsWidget />}
-                  {widget.type === 'clips' && <ClipsWidget />}
-                  {widget.type === 'clock' && <ClockWidget />}
+                  {widget.type === "stats" && <StatsWidget />}
+                  {widget.type === "clips" && <ClipsWidget />}
+                  {widget.type === "clock" && <ClockWidget />}
                 </div>
               ))}
             </ResponsiveGridLayout>
