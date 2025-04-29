@@ -11,6 +11,7 @@ import GlassmorphismBackground from "@/components/GlassmorphismBackground";
 import StatsWidget from "@/components/Widgets/StatsWidget/StatsWidget";
 import ClipsWidget from "@/components/Widgets/ClipsWidget/ClipsWidget";
 import ClockWidget from "@/components/Widgets/ClockWidget/ClockWidget";
+import DiagramWidget from "@/components/Widgets/DiagramWidget/DiagramWidget";
 import Sidebar from "@/components/Sidebar/Sidebar";
 import { useOutletContext } from "react-router-dom";
 
@@ -22,7 +23,7 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 
 interface Widget {
   id: string;
-  type: "stats" | "clips" | "clock";
+  type: "stats" | "clips" | "clock" | "diagram";
   x: number;
   y: number;
   w: number;
@@ -73,7 +74,7 @@ const Dashboard = () => {
   };
 
   const handleAddWidget = (widgetType: string) => {
-    if (!["stats", "clips", "clock"].includes(widgetType)) return;
+    if (!["stats", "clips", "clock", "diagram"].includes(widgetType)) return;
 
     // Generate a unique ID for the new widget
     const newId = `${widgetType}-${Date.now()}`;
@@ -87,8 +88,8 @@ const Dashboard = () => {
       type: widgetType as Widget["type"],
       x: 0,
       y: maxY,
-      w: widgetType === "clock" ? 2 : 4, // Smaller width for clock
-      h: widgetType === "clock" ? 2 : 3, // Smaller height for clock
+      w: widgetType === "clock" ? 2 : widgetType === "diagram" ? 6 : 4, // Wider for diagram
+      h: widgetType === "clock" ? 2 : widgetType === "diagram" ? 4 : 3, // Taller for diagram
       staticH: true,
     };
 
@@ -143,6 +144,7 @@ const Dashboard = () => {
         onModifyModeChange={setIsModifyMode}
         onAddWidget={handleAddWidget}
         onChangeBackground={onChangeBackground}
+        existingWidgets={widgets}
       />
       <div className="relative flex-1 overflow-auto h-full">
         <GlassmorphismBackground className="!backdrop-blur-2xl !bg-black/10">
@@ -184,6 +186,7 @@ const Dashboard = () => {
                     {widget.type === "stats" && <StatsWidget />}
                     {widget.type === "clips" && <ClipsWidget />}
                     {widget.type === "clock" && <ClockWidget />}
+                    {widget.type === "diagram" && <DiagramWidget />}
                   </div>
                 </div>
               ))}

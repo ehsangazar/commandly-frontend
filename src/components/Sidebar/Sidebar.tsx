@@ -25,8 +25,9 @@ const API_BASE_URL =
 interface SidebarProps {
   isModifyMode: boolean;
   onModifyModeChange: (value: boolean) => void;
-  onAddWidget: (type: string) => void;
+  onAddWidget: (widgetType: string) => void;
   onChangeBackground: () => void;
+  existingWidgets: Array<{ type: string }>;
 }
 
 interface User {
@@ -281,6 +282,7 @@ const Sidebar = ({
   onModifyModeChange,
   onAddWidget,
   onChangeBackground,
+  existingWidgets,
 }: SidebarProps) => {
   const [isWidgetSidebarOpen, setIsWidgetSidebarOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -360,10 +362,8 @@ const Sidebar = ({
       <WidgetSidebar
         isOpen={isWidgetSidebarOpen}
         onClose={() => setIsWidgetSidebarOpen(false)}
-        onAddWidget={(type) => {
-          onAddWidget(type);
-          setIsWidgetSidebarOpen(false);
-        }}
+        onAddWidget={onAddWidget}
+        existingWidgets={existingWidgets}
       />
 
       {isSettingsOpen && (
