@@ -51,7 +51,7 @@ export default function ClipsWidget() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-6 text-white/85">
+      <div className="h-full w-full rounded-2xl bg-black/25 backdrop-blur-2xl border border-white/30 shadow-lg p-6 flex items-center justify-center">
         <div className="w-6 h-6 border-4 border-white/30 border-t-white/85 rounded-full animate-spin" />
       </div>
     );
@@ -59,18 +59,18 @@ export default function ClipsWidget() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center p-6 text-red-400">
+      <div className="h-full w-full rounded-2xl bg-black/25 backdrop-blur-2xl border border-white/30 shadow-lg p-6 flex items-center justify-center">
         <div className="flex items-center space-x-2">
-          <span className="text-sm font-medium">{error}</span>
+          <span className="text-sm font-medium text-red-400">{error}</span>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="h-full w-full rounded-2xl bg-white/15 backdrop-blur-2xl border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-white/95">Recent Clips</h2>
+    <div className="h-full w-full rounded-2xl bg-black/25 backdrop-blur-2xl border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 flex flex-col">
+      <div className="flex-none p-4 pb-2 flex items-center justify-between">
+        <h2 className="text-lg font-semibold text-white">Recent Clips</h2>
         <Link
           to="/dashboard/clips"
           className="flex items-center space-x-2 text-white/85 hover:text-white/95 transition-colors duration-200"
@@ -80,24 +80,26 @@ export default function ClipsWidget() {
         </Link>
       </div>
 
-      {clips.length === 0 ? (
-        <div className="text-center py-8 text-white/85 font-medium">
-          No clips found
-        </div>
-      ) : (
-        <div className="space-y-4">
-          {clips.map((clip) => (
-            <ClipsCard
-              key={clip.id}
-              id={clip.id}
-              sourceUrl={clip.sourceUrl}
-              createdAt={clip.createdAt}
-              text={clip.text}
-              imageUrl={clip.imageUrl}
-            />
-          ))}
-        </div>
-      )}
+      <div className="flex-1 min-h-0 p-4 pt-2">
+        {clips.length === 0 ? (
+          <div className="h-full flex items-center justify-center text-white/85 font-medium">
+            No clips found
+          </div>
+        ) : (
+          <div className="h-full overflow-y-auto space-y-3 pr-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30">
+            {clips.map((clip) => (
+              <ClipsCard
+                key={clip.id}
+                id={clip.id}
+                sourceUrl={clip.sourceUrl}
+                createdAt={clip.createdAt}
+                text={clip.text}
+                imageUrl={clip.imageUrl}
+              />
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

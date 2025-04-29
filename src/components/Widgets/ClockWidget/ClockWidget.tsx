@@ -41,11 +41,11 @@ const ClockWidget = () => {
   };
 
   return (
-    <div className="h-full w-full rounded-2xl bg-white/15 backdrop-blur-2xl border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 p-4 flex flex-col justify-center items-center">
-      <div className="text-2xl sm:text-3xl font-medium text-white/95">
+    <div className="h-full w-full rounded-2xl bg-black/25 backdrop-blur-2xl border border-white/30 shadow-lg hover:shadow-xl transition-all duration-300 p-4 flex flex-col justify-center items-center">
+      <div className="text-2xl sm:text-3xl font-medium text-white">
         {formatTime(time)}
       </div>
-      <div className="text-xs sm:text-sm text-white/85 mt-1.5 font-medium">
+      <div className="text-xs sm:text-sm text-white/90 mt-1.5 font-medium">
         {formatDate(date)}
       </div>
     </div>
