@@ -11,6 +11,11 @@ import {
   FiEyeOff,
   FiCommand,
 } from "react-icons/fi";
+import {
+  backgrounds,
+  getSavedBackgroundIndex,
+  saveBackgroundIndex,
+} from "@/utils/backgrounds";
 
 interface DashboardLayoutProps {
   title?: string;
@@ -317,6 +322,10 @@ const LoginForm = () => {
 const DashboardLayout = ({ title }: DashboardLayoutProps) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(
+    getSavedBackgroundIndex()
+  );
+  const currentBackground = backgrounds[currentBackgroundIndex];
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -347,6 +356,12 @@ const DashboardLayout = ({ title }: DashboardLayoutProps) => {
     checkAuth();
   }, []);
 
+  const handleBackgroundChange = () => {
+    const newIndex = (currentBackgroundIndex + 1) % backgrounds.length;
+    setCurrentBackgroundIndex(newIndex);
+    saveBackgroundIndex(newIndex);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[var(--commandly-background)]">
@@ -360,16 +375,28 @@ const DashboardLayout = ({ title }: DashboardLayoutProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--commandly-background)]">
+    <div className="min-h-screen bg-[var(--commandly-background)] relative">
+      <div
+        style={{
+          backgroundImage: `url(${currentBackground.url})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+        }}
+        className="fixed inset-0 transition-all duration-700 ease-in-out"
+      />
+      <div
+        className={`fixed inset-0 bg-gradient-to-br ${currentBackground.color} transition-all duration-700 ease-in-out`}
+      />
+
       {/* Main Content */}
-      <div className="bg-[url('/images/dashboard-background.jpg')] bg-cover bg-center h-screen">
+      <div className="relative min-h-screen z-10 h-screen">
         {title && (
-          <h2 className="text-2xl font-bold text-[var(--commandly-text-primary)] mb-6">
+          <h2 className="text-2xl font-bold text-[var(--commandly-text-primary)] mb-6 px-8 pt-6">
             {title}
           </h2>
         )}
-        <div className="mx-auto px-4 sm:px-6 lg:px-8 py-6 h-full">
-          <Outlet />
+        <div className="h-full">
+          <Outlet context={{ onChangeBackground: handleBackgroundChange }} />
         </div>
       </div>
     </div>
