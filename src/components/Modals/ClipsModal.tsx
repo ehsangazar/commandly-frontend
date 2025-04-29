@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
-import { FiTrash2, FiEdit2, FiSearch, FiX, FiCheck } from "react-icons/fi";
-import Modal from "../Modal/Modal";
+import { createPortal } from "react-dom";
+import {
+  FiTrash2,
+  FiEdit2,
+  FiSearch,
+  FiX,
+  FiCheck,
+  FiScissors,
+  FiAlertCircle,
+} from "react-icons/fi";
+import { FiExternalLink } from "react-icons/fi";
 import { getAuthToken } from "@/utils/auth";
 
 interface Clip {
@@ -169,63 +178,116 @@ export default function ClipsModal({ isOpen, onClose }: ClipsModalProps) {
     });
   };
 
-  return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Manage Clips" size="xlarge">
-      <div className="space-y-6">
-        <div className="relative max-w-2xl mx-auto">
-          <input
-            type="text"
-            placeholder="Search clips..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-3 bg-black/40 rounded-lg pl-10 pr-4 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 focus:bg-black/50"
-          />
-          <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-white/50 w-4 h-4" />
-        </div>
+  if (!isOpen) return null;
 
-        {loading && page === 1 ? (
-          <div className="flex justify-center py-8">
-            <div className="w-6 h-6 border-4 border-white/30 border-t-white/85 rounded-full animate-spin" />
-          </div>
-        ) : error ? (
-          <div className="text-red-400 text-center py-4 font-medium">
-            {error}
-          </div>
-        ) : (
-          <>
-            <div className="space-y-4 max-h-[75vh] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent hover:scrollbar-thumb-white/30">
-              {clips.length === 0 ? (
-                <div className="text-center text-white/70 py-8 font-medium">
-                  {searchQuery
-                    ? "No clips found matching your search"
-                    : "No clips found"}
+  return createPortal(
+    <>
+      {/* Backdrop */}
+      <div
+        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity duration-200"
+        onClick={onClose}
+      />
+
+      {/* Modal */}
+      <div className="fixed inset-4 sm:inset-auto sm:left-1/2 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:w-full sm:max-w-5xl sm:h-[700px] z-50">
+        <div className="h-full w-full rounded-2xl bg-black/40 backdrop-blur-2xl border border-white/10 shadow-2xl flex flex-col overflow-hidden">
+          {/* Header */}
+          <div className="p-6 border-b border-white/10">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-[var(--commandly-primary)]/20 flex items-center justify-center">
+                  <FiScissors className="h-6 w-6 text-[var(--commandly-primary)]" />
                 </div>
-              ) : (
-                <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                <div>
+                  <h2 className="text-2xl font-semibold text-white/90">
+                    Manage Clips
+                  </h2>
+                  <p className="text-sm text-white/60 mt-1">
+                    View and manage your saved text snippets
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={onClose}
+                className="p-2.5 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-all duration-200"
+              >
+                <FiX className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search clips..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-4 py-3 bg-black/20 rounded-lg pl-11 pr-4 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[var(--commandly-primary)]/20 focus:bg-black/30 transition-all duration-200"
+              />
+              <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white/50 w-4 h-4" />
+            </div>
+          </div>
+
+          {/* Content */}
+          <div className="flex-1 overflow-y-auto p-6">
+            {loading && page === 1 ? (
+              <div className="h-[300px] flex items-center justify-center">
+                <div className="w-10 h-10 border-3 border-white/20 border-t-white/80 rounded-full animate-spin" />
+              </div>
+            ) : error ? (
+              <div className="h-[300px] flex flex-col items-center justify-center text-white/50 gap-4">
+                <div className="w-16 h-16 rounded-xl bg-red-500/20 flex items-center justify-center">
+                  <FiAlertCircle className="h-8 w-8 text-red-400" />
+                </div>
+                <div className="text-center">
+                  <p className="text-lg font-medium mb-1 text-red-400">
+                    {error}
+                  </p>
+                  <p className="text-sm text-white/50">
+                    Please try again later
+                  </p>
+                </div>
+              </div>
+            ) : clips.length === 0 ? (
+              <div className="h-[300px] flex flex-col items-center justify-center text-white/50 gap-4">
+                <div className="w-16 h-16 rounded-xl bg-white/5 flex items-center justify-center">
+                  <FiScissors className="h-8 w-8" />
+                </div>
+                <div className="text-center">
+                  <p className="text-lg font-medium mb-1">
+                    {searchQuery
+                      ? "No clips found matching your search"
+                      : "No clips found"}
+                  </p>
+                  <p className="text-sm">Start saving clips to see them here</p>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                   {clips.map((clip) => (
                     <div
                       key={clip.id}
-                      className="bg-black/50 rounded-lg p-5 space-y-4 hover:bg-black/60 transition-all duration-200 border border-white/[0.08] shadow-lg"
+                      className="rounded-xl bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 p-5 transition-all duration-200 space-y-4"
                     >
                       {editingClip?.id === clip.id ? (
                         <div className="space-y-4">
                           <textarea
                             value={editText}
                             onChange={(e) => setEditText(e.target.value)}
-                            className="w-full px-4 py-3 bg-black/40 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 min-h-[120px] resize-y font-medium"
+                            className="w-full px-4 py-3 bg-black/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[var(--commandly-primary)]/20 min-h-[120px] resize-y font-medium"
                             placeholder="Enter clip text..."
                           />
                           <input
                             type="url"
                             value={editSourceUrl}
                             onChange={(e) => setEditSourceUrl(e.target.value)}
-                            className="w-full px-4 py-3 bg-black/40 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-white/30 font-medium"
+                            className="w-full px-4 py-3 bg-black/20 rounded-lg text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[var(--commandly-primary)]/20 font-medium"
                             placeholder="Enter source URL..."
                           />
-                          <div className="flex justify-end space-x-3">
+                          <div className="flex justify-end gap-2">
                             <button
                               onClick={() => setEditingClip(null)}
-                              className="px-4 py-2 rounded-lg hover:bg-white/10 text-white/80 hover:text-white transition-colors duration-200 flex items-center space-x-2 font-medium"
+                              className="px-4 py-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-all duration-200 flex items-center gap-2"
                               disabled={saving}
                             >
                               <FiX className="w-4 h-4" />
@@ -233,7 +295,7 @@ export default function ClipsModal({ isOpen, onClose }: ClipsModalProps) {
                             </button>
                             <button
                               onClick={handleSaveEdit}
-                              className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/15 text-white transition-colors duration-200 flex items-center space-x-2 font-medium"
+                              className="px-4 py-2 rounded-lg bg-[var(--commandly-primary)] hover:bg-[var(--commandly-primary)]/90 text-white transition-all duration-200 flex items-center gap-2 shadow-lg shadow-[var(--commandly-primary)]/20"
                               disabled={saving}
                             >
                               {saving ? (
@@ -249,16 +311,14 @@ export default function ClipsModal({ isOpen, onClose }: ClipsModalProps) {
                         </div>
                       ) : (
                         <>
-                          <div className="flex justify-between items-start">
-                            <div className="flex-1 break-words">
-                              <p className="text-white text-base leading-relaxed font-medium tracking-[0.01em]">
-                                {clip.text}
-                              </p>
-                            </div>
-                            <div className="flex space-x-2 ml-4">
+                          <div className="flex justify-between items-start gap-4">
+                            <p className="text-white/90 text-base leading-relaxed font-medium tracking-[0.01em] flex-1 break-words">
+                              {clip.text}
+                            </p>
+                            <div className="flex gap-2">
                               <button
                                 onClick={() => handleEdit(clip)}
-                                className="p-2 rounded-lg hover:bg-white/10 text-white/70 hover:text-white transition-colors duration-200"
+                                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-all duration-200"
                                 title="Edit clip"
                               >
                                 <FiEdit2 className="w-4 h-4" />
@@ -266,7 +326,7 @@ export default function ClipsModal({ isOpen, onClose }: ClipsModalProps) {
                               {deleteConfirmId === clip.id ? (
                                 <button
                                   onClick={() => handleDelete(clip.id)}
-                                  className="p-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-300 hover:text-red-200 transition-colors duration-200 flex items-center"
+                                  className="p-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-300 hover:text-red-200 transition-all duration-200"
                                   disabled={saving}
                                 >
                                   {saving ? (
@@ -278,7 +338,7 @@ export default function ClipsModal({ isOpen, onClose }: ClipsModalProps) {
                               ) : (
                                 <button
                                   onClick={() => setDeleteConfirmId(clip.id)}
-                                  className="p-2 rounded-lg hover:bg-white/10 text-white/70 hover:text-white transition-colors duration-200"
+                                  className="p-2 rounded-lg bg-white/5 hover:bg-white/10 text-white/70 hover:text-white transition-all duration-200"
                                   title="Delete clip"
                                 >
                                   <FiTrash2 className="w-4 h-4" />
@@ -287,11 +347,11 @@ export default function ClipsModal({ isOpen, onClose }: ClipsModalProps) {
                             </div>
                           </div>
                           {clip.imageUrl && (
-                            <div className="relative rounded-lg overflow-hidden bg-black/30">
+                            <div className="relative rounded-xl overflow-hidden bg-black/30">
                               <img
                                 src={clip.imageUrl}
                                 alt="Clip preview"
-                                className="rounded-lg max-h-48 w-full object-cover hover:opacity-95 transition-opacity duration-200"
+                                className="w-full h-48 object-cover hover:opacity-95 transition-opacity duration-200"
                               />
                             </div>
                           )}
@@ -300,11 +360,12 @@ export default function ClipsModal({ isOpen, onClose }: ClipsModalProps) {
                               href={clip.sourceUrl}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-white/70 hover:text-white transition-colors duration-200"
+                              className="text-white/60 hover:text-white transition-colors duration-200 flex items-center gap-2"
                             >
                               {new URL(clip.sourceUrl).hostname}
+                              <FiExternalLink className="w-4 h-4" />
                             </a>
-                            <span className="text-white/70">
+                            <span className="text-white/60">
                               {formatDate(clip.createdAt)}
                             </span>
                           </div>
@@ -313,26 +374,31 @@ export default function ClipsModal({ isOpen, onClose }: ClipsModalProps) {
                     </div>
                   ))}
                 </div>
-              )}
-            </div>
-            {hasMore && (
-              <div className="flex justify-center pt-6">
-                <button
-                  onClick={handleLoadMore}
-                  className="px-6 py-2.5 bg-white/10 hover:bg-white/15 rounded-lg text-white transition-colors duration-200 font-medium"
-                  disabled={loading}
-                >
-                  {loading ? (
-                    <div className="w-5 h-5 border-3 border-white/30 border-t-white/85 rounded-full animate-spin" />
-                  ) : (
-                    "Load More"
-                  )}
-                </button>
-              </div>
+
+                {hasMore && (
+                  <div className="flex justify-center mt-6">
+                    <button
+                      onClick={handleLoadMore}
+                      className="px-6 py-2.5 rounded-lg bg-[var(--commandly-primary)] hover:bg-[var(--commandly-primary)]/90 text-white transition-all duration-200 flex items-center gap-2 shadow-lg shadow-[var(--commandly-primary)]/20"
+                      disabled={loading}
+                    >
+                      {loading ? (
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white/85 rounded-full animate-spin" />
+                      ) : (
+                        <>
+                          <span>Load More</span>
+                          <FiCheck className="w-4 h-4" />
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
+              </>
             )}
-          </>
-        )}
+          </div>
+        </div>
       </div>
-    </Modal>
+    </>,
+    document.body
   );
 }
