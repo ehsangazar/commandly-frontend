@@ -107,15 +107,15 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="w-full h-full flex items-center gap-4">
+    <div className="w-full h-full flex items-center gap-6 p-6">
       <Sidebar
         isModifyMode={isModifyMode}
         onModifyModeChange={setIsModifyMode}
         onAddWidget={handleAddWidget}
       />
       <div className="flex-1 overflow-auto h-full">
-        <GlassmorphismBackground>
-          <div className="p-4">
+        <GlassmorphismBackground className="!backdrop-blur-2xl !bg-white/10">
+          <div className="p-6">
             <ResponsiveGridLayout
               className="layout"
               layouts={layouts}
@@ -125,20 +125,22 @@ const Dashboard = () => {
               onLayoutChange={onLayoutChange}
               isDraggable={isModifyMode}
               isResizable={false}
-              margin={[16, 16]}
+              margin={[20, 20]}
               containerPadding={[0, 0]}
               useCSSTransforms
             >
               {widgets.map((widget) => (
                 <div
                   key={widget.id}
-                  className={`h-full transition-all ${
+                  className={`h-full transition-all duration-300 ${
                     isModifyMode ? "cursor-move" : "cursor-default"
                   }`}
                 >
-                  {widget.type === "stats" && <StatsWidget />}
-                  {widget.type === "clips" && <ClipsWidget />}
-                  {widget.type === "clock" && <ClockWidget />}
+                  <div className="h-full rounded-2xl backdrop-blur-xl bg-white/10 border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300">
+                    {widget.type === "stats" && <StatsWidget />}
+                    {widget.type === "clips" && <ClipsWidget />}
+                    {widget.type === "clock" && <ClockWidget />}
+                  </div>
                 </div>
               ))}
             </ResponsiveGridLayout>

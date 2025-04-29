@@ -137,10 +137,10 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
 
   if (isLoading) {
     return (
-      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
         <div
           ref={modalRef}
-          className="bg-[var(--commandly-background)] rounded-2xl p-8 max-w-2xl w-full mx-4"
+          className="bg-white/20 backdrop-blur-2xl rounded-2xl p-8 max-w-2xl w-full mx-4 border border-white/30 shadow-2xl"
         >
           <div className="flex justify-center">
             <div className="w-8 h-8 border-4 border-[var(--commandly-primary)] border-t-transparent rounded-full animate-spin" />
@@ -151,25 +151,23 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
       <div
         ref={modalRef}
-        className="bg-[var(--commandly-background)] rounded-2xl p-8 max-w-2xl w-full mx-4"
+        className="bg-white/20 backdrop-blur-2xl rounded-2xl p-8 max-w-2xl w-full mx-4 border border-white/30 shadow-2xl"
       >
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-[var(--commandly-text-primary)]">
-            Settings
-          </h2>
+          <h2 className="text-2xl font-bold text-white">Settings</h2>
           <button
             onClick={onClose}
-            className="text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)]"
+            className="text-white/70 hover:text-white transition-colors duration-200"
           >
             <FiX className="w-6 h-6" />
           </button>
         </div>
 
         {error && (
-          <div className="mb-6 p-4 rounded-lg bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 flex items-center">
+          <div className="mb-6 p-4 rounded-xl bg-red-500/20 text-red-200 border border-red-500/30 flex items-center">
             <FiAlertCircle className="w-5 h-5 mr-2 flex-shrink-0" />
             <p className="text-sm">{error}</p>
           </div>
@@ -177,16 +175,14 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
 
         <div className="space-y-6">
           {/* User Info */}
-          <div className="bg-white dark:bg-[var(--commandly-hover)] rounded-xl p-6">
+          <div className="bg-white/20 backdrop-blur-xl rounded-xl p-6 border border-white/30">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 rounded-full bg-[var(--commandly-primary)]/10 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-[var(--commandly-primary)]/20 flex items-center justify-center">
                 <FiUser className="w-6 h-6 text-[var(--commandly-primary)]" />
               </div>
               <div>
-                <h3 className="text-lg font-medium text-[var(--commandly-text-primary)]">
-                  User Profile
-                </h3>
-                <p className="text-sm text-[var(--commandly-text-secondary)]">
+                <h3 className="text-lg font-medium text-white">User Profile</h3>
+                <p className="text-sm text-white/70">
                   Manage your account settings
                 </p>
               </div>
@@ -195,13 +191,11 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
             <div className="mt-6 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
-                  <FiMail className="w-5 h-5 text-[var(--commandly-text-secondary)]" />
-                  <span className="text-[var(--commandly-text-primary)]">
-                    {user?.email}
-                  </span>
+                  <FiMail className="w-5 h-5 text-white/70" />
+                  <span className="text-white">{user?.email}</span>
                 </div>
                 {user?.isVerified && (
-                  <div className="flex items-center space-x-1 text-green-500">
+                  <div className="flex items-center space-x-1 text-green-300">
                     <FiCheckCircle className="w-5 h-5" />
                     <span className="text-sm">Verified</span>
                   </div>
@@ -211,16 +205,14 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
           </div>
 
           {/* Subscription Info */}
-          <div className="bg-white dark:bg-[var(--commandly-hover)] rounded-xl p-6">
+          <div className="bg-white/20 backdrop-blur-xl rounded-xl p-6 border border-white/30">
             <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 rounded-full bg-[var(--commandly-primary)]/10 flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-[var(--commandly-primary)]/20 flex items-center justify-center">
                 <FiCreditCard className="w-6 h-6 text-[var(--commandly-primary)]" />
               </div>
               <div>
-                <h3 className="text-lg font-medium text-[var(--commandly-text-primary)]">
-                  Subscription
-                </h3>
-                <p className="text-sm text-[var(--commandly-text-secondary)]">
+                <h3 className="text-lg font-medium text-white">Subscription</h3>
+                <p className="text-sm text-white/70">
                   Manage your subscription
                 </p>
               </div>
@@ -230,22 +222,18 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
               {subscription ? (
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-[var(--commandly-text-secondary)]">
-                      Plan
-                    </span>
-                    <span className="text-[var(--commandly-text-primary)] font-medium">
+                    <span className="text-white/70">Plan</span>
+                    <span className="text-white font-medium">
                       {subscription.plan.name}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-[var(--commandly-text-secondary)]">
-                      Status
-                    </span>
+                    <span className="text-white/70">Status</span>
                     <span
-                      className={`px-2 py-1 rounded-full text-sm ${
+                      className={`px-3 py-1 rounded-xl text-sm ${
                         subscription.status === "active"
-                          ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                          : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                          ? "bg-green-500/20 text-green-300 border border-green-500/30"
+                          : "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
                       }`}
                     >
                       {subscription.status.charAt(0).toUpperCase() +
@@ -253,19 +241,15 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-[var(--commandly-text-secondary)]">
-                      Next Billing
-                    </span>
-                    <span className="text-[var(--commandly-text-primary)]">
+                    <span className="text-white/70">Next Billing</span>
+                    <span className="text-white">
                       {formatDate(subscription.currentPeriodEnd)}
                     </span>
                   </div>
                 </div>
               ) : (
                 <div className="text-center py-4">
-                  <p className="text-[var(--commandly-text-secondary)]">
-                    No active subscription
-                  </p>
+                  <p className="text-white/70">No active subscription</p>
                 </div>
               )}
             </div>
@@ -275,7 +259,7 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
           <button
             onClick={handleLogout}
             disabled={loading}
-            className="w-full flex items-center justify-center space-x-2 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full flex items-center justify-center space-x-2 p-4 bg-red-500/20 text-red-300 rounded-xl hover:bg-red-500/30 border border-red-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <FiLogOut className="w-5 h-5" />
             <span className="font-medium">
@@ -298,14 +282,14 @@ const Sidebar = ({
 
   return (
     <>
-      <GlassmorphismBackground className="!h-fit">
-        <div className="h-fit rounded-lg w-16 flex flex-col items-center py-4 gap-4">
+      <GlassmorphismBackground className="!backdrop-blur-2xl !bg-white/10">
+        <div className="h-fit rounded-2xl w-16 flex flex-col items-center py-6 gap-6">
           <button
             onClick={() => onModifyModeChange(!isModifyMode)}
-            className={`p-3 rounded-lg transition-all duration-200 hover:scale-110 active:scale-95 ${
+            className={`p-3.5 rounded-xl transition-all duration-300 hover:scale-110 active:scale-95 ${
               isModifyMode
-                ? "bg-[var(--commandly-primary)] text-white"
-                : "bg-[var(--commandly-hover)] text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)]"
+                ? "bg-[var(--commandly-primary)] text-white shadow-lg"
+                : "bg-white/10 text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)] hover:bg-white/20"
             }`}
             title={isModifyMode ? "Done" : "Modify Layout"}
           >
@@ -314,7 +298,7 @@ const Sidebar = ({
 
           <button
             onClick={() => setIsWidgetSidebarOpen((prevState) => !prevState)}
-            className="add-widget-button p-3 rounded-lg bg-[var(--commandly-hover)] text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)] transition-all duration-200 hover:scale-110 active:scale-95"
+            className="p-3.5 rounded-xl bg-white/10 text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)] hover:bg-white/20 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg"
             title="Add Widget"
           >
             <FiPlus className="w-5 h-5" />
@@ -322,7 +306,7 @@ const Sidebar = ({
 
           <button
             onClick={() => setIsSettingsOpen(true)}
-            className="p-3 rounded-lg bg-[var(--commandly-hover)] text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)] transition-all duration-200 hover:scale-110 active:scale-95"
+            className="p-3.5 rounded-xl bg-white/10 text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)] hover:bg-white/20 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg"
             title="Settings"
           >
             <FiSettings className="w-5 h-5" />
