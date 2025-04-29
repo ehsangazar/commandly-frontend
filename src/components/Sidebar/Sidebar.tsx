@@ -1,7 +1,23 @@
-import { FiSettings, FiLayout, FiPlus } from "react-icons/fi";
+import {
+  FiSettings,
+  FiLayout,
+  FiPlus,
+  FiUser,
+  FiMail,
+  FiLogOut,
+  FiCheckCircle,
+  FiCreditCard,
+  FiX,
+  FiAlertCircle,
+} from "react-icons/fi";
 import GlassmorphismBackground from "../GlassmorphismBackground";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import WidgetSidebar from "../WidgetSidebar/WidgetSidebar";
+import { getAuthToken, removeAuthToken } from "@/utils/auth";
+import { useNavigate } from "react-router-dom";
+
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
 
 interface SidebarProps {
   isModifyMode: boolean;
@@ -9,10 +25,276 @@ interface SidebarProps {
   onAddWidget: (widgetType: string) => void;
 }
 
-const Sidebar = ({ isModifyMode, onModifyModeChange, onAddWidget }: SidebarProps) => {
-  const [isWidgetSidebarOpen, setIsWidgetSidebarOpen] = useState(false);
+interface User {
+  id: string;
+  email: string;
+  isVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
 
-  console.log(isWidgetSidebarOpen)
+interface Plan {
+  id: string;
+  name: string;
+  price: number;
+  interval: string;
+  features: string[];
+}
+
+interface Subscription {
+  id: string;
+  planId: string;
+  status: string;
+  currentPeriodStart: string;
+  currentPeriodEnd: string;
+  plan: Plan;
+}
+
+const SettingsModal = ({ onClose }: { onClose: () => void }) => {
+  const navigate = useNavigate();
+  const modalRef = useRef<HTMLDivElement>(null);
+  const [user, setUser] = useState<User | null>(null);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        modalRef.current &&
+        !modalRef.current.contains(event.target as Node)
+      ) {
+        onClose();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [onClose]);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = getAuthToken();
+        if (!token) {
+          navigate("/login");
+          return;
+        }
+
+        const [userResponse, subscriptionResponse] = await Promise.all([
+          fetch(`${API_BASE_URL}/auth/me`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+          fetch(`${API_BASE_URL}/subscription/status`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }),
+        ]);
+
+        const userData = await userResponse.json();
+        const subscriptionData = await subscriptionResponse.json();
+
+        if (userData.success) {
+          setUser(userData.user);
+        } else {
+          setError(userData.error || "Failed to fetch user data");
+        }
+
+        if (subscriptionData.success) {
+          setSubscription(subscriptionData.subscription || null);
+        }
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "Failed to fetch user data"
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [navigate]);
+
+  const handleLogout = () => {
+    setLoading(true);
+    removeAuthToken();
+    navigate("/login");
+  };
+
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString(undefined, {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  };
+
+  if (isLoading) {
+    return (
+      <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+        <div
+          ref={modalRef}
+          className="bg-[var(--commandly-background)] rounded-2xl p-8 max-w-2xl w-full mx-4"
+        >
+          <div className="flex justify-center">
+            <div className="w-8 h-8 border-4 border-[var(--commandly-primary)] border-t-transparent rounded-full animate-spin" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div
+        ref={modalRef}
+        className="bg-[var(--commandly-background)] rounded-2xl p-8 max-w-2xl w-full mx-4"
+      >
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-[var(--commandly-text-primary)]">
+            Settings
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)]"
+          >
+            <FiX className="w-6 h-6" />
+          </button>
+        </div>
+
+        {error && (
+          <div className="mb-6 p-4 rounded-lg bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 flex items-center">
+            <FiAlertCircle className="w-5 h-5 mr-2 flex-shrink-0" />
+            <p className="text-sm">{error}</p>
+          </div>
+        )}
+
+        <div className="space-y-6">
+          {/* User Info */}
+          <div className="bg-white dark:bg-[var(--commandly-hover)] rounded-xl p-6">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 rounded-full bg-[var(--commandly-primary)]/10 flex items-center justify-center">
+                <FiUser className="w-6 h-6 text-[var(--commandly-primary)]" />
+              </div>
+              <div>
+                <h3 className="text-lg font-medium text-[var(--commandly-text-primary)]">
+                  User Profile
+                </h3>
+                <p className="text-sm text-[var(--commandly-text-secondary)]">
+                  Manage your account settings
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-6 space-y-4">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <FiMail className="w-5 h-5 text-[var(--commandly-text-secondary)]" />
+                  <span className="text-[var(--commandly-text-primary)]">
+                    {user?.email}
+                  </span>
+                </div>
+                {user?.isVerified && (
+                  <div className="flex items-center space-x-1 text-green-500">
+                    <FiCheckCircle className="w-5 h-5" />
+                    <span className="text-sm">Verified</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Subscription Info */}
+          <div className="bg-white dark:bg-[var(--commandly-hover)] rounded-xl p-6">
+            <div className="flex items-center space-x-4">
+              <div className="w-12 h-12 rounded-full bg-[var(--commandly-primary)]/10 flex items-center justify-center">
+                <FiCreditCard className="w-6 h-6 text-[var(--commandly-primary)]" />
+              </div>
+              <div>
+                <h3 className="text-lg font-medium text-[var(--commandly-text-primary)]">
+                  Subscription
+                </h3>
+                <p className="text-sm text-[var(--commandly-text-secondary)]">
+                  Manage your subscription
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-6">
+              {subscription ? (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[var(--commandly-text-secondary)]">
+                      Plan
+                    </span>
+                    <span className="text-[var(--commandly-text-primary)] font-medium">
+                      {subscription.plan.name}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[var(--commandly-text-secondary)]">
+                      Status
+                    </span>
+                    <span
+                      className={`px-2 py-1 rounded-full text-sm ${
+                        subscription.status === "active"
+                          ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                          : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                      }`}
+                    >
+                      {subscription.status.charAt(0).toUpperCase() +
+                        subscription.status.slice(1)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="text-[var(--commandly-text-secondary)]">
+                      Next Billing
+                    </span>
+                    <span className="text-[var(--commandly-text-primary)]">
+                      {formatDate(subscription.currentPeriodEnd)}
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-4">
+                  <p className="text-[var(--commandly-text-secondary)]">
+                    No active subscription
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Logout Button */}
+          <button
+            onClick={handleLogout}
+            disabled={loading}
+            className="w-full flex items-center justify-center space-x-2 p-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <FiLogOut className="w-5 h-5" />
+            <span className="font-medium">
+              {loading ? "Logging out..." : "Logout"}
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const Sidebar = ({
+  isModifyMode,
+  onModifyModeChange,
+  onAddWidget,
+}: SidebarProps) => {
+  const [isWidgetSidebarOpen, setIsWidgetSidebarOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   return (
     <>
@@ -31,7 +313,7 @@ const Sidebar = ({ isModifyMode, onModifyModeChange, onAddWidget }: SidebarProps
           </button>
 
           <button
-            onClick={() => setIsWidgetSidebarOpen(prevState => !prevState)}
+            onClick={() => setIsWidgetSidebarOpen((prevState) => !prevState)}
             className="add-widget-button p-3 rounded-lg bg-[var(--commandly-hover)] text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)] transition-all duration-200 hover:scale-110 active:scale-95"
             title="Add Widget"
           >
@@ -39,6 +321,7 @@ const Sidebar = ({ isModifyMode, onModifyModeChange, onAddWidget }: SidebarProps
           </button>
 
           <button
+            onClick={() => setIsSettingsOpen(true)}
             className="p-3 rounded-lg bg-[var(--commandly-hover)] text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)] transition-all duration-200 hover:scale-110 active:scale-95"
             title="Settings"
           >
@@ -47,16 +330,20 @@ const Sidebar = ({ isModifyMode, onModifyModeChange, onAddWidget }: SidebarProps
         </div>
       </GlassmorphismBackground>
 
-      <WidgetSidebar 
-        isOpen={isWidgetSidebarOpen} 
-        onClose={() => setIsWidgetSidebarOpen(false)} 
+      <WidgetSidebar
+        isOpen={isWidgetSidebarOpen}
+        onClose={() => setIsWidgetSidebarOpen(false)}
         onAddWidget={(type) => {
           onAddWidget(type);
           setIsWidgetSidebarOpen(false);
         }}
       />
+
+      {isSettingsOpen && (
+        <SettingsModal onClose={() => setIsSettingsOpen(false)} />
+      )}
     </>
   );
 };
 
-export default Sidebar; 
+export default Sidebar;
