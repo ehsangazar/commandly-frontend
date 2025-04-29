@@ -325,14 +325,6 @@ const Sidebar = ({
               >
                 <FiClock className="w-5 h-5" />
               </button>
-
-              <button
-                onClick={onChangeBackground}
-                className="p-3.5 rounded-xl bg-white/10 text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)] hover:bg-white/20 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg"
-                title="Change background"
-              >
-                <FiImage className="w-5 h-5" />
-              </button>
             </>
           )}
 
@@ -350,6 +342,17 @@ const Sidebar = ({
             title="Settings"
           >
             <FiSettings className="w-5 h-5" />
+          </button>
+
+          <button
+            onClick={onChangeBackground}
+            className="relative p-3.5 rounded-xl bg-white/10 text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)] hover:bg-white/20 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg group overflow-hidden"
+            title="Change background"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-orange-500/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 animate-pulse transition-opacity duration-300" />
+            <FiImage className="w-5 h-5 relative z-10 transform group-hover:rotate-12 transition-transform duration-300" />
+            <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-orange-500/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
           </button>
         </div>
       </GlassmorphismBackground>
