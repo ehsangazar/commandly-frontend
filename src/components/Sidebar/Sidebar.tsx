@@ -127,7 +127,7 @@ const SettingsModal = ({ onClose }: { onClose: () => void }) => {
   const handleLogout = () => {
     setLoading(true);
     removeAuthToken();
-    navigate("/login");
+    navigate("/dashboard.html");
   };
 
   const formatDate = (dateString: string) => {
