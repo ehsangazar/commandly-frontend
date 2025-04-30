@@ -9,8 +9,6 @@ import {
   FiX,
   FiAlertCircle,
   FiGrid,
-  FiClock,
-  FiBarChart2,
   FiImage,
 } from "react-icons/fi";
 import GlassmorphismBackground from "../GlassmorphismBackground";
@@ -302,33 +300,6 @@ const Sidebar = ({
           >
             <FiGrid className="w-5 h-5" />
           </button>
-
-          {isModifyMode && (
-            <>
-              <div className="w-8 h-px bg-white/20" />
-              <button
-                onClick={() => onAddWidget("stats")}
-                className="p-3 text-white/70 hover:bg-white/10 hover:text-white/90 rounded-xl transition-colors duration-200"
-                title="Add stats widget"
-              >
-                <FiBarChart2 className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => onAddWidget("clips")}
-                className="p-3 text-white/70 hover:bg-white/10 hover:text-white/90 rounded-xl transition-colors duration-200"
-                title="Add clips widget"
-              >
-                <FiPlus className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => onAddWidget("clock")}
-                className="p-3 text-white/70 hover:bg-white/10 hover:text-white/90 rounded-xl transition-colors duration-200"
-                title="Add clock widget"
-              >
-                <FiClock className="w-5 h-5" />
-              </button>
-            </>
-          )}
 
           <button
             onClick={() => setIsWidgetSidebarOpen((prevState) => !prevState)}
