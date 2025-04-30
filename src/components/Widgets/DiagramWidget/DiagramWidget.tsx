@@ -6,7 +6,6 @@ import {
   FiClock,
   FiExternalLink,
 } from "react-icons/fi";
-import Cookies from "js-cookie";
 import {
   PieChart,
   Pie,
@@ -26,6 +25,7 @@ import {
 } from "date-fns";
 import { Props as DefaultLegendContentProps } from "recharts/types/component/DefaultLegendContent";
 import StatsModal from "@/components/Modals/StatsModal";
+import { getAuthToken } from "@/utils/auth";
 
 interface DomainStats {
   domain: string;
@@ -74,12 +74,7 @@ const DiagramWidget = () => {
 
   const fetchStats = async () => {
     try {
-      const token = Cookies.get("commandly_token");
-      if (!token) {
-        setError("Authentication token not found");
-        return;
-      }
-
+      const token = getAuthToken();
       const fetchPeriodStats = async (startDate: Date, endDate: Date) => {
         const params = new URLSearchParams({
           startDate: startDate.toISOString(),

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Cookies from "js-cookie";
 import {
   FiClock,
   FiGlobe,
@@ -17,6 +16,7 @@ import {
   intervalToDuration,
 } from "date-fns";
 import StatsModal from "@/components/Modals/StatsModal";
+import { getAuthToken } from "@/utils/auth";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
@@ -48,11 +48,7 @@ const StatsWidget = () => {
 
   const fetchStats = async () => {
     try {
-      const token = Cookies.get("commandly_token");
-      if (!token) {
-        setError("Authentication token not found");
-        return;
-      }
+      const token = getAuthToken();
 
       const fetchPeriodStats = async (startDate: Date, endDate: Date) => {
         const params = new URLSearchParams({
