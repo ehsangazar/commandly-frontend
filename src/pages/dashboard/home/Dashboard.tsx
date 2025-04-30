@@ -88,8 +88,8 @@ const Dashboard = () => {
       type: widgetType as Widget["type"],
       x: 0,
       y: maxY,
-      w: widgetType === "clock" ? 2 : widgetType === "diagram" ? 6 : 4, // Wider for diagram
-      h: widgetType === "clock" ? 2 : widgetType === "diagram" ? 4 : 3, // Taller for diagram
+      w: widgetType === "clock" ? 2 : widgetType === "diagram" ? 4 : 4, // Reduced from 6 to 4 for diagram
+      h: widgetType === "clock" ? 2 : widgetType === "diagram" ? 3 : 3, // Reduced from 4 to 3 for diagram
       staticH: true,
     };
 
