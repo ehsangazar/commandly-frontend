@@ -73,6 +73,13 @@ const Dashboard = () => {
     setWidgets(updatedWidgets);
   };
 
+  const widgetSizes = {
+    stats: { w: 4, h: 3 },
+    clips: { w: 4, h: 3 },
+    clock: { w: 2, h: 2 },
+    diagram: { w: 4, h: 3 },
+  };
+
   const handleAddWidget = (widgetType: string) => {
     if (!["stats", "clips", "clock", "diagram"].includes(widgetType)) return;
 
@@ -88,8 +95,8 @@ const Dashboard = () => {
       type: widgetType as Widget["type"],
       x: 0,
       y: maxY,
-      w: widgetType === "clock" ? 2 : widgetType === "diagram" ? 4 : 4, // Reduced from 6 to 4 for diagram
-      h: widgetType === "clock" ? 2 : widgetType === "diagram" ? 3 : 3, // Reduced from 4 to 3 for diagram
+      w: widgetSizes[widgetType as keyof typeof widgetSizes].w,
+      h: widgetSizes[widgetType as keyof typeof widgetSizes].h,
       staticH: true,
     };
 
@@ -115,7 +122,7 @@ const Dashboard = () => {
       i: widget.id,
       x: widget.x,
       y: widget.y,
-      w: Math.min(widget.w, 3),
+      w: widget.w,
       h: widget.h,
       staticH: widget.staticH,
     })),
@@ -123,7 +130,7 @@ const Dashboard = () => {
       i: widget.id,
       x: widget.x,
       y: widget.y,
-      w: Math.min(widget.w, 2),
+      w: widget.w,
       h: widget.h,
       staticH: widget.staticH,
     })),
@@ -131,7 +138,7 @@ const Dashboard = () => {
       i: widget.id,
       x: widget.x,
       y: widget.y,
-      w: Math.min(widget.w, 1),
+      w: widget.w,
       h: widget.h,
       staticH: widget.staticH,
     })),
