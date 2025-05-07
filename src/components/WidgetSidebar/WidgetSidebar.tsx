@@ -7,10 +7,6 @@ import {
   FiPieChart,
   FiAlertCircle,
 } from "react-icons/fi";
-import StatsWidget from "../Widgets/StatsWidget/StatsWidget";
-import ClipsWidget from "../Widgets/ClipsWidget/ClipsWidget";
-import ClockWidget from "../Widgets/ClockWidget/ClockWidget";
-import DiagramWidget from "../Widgets/DiagramWidget/DiagramWidget";
 import GlassmorphismBackground from "../GlassmorphismBackground";
 
 interface WidgetSidebarProps {
@@ -49,7 +45,7 @@ const WidgetSidebar = ({
       title: "Stats Widget",
       description: "Track your browsing statistics",
       icon: FiBarChart2,
-      component: StatsWidget,
+      preview: "/widgets/stats-preview.png",
       unique: true,
       maxInstances: 1,
     },
@@ -58,7 +54,7 @@ const WidgetSidebar = ({
       title: "Usage Chart",
       description: "Visualize website usage with charts",
       icon: FiPieChart,
-      component: DiagramWidget,
+      preview: "/widgets/diagram-preview.png",
       unique: true,
       maxInstances: 1,
     },
@@ -67,7 +63,7 @@ const WidgetSidebar = ({
       title: "Clips Widget",
       description: "Save and organize text snippets",
       icon: FiClipboard,
-      component: ClipsWidget,
+      preview: "/widgets/clips-preview.png",
       unique: false,
       maxInstances: 1,
     },
@@ -76,7 +72,7 @@ const WidgetSidebar = ({
       title: "Clock Widget",
       description: "Display time and date",
       icon: FiClock,
-      component: ClockWidget,
+      preview: "/widgets/clock-preview.png",
       unique: false,
       maxInstances: 1,
     },
@@ -180,9 +176,11 @@ const WidgetSidebar = ({
                         }`}
                       >
                         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40 z-10" />
-                        <div className="h-48 pointer-events-none scale-75 origin-top">
-                          <widget.component />
-                        </div>
+                        <img
+                          src={widget.preview}
+                          alt={`${widget.title} preview`}
+                          className="w-full h-48 object-cover"
+                        />
                         <div
                           className={`absolute inset-0 ${
                             !isDisabled
