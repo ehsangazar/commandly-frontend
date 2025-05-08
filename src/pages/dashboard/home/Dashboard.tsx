@@ -182,10 +182,10 @@ const Dashboard = () => {
                     {isModifyMode && (
                       <button
                         onClick={() => handleRemoveWidget(widget.id)}
-                        className="absolute -top-2 -right-2 z-10 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full flex items-center justify-center shadow-lg transition-colors duration-200"
+                        className="absolute -top-2 -right-2 z-10 w-6 h-6 bg-white text-gray-500 rounded-full flex items-center justify-center shadow-lg hover:text-black transition-colors duration-200"
                         title="Remove widget"
                       >
-                        ×
+                        -
                       </button>
                     )}
                     {widget.type === "stats" && <StatsWidget />}
