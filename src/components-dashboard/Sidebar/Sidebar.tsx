@@ -10,12 +10,14 @@ import {
   FiAlertCircle,
   FiGrid,
   FiImage,
+  FiScissors,
+  FiLayout,
 } from "react-icons/fi";
 import GlassmorphismBackground from "../GlassmorphismBackground";
 import { useState, useEffect, useRef } from "react";
 import WidgetSidebar from "../WidgetSidebar/WidgetSidebar";
 import { getAuthToken, removeAuthToken } from "@/utils/auth";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
@@ -291,6 +293,20 @@ const Sidebar = ({
 }: SidebarProps) => {
   const [isWidgetSidebarOpen, setIsWidgetSidebarOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isClipsView =
+    new URLSearchParams(location.search).get("clip") === "true";
+  const isBaseDashboard = !location.search;
+  const hasQueryParams = location.search !== "";
+
+  const handleClipsClick = () => {
+    if (isClipsView) {
+      navigate("/dashboard");
+    } else {
+      navigate("/dashboard?clip=true");
+    }
+  };
 
   return (
     <>
@@ -301,26 +317,42 @@ const Sidebar = ({
       >
         <div className="h-fit rounded-2xl w-16 flex flex-col items-center py-4 gap-2">
           <button
-            onClick={() => onModifyModeChange(!isModifyMode)}
+            onClick={() => navigate("/dashboard")}
             className={`p-3.5 cursor-pointer rounded-full transition-all duration-300 text-black relative group hover:scale-110 active:scale-95 ${
-              isModifyMode
+              isBaseDashboard
                 ? "bg-gray-300"
                 : "bg-gray-200 shadow-lg hover:shadow-xl"
             }`}
           >
-            <FiGrid className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12" />
-            <Tooltip
-              text={isModifyMode ? "Exit modify mode" : "Enter modify mode"}
-            />
+            <FiLayout className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12" />
+            <Tooltip text="Dashboard" />
           </button>
 
-          <button
-            onClick={() => setIsWidgetSidebarOpen((prevState) => !prevState)}
-            className="p-3.5 cursor-pointer rounded-full text-black transition-all duration-300 shadow-lg bg-gray-200 hover:shadow-xl focus:bg-gray-300 focus:shadow-none relative group hover:scale-110 active:scale-95"
-          >
-            <FiPlus className="w-5 h-5 transition-transform duration-300 group-hover:rotate-90" />
-            <Tooltip text="Add Widget" />
-          </button>
+          {!hasQueryParams && (
+            <button
+              onClick={() => onModifyModeChange(!isModifyMode)}
+              className={`p-3.5 cursor-pointer rounded-full transition-all duration-300 text-black relative group hover:scale-110 active:scale-95 ${
+                isModifyMode
+                  ? "bg-gray-300"
+                  : "bg-gray-200 shadow-lg hover:shadow-xl"
+              }`}
+            >
+              <FiGrid className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12" />
+              <Tooltip
+                text={isModifyMode ? "Exit modify mode" : "Enter modify mode"}
+              />
+            </button>
+          )}
+
+          {!hasQueryParams && (
+            <button
+              onClick={() => setIsWidgetSidebarOpen((prevState) => !prevState)}
+              className="p-3.5 cursor-pointer rounded-full text-black transition-all duration-300 shadow-lg bg-gray-200 hover:shadow-xl focus:bg-gray-300 focus:shadow-none relative group hover:scale-110 active:scale-95"
+            >
+              <FiPlus className="w-5 h-5 transition-transform duration-300 group-hover:rotate-90" />
+              <Tooltip text="Add Widget" />
+            </button>
+          )}
 
           <button
             onClick={() => setIsSettingsOpen(true)}
@@ -336,6 +368,16 @@ const Sidebar = ({
           >
             <FiImage className="w-5 h-5 transition-transform duration-300 group-hover:rotate-45" />
             <Tooltip text="Change background" />
+          </button>
+
+          <button
+            onClick={handleClipsClick}
+            className={`p-3.5 cursor-pointer rounded-full text-black transition-all duration-300 shadow-lg hover:shadow-xl focus:bg-gray-300 focus:shadow-none relative group hover:scale-110 active:scale-95 ${
+              isClipsView ? "bg-gray-300" : "bg-gray-200"
+            }`}
+          >
+            <FiScissors className="w-5 h-5 transition-transform duration-300 group-hover:rotate-45" />
+            <Tooltip text={isClipsView ? "Back to Dashboard" : "View Clips"} />
           </button>
         </div>
       </GlassmorphismBackground>
