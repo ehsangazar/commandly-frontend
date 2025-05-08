@@ -332,12 +332,9 @@ const Sidebar = ({
 
           <button
             onClick={onChangeBackground}
-            className="relative p-3.5 cursor-pointer rounded-full bg-gray-200 text-black transition-all duration-300 group overflow-hidden shadow-lg hover:shadow-xl focus:bg-gray-300 focus:shadow-none hover:scale-110 active:scale-95"
+            className="p-3.5 cursor-pointer rounded-full bg-gray-200 text-black transition-all duration-300 shadow-lg hover:shadow-xl focus:bg-gray-300 focus:shadow-none relative group hover:scale-110 active:scale-95"
           >
-            <div className="absolute" />
-            <div className="absolute inset-0 bg-white/5" />
-            <FiImage className="w-5 h-5 relative z-10 transition-transform duration-300 group-hover:scale-110" />
-            <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-orange-500/20 rounded-xl blur -z-10 group-hover:scale-110 transition-transform duration-300" />
+            <FiImage className="w-5 h-5 transition-transform duration-300 group-hover:rotate-45" />
             <Tooltip text="Change background" />
           </button>
         </div>
