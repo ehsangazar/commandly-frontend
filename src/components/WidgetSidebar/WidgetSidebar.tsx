@@ -114,7 +114,7 @@ const WidgetSidebar = ({
       >
         <GlassmorphismBackground className="h-full !backdrop-blur-2xl !bg-black/20">
           {/* Header - Fixed at top */}
-          <div className="absolute top-0 left-0 right-0 p-6 bg-black/20 backdrop-blur-xl border-b border-white/10 transition-all duration-500">
+          <div className="sticky top-0 p-6 bg-black/20 backdrop-blur-xl border-b border-white/10">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold text-white/90">
                 Add Widget
@@ -128,8 +128,8 @@ const WidgetSidebar = ({
             </div>
           </div>
 
-          {/* Scrollable Content - With padding for header */}
-          <div className="h-full overflow-y-auto pt-24 pb-6 px-6">
+          {/* Scrollable Content */}
+          <div className="h-[calc(100vh-88px)] overflow-y-auto py-6 pl-6 pr-4 custom-scrollbar">
             <div className="space-y-6">
               {sortedWidgets.map((widget) => {
                 const instanceCount = existingWidgets.filter(

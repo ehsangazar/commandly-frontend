@@ -102,7 +102,7 @@ export default function ClipsWidget() {
               <p className="text-sm">No clips found</p>
             </div>
           ) : (
-            <div className="space-y-3 overflow-y-auto max-h-full pr-2">
+            <div className="space-y-3 overflow-y-auto max-h-full pr-2 custom-scrollbar">
               {clips.map((clip) => (
                 <ClipsCard
                   key={clip.id}

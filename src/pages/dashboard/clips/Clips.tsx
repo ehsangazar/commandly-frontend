@@ -151,7 +151,7 @@ export default function Clips() {
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6 p-6 custom-scrollbar h-[calc(100vh-4rem)] overflow-y-auto bg-transparent">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-[var(--commandly-text-primary)]">
           My Clips
@@ -170,7 +170,7 @@ export default function Clips() {
             {clips.map((clip) => (
               <div
                 key={clip.id}
-                className="flex flex-col overflow-hidden rounded-lg border border-[var(--commandly-border)] bg-[var(--commandly-background)]"
+                className="flex flex-col overflow-hidden rounded-lg border border-[var(--commandly-border)] bg-[var(--commandly-background)]/50 backdrop-blur-sm"
               >
                 {clip.imageUrl && (
                   <div className="aspect-video overflow-hidden">
@@ -228,7 +228,7 @@ export default function Clips() {
             <button
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
               disabled={currentPage === 1}
-              className="rounded-md border border-[var(--commandly-border)] bg-[var(--commandly-background)] px-4 py-2 text-sm font-medium text-[var(--commandly-text-primary)] hover:bg-[var(--commandly-hover)] disabled:opacity-50"
+              className="rounded-md border border-[var(--commandly-border)] bg-[var(--commandly-background)]/50 backdrop-blur-sm px-4 py-2 text-sm font-medium text-[var(--commandly-text-primary)] hover:bg-[var(--commandly-hover)] disabled:opacity-50"
             >
               Previous
             </button>
@@ -238,7 +238,7 @@ export default function Clips() {
             <button
               onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
               disabled={currentPage === totalPages}
-              className="rounded-md border border-[var(--commandly-border)] bg-[var(--commandly-background)] px-4 py-2 text-sm font-medium text-[var(--commandly-text-primary)] hover:bg-[var(--commandly-hover)] disabled:opacity-50"
+              className="rounded-md border border-[var(--commandly-border)] bg-[var(--commandly-background)]/50 backdrop-blur-sm px-4 py-2 text-sm font-medium text-[var(--commandly-text-primary)] hover:bg-[var(--commandly-hover)] disabled:opacity-50"
             >
               Next
             </button>

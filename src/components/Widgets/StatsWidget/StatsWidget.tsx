@@ -202,7 +202,7 @@ const StatsWidget = () => {
               <div className="w-10 h-10 border-3 border-white/20 border-t-white/80 rounded-full animate-spin" />
             </div>
           ) : (
-            <div className="space-y-3 overflow-y-auto max-h-full pr-2">
+            <div className="space-y-3 overflow-y-auto max-h-full pr-2 custom-scrollbar">
               {stats[activePeriod].slice(0, 3).map((item, index) => (
                 <button
                   key={item.domain}

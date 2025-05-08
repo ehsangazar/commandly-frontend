@@ -228,7 +228,7 @@ export default function ClipsModal({ isOpen, onClose }: ClipsModalProps) {
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
             {loading && page === 1 ? (
               <div className="h-[300px] flex items-center justify-center">
                 <div className="w-10 h-10 border-3 border-white/20 border-t-white/80 rounded-full animate-spin" />

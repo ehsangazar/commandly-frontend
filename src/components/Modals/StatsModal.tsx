@@ -137,7 +137,7 @@ const StatsModal = ({
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
+          <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scrollbar">
             {stats[activePeriod].map((item, index) => (
               <div
                 key={item.domain}
