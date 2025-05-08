@@ -54,7 +54,7 @@ interface Subscription {
 }
 
 const Tooltip = ({ text }: { text: string }) => (
-  <div className="absolute left-[calc(100%+8px)] top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-[100]">
+  <div className="absolute left-[calc(100%+8px)] top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-all duration-300 scale-95 group-hover:scale-100 whitespace-nowrap pointer-events-none z-[100]">
     {text}
     <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900" />
   </div>
@@ -302,11 +302,13 @@ const Sidebar = ({
         <div className="h-fit rounded-2xl w-16 flex flex-col items-center py-4 gap-2">
           <button
             onClick={() => onModifyModeChange(!isModifyMode)}
-            className={`p-3.5 cursor-pointer rounded-full transition-all duration-300 text-black relative group ${
-              isModifyMode ? "bg-gray-300" : "bg-gray-200 shadow-lg"
+            className={`p-3.5 cursor-pointer rounded-full transition-all duration-300 text-black relative group hover:scale-110 active:scale-95 ${
+              isModifyMode
+                ? "bg-gray-300"
+                : "bg-gray-200 shadow-lg hover:shadow-xl"
             }`}
           >
-            <FiGrid className="w-5 h-5" />
+            <FiGrid className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12" />
             <Tooltip
               text={isModifyMode ? "Exit modify mode" : "Enter modify mode"}
             />
@@ -314,28 +316,28 @@ const Sidebar = ({
 
           <button
             onClick={() => setIsWidgetSidebarOpen((prevState) => !prevState)}
-            className="p-3.5 cursor-pointer rounded-full text-black transition-all duration-300 shadow-lg bg-gray-200 focus:bg-gray-300 focus:shadow-none relative group"
+            className="p-3.5 cursor-pointer rounded-full text-black transition-all duration-300 shadow-lg bg-gray-200 hover:shadow-xl focus:bg-gray-300 focus:shadow-none relative group hover:scale-110 active:scale-95"
           >
-            <FiPlus className="w-5 h-5" />
+            <FiPlus className="w-5 h-5 transition-transform duration-300 group-hover:rotate-90" />
             <Tooltip text="Add Widget" />
           </button>
 
           <button
             onClick={() => setIsSettingsOpen(true)}
-            className="p-3.5 cursor-pointer rounded-full bg-gray-200 text-black transition-all duration-300 shadow-lg focus:bg-gray-300 focus:shadow-none relative group"
+            className="p-3.5 cursor-pointer rounded-full bg-gray-200 text-black transition-all duration-300 shadow-lg hover:shadow-xl focus:bg-gray-300 focus:shadow-none relative group hover:scale-110 active:scale-95"
           >
-            <FiSettings className="w-5 h-5" />
+            <FiSettings className="w-5 h-5 transition-transform duration-300 group-hover:rotate-45" />
             <Tooltip text="Settings" />
           </button>
 
           <button
             onClick={onChangeBackground}
-            className="relative p-3.5 cursor-pointer rounded-full bg-gray-200 text-black transition-all duration-300 group overflow-hidden shadow-lg focus:bg-gray-300 focus:shadow-none"
+            className="relative p-3.5 cursor-pointer rounded-full bg-gray-200 text-black transition-all duration-300 group overflow-hidden shadow-lg hover:shadow-xl focus:bg-gray-300 focus:shadow-none hover:scale-110 active:scale-95"
           >
             <div className="absolute" />
             <div className="absolute inset-0 bg-white/5" />
-            <FiImage className="w-5 h-5 relative z-10" />
-            <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-orange-500/20 rounded-xl blur -z-10" />
+            <FiImage className="w-5 h-5 relative z-10 transition-transform duration-300 group-hover:scale-110" />
+            <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-orange-500/20 rounded-xl blur -z-10 group-hover:scale-110 transition-transform duration-300" />
             <Tooltip text="Change background" />
           </button>
         </div>
