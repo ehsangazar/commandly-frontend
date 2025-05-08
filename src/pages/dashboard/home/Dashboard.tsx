@@ -14,6 +14,10 @@ import ClockWidget from "@/components-dashboard/Widgets/ClockWidget/ClockWidget"
 import DiagramWidget from "@/components-dashboard/Widgets/DiagramWidget/DiagramWidget";
 import Sidebar from "@/components-dashboard/Sidebar/Sidebar";
 import { useOutletContext } from "react-router-dom";
+import {
+  getWidgetSettings,
+  updateWidgetSettings,
+} from "@/services/widgetSettings";
 
 interface DashboardContext {
   onChangeBackground: () => void;
@@ -31,29 +35,45 @@ interface Widget {
   staticH: boolean;
 }
 
-const STORAGE_KEY = "dashboard-widgets";
-
 const Dashboard = () => {
   const { onChangeBackground } = useOutletContext<DashboardContext>();
   const [isModifyMode, setIsModifyMode] = useState(false);
-  const [widgets, setWidgets] = useState<Widget[]>(() => {
-    // Load widgets from localStorage on initial render
-    try {
-      const savedWidgets = localStorage.getItem(STORAGE_KEY);
-      return savedWidgets ? JSON.parse(savedWidgets) : [];
-    } catch (error) {
-      console.error("Failed to load widgets from localStorage:", error);
-      return [];
-    }
-  });
+  const [widgets, setWidgets] = useState<Widget[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Save widgets to localStorage whenever they change
+  // Load widgets from API on initial render
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(widgets));
-    } catch (error) {
-      console.error("Failed to save widgets to localStorage:", error);
-    }
+    const loadWidgets = async () => {
+      try {
+        const response = await getWidgetSettings();
+        if (response.success && response.settings) {
+          setWidgets(response.settings);
+        }
+      } catch (error) {
+        console.error("Failed to load widgets:", error);
+        setError("Failed to load widgets. Please try again later.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadWidgets();
+  }, []);
+
+  // Save widgets to API whenever they change
+  useEffect(() => {
+    const saveWidgets = async () => {
+      if (widgets.length === 0) return; // Don't save on initial empty state
+      try {
+        await updateWidgetSettings(widgets);
+      } catch (error) {
+        console.error("Failed to save widgets:", error);
+        setError("Failed to save widget changes. Please try again later.");
+      }
+    };
+
+    saveWidgets();
   }, [widgets]);
 
   const onLayoutChange = (_layout: Layout[], allLayouts: ReactGridLayouts) => {
@@ -143,6 +163,22 @@ const Dashboard = () => {
       staticH: widget.staticH,
     })),
   };
+
+  if (isLoading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="text-white">Loading widgets...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="text-red-500">{error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full flex items-center gap-6 p-6 relative">
