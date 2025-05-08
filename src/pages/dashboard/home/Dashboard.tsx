@@ -177,9 +177,7 @@ const Dashboard = () => {
                   }`}
                 >
                   <div
-                    className={`relative h-full rounded-2xl backdrop-blur-xl border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300 ${
-                      widget.type === "clock" ? "bg-white/20" : "bg-black/20"
-                    }`}
+                    className={`relative h-full rounded-2xl backdrop-blur-xl border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300`}
                   >
                     {isModifyMode && (
                       <button

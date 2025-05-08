@@ -34,7 +34,7 @@ const ClockWidget = () => {
   };
 
   return (
-    <div className="h-full w-full rounded-xl bg-black/20 backdrop-blur-xl border border-white/10 shadow-lg flex flex-col">
+    <div className="h-full w-full rounded-xl bg-white/20 backdrop-blur-xl border border-white/10 shadow-lg flex flex-col">
       {/* Content */}
       <div className="flex-1 p-6 flex items-center justify-center">
         {/* Time (left) */}
