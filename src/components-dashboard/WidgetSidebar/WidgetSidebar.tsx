@@ -106,9 +106,9 @@ const WidgetSidebar = ({
       {/* Sidebar */}
       <div
         style={{
-          transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
-          transition: 'transform 0.5s ease-in-out, opacity 0.5s ease-in-out',
-          opacity: isOpen ? 1 : 0
+          transform: isOpen ? "translateX(0)" : "translateX(100%)",
+          transition: "transform 0.5s ease-in-out, opacity 0.5s ease-in-out",
+          opacity: isOpen ? 1 : 0,
         }}
         className="fixed top-0 right-0 h-screen w-96 z-50 widget-sidebar"
       >

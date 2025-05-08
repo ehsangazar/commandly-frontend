@@ -24,7 +24,7 @@ import {
   intervalToDuration,
 } from "date-fns";
 import { Props as DefaultLegendContentProps } from "recharts/types/component/DefaultLegendContent";
-import StatsModal from "@/components/Modals/StatsModal";
+import StatsModal from "@/components-dashboard/Modals/StatsModal";
 import { getAuthToken } from "@/utils/auth";
 
 interface DomainStats {

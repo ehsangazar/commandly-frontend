@@ -287,14 +287,15 @@ const Sidebar = ({
 
   return (
     <>
-      <GlassmorphismBackground fullRadius={true} className="!backdrop-blur-2xl !bg-white/10 !h-fit">
+      <GlassmorphismBackground
+        fullRadius={true}
+        className="!backdrop-blur-2xl !bg-white/10 !h-fit"
+      >
         <div className="h-fit rounded-2xl w-16 flex flex-col items-center py-4 gap-2">
           <button
             onClick={() => onModifyModeChange(!isModifyMode)}
             className={`p-3.5 rounded-full transition-all duration-300 text-black ${
-              isModifyMode
-                ? "bg-gray-300"
-                : "bg-gray-200 shadow-lg"
+              isModifyMode ? "bg-gray-300" : "bg-gray-200 shadow-lg"
             }`}
             title={isModifyMode ? "Exit modify mode" : "Enter modify mode"}
           >

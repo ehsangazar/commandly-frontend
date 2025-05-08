@@ -5,7 +5,7 @@ import {
   FiRefreshCw,
   FiExternalLink,
   FiBarChart2,
-  FiMaximize
+  FiMaximize,
 } from "react-icons/fi";
 import {
   startOfDay,
@@ -15,7 +15,7 @@ import {
   startOfMonth,
   endOfMonth,
 } from "date-fns";
-import StatsModal from "@/components/Modals/StatsModal";
+import StatsModal from "@/components-dashboard/Modals/StatsModal";
 import { getAuthToken } from "@/utils/auth";
 
 const API_BASE_URL =
@@ -122,7 +122,7 @@ const StatsWidget = () => {
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
-    
+
     if (hours > 0) {
       return `${hours}h ${minutes}m`;
     }
@@ -130,10 +130,13 @@ const StatsWidget = () => {
   };
 
   const getMaxTime = (period: "daily" | "weekly" | "monthly") => {
-    return Math.max(...stats[period].map(item => item.time));
+    return Math.max(...stats[period].map((item) => item.time));
   };
 
-  const getBarWidth = (time: number, period: "daily" | "weekly" | "monthly") => {
+  const getBarWidth = (
+    time: number,
+    period: "daily" | "weekly" | "monthly"
+  ) => {
     const maxTime = getMaxTime(period);
     return `${(time / maxTime) * 100}%`;
   };
@@ -203,8 +206,12 @@ const StatsWidget = () => {
             <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center">
               <FiBarChart2 className="h-6 w-6" />
             </div>
-            <p className="!text-sm">No browsing data available for this period</p>
-            <p className="!text-xs text-white/40">Start browsing to see your statistics</p>
+            <p className="!text-sm">
+              No browsing data available for this period
+            </p>
+            <p className="!text-xs text-white/40">
+              Start browsing to see your statistics
+            </p>
           </div>
         ) : (
           <div className="space-y-2">

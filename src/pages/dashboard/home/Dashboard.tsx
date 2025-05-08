@@ -7,12 +7,12 @@ import {
 } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "react-resizable/css/styles.css";
-import GlassmorphismBackground from "@/components/GlassmorphismBackground";
-import StatsWidget from "@/components/Widgets/StatsWidget/StatsWidget";
-import ClipsWidget from "@/components/Widgets/ClipsWidget/ClipsWidget";
-import ClockWidget from "@/components/Widgets/ClockWidget/ClockWidget";
-import DiagramWidget from "@/components/Widgets/DiagramWidget/DiagramWidget";
-import Sidebar from "@/components/Sidebar/Sidebar";
+import GlassmorphismBackground from "@/components-dashboard/GlassmorphismBackground";
+import StatsWidget from "@/components-dashboard/Widgets/StatsWidget/StatsWidget";
+import ClipsWidget from "@/components-dashboard/Widgets/ClipsWidget/ClipsWidget";
+import ClockWidget from "@/components-dashboard/Widgets/ClockWidget/ClockWidget";
+import DiagramWidget from "@/components-dashboard/Widgets/DiagramWidget/DiagramWidget";
+import Sidebar from "@/components-dashboard/Sidebar/Sidebar";
 import { useOutletContext } from "react-router-dom";
 
 interface DashboardContext {
