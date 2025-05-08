@@ -287,14 +287,14 @@ const Sidebar = ({
 
   return (
     <>
-      <GlassmorphismBackground className="!backdrop-blur-2xl !bg-white/10">
-        <div className="h-fit rounded-2xl w-16 flex flex-col items-center py-6 gap-6">
+      <GlassmorphismBackground fullRadius={true} className="!backdrop-blur-2xl !bg-white/10 !h-fit">
+        <div className="h-fit rounded-2xl w-16 flex flex-col items-center py-4 gap-2">
           <button
             onClick={() => onModifyModeChange(!isModifyMode)}
-            className={`p-3.5 rounded-xl transition-all duration-300 hover:scale-110 active:scale-95 ${
+            className={`p-3.5 rounded-full transition-all duration-300 text-black ${
               isModifyMode
-                ? "bg-[var(--commandly-primary)] text-white shadow-lg"
-                : "bg-white/10 text-white/80 hover:text-white hover:bg-white/20"
+                ? "bg-gray-300"
+                : "bg-gray-200 shadow-lg"
             }`}
             title={isModifyMode ? "Exit modify mode" : "Enter modify mode"}
           >
@@ -303,7 +303,7 @@ const Sidebar = ({
 
           <button
             onClick={() => setIsWidgetSidebarOpen((prevState) => !prevState)}
-            className="p-3.5 rounded-xl bg-white/10 text-white/80 hover:text-white hover:bg-white/20 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg"
+            className="p-3.5 rounded-full text-black transition-all duration-300 shadow-lg bg-gray-200 focus:bg-gray-300 focus:shadow-none"
             title="Add Widget"
           >
             <FiPlus className="w-5 h-5" />
@@ -311,7 +311,7 @@ const Sidebar = ({
 
           <button
             onClick={() => setIsSettingsOpen(true)}
-            className="p-3.5 rounded-xl bg-white/10 text-white/80 hover:text-white hover:bg-white/20 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg"
+            className="p-3.5 rounded-full bg-gray-200 text-black transition-all duration-300 shadow-lg focus:bg-gray-300 focus:shadow-none"
             title="Settings"
           >
             <FiSettings className="w-5 h-5" />
@@ -319,13 +319,13 @@ const Sidebar = ({
 
           <button
             onClick={onChangeBackground}
-            className="relative p-3.5 rounded-xl bg-white/10 text-white/80 hover:text-white hover:bg-white/20 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg group overflow-hidden"
+            className="relative p-3.5 rounded-full bg-gray-200 text-black transition-all duration-300 group overflow-hidden shadow-lg focus:bg-gray-300 focus:shadow-none"
             title="Change background"
           >
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-orange-500/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 animate-pulse transition-opacity duration-300" />
-            <FiImage className="w-5 h-5 relative z-10 transform group-hover:rotate-12 transition-transform duration-300" />
-            <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-orange-500/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10" />
+            <div className="absolute" />
+            <div className="absolute inset-0 bg-white/5" />
+            <FiImage className="w-5 h-5 relative z-10" />
+            <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-orange-500/20 rounded-xl blur -z-10" />
           </button>
         </div>
       </GlassmorphismBackground>
