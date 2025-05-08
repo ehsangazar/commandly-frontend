@@ -126,7 +126,7 @@ const StatsWidget = () => {
       <div className="h-full w-full rounded-xl bg-black/20 backdrop-blur-xl border border-white/10 shadow-lg flex flex-col">
         {/* Header */}
         <div className="p-4 border-b border-white/10">
-          <div className="flex items-center justify-between">
+          <div className="flex sm:flex-row flex-col items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-[var(--commandly-primary)]/20 flex items-center justify-center">
                 <FiGlobe className="h-5 w-5 text-[var(--commandly-primary)]" />

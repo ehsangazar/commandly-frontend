@@ -294,7 +294,7 @@ const Sidebar = ({
             className={`p-3.5 rounded-xl transition-all duration-300 hover:scale-110 active:scale-95 ${
               isModifyMode
                 ? "bg-[var(--commandly-primary)] text-white shadow-lg"
-                : "bg-white/10 text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)] hover:bg-white/20"
+                : "bg-white/10 text-white/80 hover:text-white hover:bg-white/20"
             }`}
             title={isModifyMode ? "Exit modify mode" : "Enter modify mode"}
           >
@@ -303,7 +303,7 @@ const Sidebar = ({
 
           <button
             onClick={() => setIsWidgetSidebarOpen((prevState) => !prevState)}
-            className="p-3.5 rounded-xl bg-white/10 text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)] hover:bg-white/20 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg"
+            className="p-3.5 rounded-xl bg-white/10 text-white/80 hover:text-white hover:bg-white/20 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg"
             title="Add Widget"
           >
             <FiPlus className="w-5 h-5" />
@@ -311,7 +311,7 @@ const Sidebar = ({
 
           <button
             onClick={() => setIsSettingsOpen(true)}
-            className="p-3.5 rounded-xl bg-white/10 text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)] hover:bg-white/20 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg"
+            className="p-3.5 rounded-xl bg-white/10 text-white/80 hover:text-white hover:bg-white/20 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg"
             title="Settings"
           >
             <FiSettings className="w-5 h-5" />
@@ -319,7 +319,7 @@ const Sidebar = ({
 
           <button
             onClick={onChangeBackground}
-            className="relative p-3.5 rounded-xl bg-white/10 text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-text-primary)] hover:bg-white/20 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg group overflow-hidden"
+            className="relative p-3.5 rounded-xl bg-white/10 text-white/80 hover:text-white hover:bg-white/20 transition-all duration-300 hover:scale-110 active:scale-95 shadow-lg group overflow-hidden"
             title="Change background"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-orange-500/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />

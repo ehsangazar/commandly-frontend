@@ -105,13 +105,16 @@ const WidgetSidebar = ({
 
       {/* Sidebar */}
       <div
-        className={`fixed top-0 right-0 h-screen w-96 transform transition-transform duration-500 ease-out z-50 widget-sidebar ${
-          isOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        style={{
+          transform: isOpen ? 'translateX(0)' : 'translateX(100%)',
+          transition: 'transform 0.5s ease-in-out, opacity 0.5s ease-in-out',
+          opacity: isOpen ? 1 : 0
+        }}
+        className="fixed top-0 right-0 h-screen w-96 z-50 widget-sidebar"
       >
         <GlassmorphismBackground className="h-full !backdrop-blur-2xl !bg-black/20">
           {/* Header - Fixed at top */}
-          <div className="absolute top-0 left-0 right-0 p-6 bg-black/20 backdrop-blur-xl border-b border-white/10">
+          <div className="absolute top-0 left-0 right-0 p-6 bg-black/20 backdrop-blur-xl border-b border-white/10 transition-all duration-500">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold text-white/90">
                 Add Widget
