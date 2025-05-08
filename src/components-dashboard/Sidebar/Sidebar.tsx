@@ -53,6 +53,13 @@ interface Subscription {
   plan: Plan;
 }
 
+const Tooltip = ({ text }: { text: string }) => (
+  <div className="absolute left-[calc(100%+8px)] top-1/2 -translate-y-1/2 px-2 py-1 bg-gray-900 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-[100]">
+    {text}
+    <div className="absolute right-full top-1/2 -translate-y-1/2 border-4 border-transparent border-r-gray-900" />
+  </div>
+);
+
 const SettingsModal = ({ onClose }: { onClose: () => void }) => {
   const navigate = useNavigate();
   const modalRef = useRef<HTMLDivElement>(null);
@@ -290,43 +297,46 @@ const Sidebar = ({
       <GlassmorphismBackground
         fullRadius={true}
         className="!backdrop-blur-2xl !bg-white/10 !h-fit"
+        zIndex={2}
       >
         <div className="h-fit rounded-2xl w-16 flex flex-col items-center py-4 gap-2">
           <button
             onClick={() => onModifyModeChange(!isModifyMode)}
-            className={`p-3.5 rounded-full transition-all duration-300 text-black ${
+            className={`p-3.5 cursor-pointer rounded-full transition-all duration-300 text-black relative group ${
               isModifyMode ? "bg-gray-300" : "bg-gray-200 shadow-lg"
             }`}
-            title={isModifyMode ? "Exit modify mode" : "Enter modify mode"}
           >
             <FiGrid className="w-5 h-5" />
+            <Tooltip
+              text={isModifyMode ? "Exit modify mode" : "Enter modify mode"}
+            />
           </button>
 
           <button
             onClick={() => setIsWidgetSidebarOpen((prevState) => !prevState)}
-            className="p-3.5 rounded-full text-black transition-all duration-300 shadow-lg bg-gray-200 focus:bg-gray-300 focus:shadow-none"
-            title="Add Widget"
+            className="p-3.5 cursor-pointer rounded-full text-black transition-all duration-300 shadow-lg bg-gray-200 focus:bg-gray-300 focus:shadow-none relative group"
           >
             <FiPlus className="w-5 h-5" />
+            <Tooltip text="Add Widget" />
           </button>
 
           <button
             onClick={() => setIsSettingsOpen(true)}
-            className="p-3.5 rounded-full bg-gray-200 text-black transition-all duration-300 shadow-lg focus:bg-gray-300 focus:shadow-none"
-            title="Settings"
+            className="p-3.5 cursor-pointer rounded-full bg-gray-200 text-black transition-all duration-300 shadow-lg focus:bg-gray-300 focus:shadow-none relative group"
           >
             <FiSettings className="w-5 h-5" />
+            <Tooltip text="Settings" />
           </button>
 
           <button
             onClick={onChangeBackground}
-            className="relative p-3.5 rounded-full bg-gray-200 text-black transition-all duration-300 group overflow-hidden shadow-lg focus:bg-gray-300 focus:shadow-none"
-            title="Change background"
+            className="relative p-3.5 cursor-pointer rounded-full bg-gray-200 text-black transition-all duration-300 group overflow-hidden shadow-lg focus:bg-gray-300 focus:shadow-none"
           >
             <div className="absolute" />
             <div className="absolute inset-0 bg-white/5" />
             <FiImage className="w-5 h-5 relative z-10" />
             <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/20 via-pink-500/20 to-orange-500/20 rounded-xl blur -z-10" />
+            <Tooltip text="Change background" />
           </button>
         </div>
       </GlassmorphismBackground>
