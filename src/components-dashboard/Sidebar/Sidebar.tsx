@@ -308,6 +308,12 @@ const Sidebar = ({
     }
   };
 
+  const buttonBaseClasses =
+    "p-3.5 cursor-pointer rounded-full transition-all duration-300 text-black relative group hover:scale-110 active:scale-95";
+  const buttonActiveClasses = "bg-purple-500 text-white shadow-lg";
+  const buttonInactiveClasses =
+    "bg-gray-200 shadow-lg hover:shadow-xl hover:bg-gray-100";
+
   return (
     <>
       <GlassmorphismBackground
@@ -319,10 +325,8 @@ const Sidebar = ({
         <div className="h-fit rounded-2xl w-16 flex flex-col items-center py-4 gap-2">
           <button
             onClick={() => navigate("/dashboard")}
-            className={`p-3.5 cursor-pointer rounded-full transition-all duration-300 text-black relative group hover:scale-110 active:scale-95 ${
-              isBaseDashboard
-                ? "bg-gray-300"
-                : "bg-gray-200 shadow-lg hover:shadow-xl"
+            className={`${buttonBaseClasses} ${
+              isBaseDashboard ? buttonActiveClasses : buttonInactiveClasses
             }`}
           >
             <FiLayout className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12" />
@@ -332,10 +336,8 @@ const Sidebar = ({
           {!hasQueryParams && (
             <button
               onClick={() => onModifyModeChange(!isModifyMode)}
-              className={`p-3.5 cursor-pointer rounded-full transition-all duration-300 text-black relative group hover:scale-110 active:scale-95 ${
-                isModifyMode
-                  ? "bg-gray-300"
-                  : "bg-gray-200 shadow-lg hover:shadow-xl"
+              className={`${buttonBaseClasses} ${
+                isModifyMode ? buttonActiveClasses : buttonInactiveClasses
               }`}
             >
               <FiGrid className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12" />
@@ -348,7 +350,7 @@ const Sidebar = ({
           {!hasQueryParams && (
             <button
               onClick={() => setIsWidgetSidebarOpen((prevState) => !prevState)}
-              className="p-3.5 cursor-pointer rounded-full text-black transition-all duration-300 shadow-lg bg-gray-200 hover:shadow-xl focus:bg-gray-300 focus:shadow-none relative group hover:scale-110 active:scale-95"
+              className={`${buttonBaseClasses} ${buttonInactiveClasses}`}
             >
               <FiPlus className="w-5 h-5 transition-transform duration-300 group-hover:rotate-90" />
               <Tooltip text="Add Widget" />
@@ -357,7 +359,7 @@ const Sidebar = ({
 
           <button
             onClick={() => setIsSettingsOpen(true)}
-            className="p-3.5 cursor-pointer rounded-full bg-gray-200 text-black transition-all duration-300 shadow-lg hover:shadow-xl focus:bg-gray-300 focus:shadow-none relative group hover:scale-110 active:scale-95"
+            className={`${buttonBaseClasses} ${buttonInactiveClasses}`}
           >
             <FiSettings className="w-5 h-5 transition-transform duration-300 group-hover:rotate-45" />
             <Tooltip text="Settings" />
@@ -365,7 +367,7 @@ const Sidebar = ({
 
           <button
             onClick={onChangeBackground}
-            className="p-3.5 cursor-pointer rounded-full bg-gray-200 text-black transition-all duration-300 shadow-lg hover:shadow-xl focus:bg-gray-300 focus:shadow-none relative group hover:scale-110 active:scale-95"
+            className={`${buttonBaseClasses} ${buttonInactiveClasses}`}
           >
             <FiImage className="w-5 h-5 transition-transform duration-300 group-hover:rotate-45" />
             <Tooltip text="Change background" />
@@ -373,8 +375,8 @@ const Sidebar = ({
 
           <button
             onClick={handleClipsClick}
-            className={`p-3.5 cursor-pointer rounded-full text-black transition-all duration-300 shadow-lg hover:shadow-xl focus:bg-gray-300 focus:shadow-none relative group hover:scale-110 active:scale-95 ${
-              isClipsView ? "bg-gray-300" : "bg-gray-200"
+            className={`${buttonBaseClasses} ${
+              isClipsView ? buttonActiveClasses : buttonInactiveClasses
             }`}
           >
             <FiScissors className="w-5 h-5 transition-transform duration-300 group-hover:rotate-45" />
