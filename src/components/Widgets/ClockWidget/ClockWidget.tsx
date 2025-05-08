@@ -21,34 +21,31 @@ const ClockWidget = () => {
     };
   }, []);
 
-  // Format time as HH:MM:SS
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString("en-US", {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-      hour12: false,
-    });
-  };
+  // Get hours and minutes as two-digit strings
+  const getHours = (date: Date) => date.getHours().toString().padStart(2, '0');
+  const getMinutes = (date: Date) => date.getMinutes().toString().padStart(2, '0');
 
-  // Format date as Day, Month Date
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString("en-US", {
-      weekday: "long",
-      month: "long",
-      day: "numeric",
-    });
+  // Get day of week (short) and date (e.g., May 4)
+  const getDay = (date: Date) => date.toLocaleDateString("en-US", { weekday: "short" });
+  const getMonthDay = (date: Date) => {
+    const month = date.toLocaleDateString("en-US", { month: "short" });
+    const day = date.getDate();
+    return `${month} ${day}`;
   };
 
   return (
     <div className="h-full w-full rounded-xl bg-black/20 backdrop-blur-xl border border-white/10 shadow-lg flex flex-col">
       {/* Content */}
-      <div className="flex-1 p-6 flex flex-col items-center justify-center">
-        <div className="text-4xl font-medium text-white tracking-wide">
-          {formatTime(time)}
+      <div className="flex-1 p-6 flex items-center justify-center">
+        {/* Time (left) */}
+        <div className="flex flex-col items-end mr-4">
+          <span className="text-5xl font-medium text-white leading-none">{getHours(time)}</span>
+          <span className="text-5xl font-medium text-white leading-none mt-1">{getMinutes(time)}</span>
         </div>
-        <div className="text-base text-white/70 mt-3 font-medium">
-          {formatDate(date)}
+        {/* Date (right) */}
+        <div className="flex flex-col items-start ml-2">
+          <span className="text-xl text-white/80 font-medium">{getDay(date)},</span>
+          <span className="text-xl text-white/80 font-medium">{getMonthDay(date)}</span>
         </div>
       </div>
     </div>
