@@ -114,7 +114,6 @@ const WidgetSidebar = ({
       >
         <GlassmorphismBackground
           className="h-full !backdrop-blur-2xl !bg-black/20"
-          overflowY={true}
         >
           {/* Header - Fixed at top */}
           <div className="sticky top-0 p-6 bg-black/20 backdrop-blur-xl border-b border-white/10">

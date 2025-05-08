@@ -2,6 +2,7 @@ import { useSearchParams } from "react-router-dom";
 import GlassmorphismBackground from "@/components-dashboard/GlassmorphismBackground";
 import Clips from "./Clips";
 import Dashboard from "./Dashboard";
+import Settings from "./Settings";
 
 export interface Widget {
   id: string;
@@ -16,14 +17,15 @@ export interface Widget {
 const App = () => {
   const [searchParams] = useSearchParams();
   const showClip = searchParams.get("clip") === "true";
-
+  const showSettings = searchParams.get("settings") === "true";
   return (
     <GlassmorphismBackground
       className="!backdrop-blur-2xl !bg-black/30"
-      overflowY={true}
     >
       <div className="p-6">
-        {showClip ? (
+        {showSettings ? (
+          <Settings />
+        ) : showClip ? (
           <div className="h-full">
             <Clips />
           </div>
