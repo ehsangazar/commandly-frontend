@@ -31,6 +31,7 @@ const App = () => {
         {/* Dashboard Routes */}
         <Route element={<DashboardLayout />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard.html" element={<Dashboard />} />
         </Route>
 
         {/* Main Layout Routes */}
