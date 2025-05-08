@@ -7,21 +7,21 @@ import {
   saveBackgroundIndex,
 } from "@/utils/backgrounds";
 import LoginForm from "@/components-dashboard/LoginForm/LoginForm";
-
-interface DashboardLayoutProps {
-  title?: string;
-}
+import Sidebar from "@/components-dashboard/Sidebar/Sidebar";
+import { Widget } from "@/pages/dashboard/App";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
 
-const DashboardLayout = ({ title }: DashboardLayoutProps) => {
+const DashboardLayout = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(
     getSavedBackgroundIndex()
   );
   const currentBackground = backgrounds[currentBackgroundIndex];
+  const [isModifyMode, setIsModifyMode] = useState(false);
+  const [widgets, setWidgets] = useState<Widget[]>([]);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -52,10 +52,41 @@ const DashboardLayout = ({ title }: DashboardLayoutProps) => {
     checkAuth();
   }, []);
 
+  const widgetSizes = {
+    stats: { w: 4, h: 3 },
+    clips: { w: 4, h: 3 },
+    clock: { w: 2, h: 2 },
+    diagram: { w: 4, h: 3 },
+  };
+
   const handleBackgroundChange = () => {
     const newIndex = (currentBackgroundIndex + 1) % backgrounds.length;
     setCurrentBackgroundIndex(newIndex);
     saveBackgroundIndex(newIndex);
+  };
+
+  const handleAddWidget = (widgetType: string) => {
+    if (!["stats", "clips", "clock", "diagram"].includes(widgetType)) return;
+
+    // Generate a unique ID for the new widget
+    const newId = `${widgetType}-${Date.now()}`;
+
+    // Find the highest y position to place the new widget below existing ones
+    const maxY = Math.max(...widgets.map((w) => w.y + w.h), 0);
+
+    // Create the new widget with different default sizes based on type
+    const newWidget: Widget = {
+      id: newId,
+      type: widgetType as Widget["type"],
+      x: 0,
+      y: maxY,
+      w: widgetSizes[widgetType as keyof typeof widgetSizes].w,
+      h: widgetSizes[widgetType as keyof typeof widgetSizes].h,
+      staticH: true,
+    };
+
+    // Add the new widget to the state
+    setWidgets([...widgets, newWidget]);
   };
 
   if (isLoading) {
@@ -71,29 +102,21 @@ const DashboardLayout = ({ title }: DashboardLayoutProps) => {
   }
 
   return (
-    <div className="min-h-screen bg-[var(--commandly-background)] relative">
-      <div
-        style={{
-          backgroundImage: `url(${currentBackground.url})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-        className="fixed inset-0 transition-all duration-700 ease-in-out"
+    <div
+      className="w-full flex items-center gap-6 p-6 relative h-screen"
+      style={{ backgroundImage: `url(${currentBackground.url})` }}
+    >
+      <Sidebar
+        isModifyMode={isModifyMode}
+        onModifyModeChange={setIsModifyMode}
+        onAddWidget={handleAddWidget}
+        onChangeBackground={handleBackgroundChange}
+        existingWidgets={widgets}
       />
-      <div
-        className={`fixed inset-0 bg-gradient-to-br ${currentBackground.color} transition-all duration-700 ease-in-out`}
-      />
-
-      {/* Main Content */}
-      <div className="relative min-h-screen z-10 h-screen">
-        {title && (
-          <h2 className="text-2xl font-bold text-[var(--commandly-text-primary)] mb-6 px-8 pt-6">
-            {title}
-          </h2>
-        )}
-        <div className="h-full">
-          <Outlet context={{ onChangeBackground: handleBackgroundChange }} />
-        </div>
+      <div className="relative flex-1 overflow-auto h-full">
+        <Outlet
+          context={{ isModifyMode, setIsModifyMode, widgets, setWidgets }}
+        />
       </div>
     </div>
   );

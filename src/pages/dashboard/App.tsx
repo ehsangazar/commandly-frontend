@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useOutletContext } from "react-router-dom";
 import {
   Responsive,
   WidthProvider,
@@ -13,20 +13,19 @@ import StatsWidget from "@/components-dashboard/Widgets/StatsWidget/StatsWidget"
 import ClipsWidget from "@/components-dashboard/Widgets/ClipsWidget/ClipsWidget";
 import ClockWidget from "@/components-dashboard/Widgets/ClockWidget/ClockWidget";
 import DiagramWidget from "@/components-dashboard/Widgets/DiagramWidget/DiagramWidget";
-import Sidebar from "@/components-dashboard/Sidebar/Sidebar";
-import { useOutletContext } from "react-router-dom";
 import {
   getWidgetSettings,
   updateWidgetSettings,
 } from "@/services/widgetSettings";
 
 interface DashboardContext {
-  onChangeBackground: () => void;
+  isModifyMode: boolean;
+  setIsModifyMode: (value: boolean) => void;
+  widgets: Widget[];
+  setWidgets: (widgets: Widget[]) => void;
 }
 
-const ResponsiveGridLayout = WidthProvider(Responsive);
-
-interface Widget {
+export interface Widget {
   id: string;
   type: "stats" | "clips" | "clock" | "diagram";
   x: number;
@@ -36,13 +35,13 @@ interface Widget {
   staticH: boolean;
 }
 
+const ResponsiveGridLayout = WidthProvider(Responsive);
+
 const Dashboard = () => {
   const [searchParams] = useSearchParams();
   const showClip = searchParams.get("clip") === "true";
-
-  const { onChangeBackground } = useOutletContext<DashboardContext>();
-  const [isModifyMode, setIsModifyMode] = useState(false);
-  const [widgets, setWidgets] = useState<Widget[]>([]);
+  const { isModifyMode, widgets, setWidgets } =
+    useOutletContext<DashboardContext>();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -63,7 +62,7 @@ const Dashboard = () => {
     };
 
     loadWidgets();
-  }, []);
+  }, [setWidgets]);
 
   // Save widgets to API whenever they change
   useEffect(() => {
@@ -95,37 +94,6 @@ const Dashboard = () => {
     });
 
     setWidgets(updatedWidgets);
-  };
-
-  const widgetSizes = {
-    stats: { w: 4, h: 3 },
-    clips: { w: 4, h: 3 },
-    clock: { w: 2, h: 2 },
-    diagram: { w: 4, h: 3 },
-  };
-
-  const handleAddWidget = (widgetType: string) => {
-    if (!["stats", "clips", "clock", "diagram"].includes(widgetType)) return;
-
-    // Generate a unique ID for the new widget
-    const newId = `${widgetType}-${Date.now()}`;
-
-    // Find the highest y position to place the new widget below existing ones
-    const maxY = Math.max(...widgets.map((w) => w.y + w.h), 0);
-
-    // Create the new widget with different default sizes based on type
-    const newWidget: Widget = {
-      id: newId,
-      type: widgetType as Widget["type"],
-      x: 0,
-      y: maxY,
-      w: widgetSizes[widgetType as keyof typeof widgetSizes].w,
-      h: widgetSizes[widgetType as keyof typeof widgetSizes].h,
-      staticH: true,
-    };
-
-    // Add the new widget to the state
-    setWidgets([...widgets, newWidget]);
   };
 
   const handleRemoveWidget = (widgetId: string) => {
@@ -184,70 +152,57 @@ const Dashboard = () => {
     );
   }
 
-  if (showClip) {
-    return (
-      <div className="w-full h-full flex items-center justify-center">
-        <ClipsWidget />
-      </div>
-    );
-  }
-
   return (
-    <div className="w-full h-full flex items-center gap-6 p-6 relative">
-      <Sidebar
-        isModifyMode={isModifyMode}
-        onModifyModeChange={setIsModifyMode}
-        onAddWidget={handleAddWidget}
-        onChangeBackground={onChangeBackground}
-        existingWidgets={widgets}
-      />
-      <div className="relative flex-1 overflow-auto h-full">
-        <GlassmorphismBackground className="!backdrop-blur-2xl !bg-black/10">
-          <div className="p-6">
-            <ResponsiveGridLayout
-              className="layout"
-              layouts={layouts}
-              breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480 }}
-              cols={{ lg: 12, md: 9, sm: 6, xs: 3 }}
-              rowHeight={100}
-              onLayoutChange={onLayoutChange}
-              isDraggable={isModifyMode}
-              isResizable={false}
-              margin={[20, 20]}
-              containerPadding={[0, 0]}
-              useCSSTransforms
-            >
-              {widgets.map((widget) => (
-                <div
-                  key={widget.id}
-                  className={`h-full transition-all duration-300 ${
-                    isModifyMode ? "cursor-move" : "cursor-default"
-                  }`}
-                >
-                  <div
-                    className={`relative h-full rounded-2xl backdrop-blur-xl border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300`}
-                  >
-                    {isModifyMode && (
-                      <button
-                        onClick={() => handleRemoveWidget(widget.id)}
-                        className="absolute -top-2 -right-2 z-10 w-6 h-6 bg-white text-gray-500 rounded-full flex items-center justify-center shadow-lg hover:text-black transition-colors duration-200"
-                        title="Remove widget"
-                      >
-                        -
-                      </button>
-                    )}
-                    {widget.type === "stats" && <StatsWidget />}
-                    {widget.type === "clips" && <ClipsWidget />}
-                    {widget.type === "clock" && <ClockWidget />}
-                    {widget.type === "diagram" && <DiagramWidget />}
-                  </div>
-                </div>
-              ))}
-            </ResponsiveGridLayout>
+    <GlassmorphismBackground className="!backdrop-blur-2xl !bg-black/10">
+      <div className="p-6">
+        {showClip ? (
+          <div className="h-full">
+            <ClipsWidget />
           </div>
-        </GlassmorphismBackground>
+        ) : (
+          <ResponsiveGridLayout
+            className="layout"
+            layouts={layouts}
+            breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480 }}
+            cols={{ lg: 12, md: 9, sm: 6, xs: 3 }}
+            rowHeight={100}
+            onLayoutChange={onLayoutChange}
+            isDraggable={isModifyMode}
+            isResizable={false}
+            margin={[20, 20]}
+            containerPadding={[0, 0]}
+            useCSSTransforms
+          >
+            {widgets.map((widget) => (
+              <div
+                key={widget.id}
+                className={`h-full transition-all duration-300 ${
+                  isModifyMode ? "cursor-move" : "cursor-default"
+                }`}
+              >
+                <div
+                  className={`relative h-full rounded-2xl backdrop-blur-xl border border-white/20 shadow-lg hover:shadow-xl transition-all duration-300`}
+                >
+                  {isModifyMode && (
+                    <button
+                      onClick={() => handleRemoveWidget(widget.id)}
+                      className="absolute -top-2 -right-2 z-10 w-6 h-6 bg-white text-gray-500 rounded-full flex items-center justify-center shadow-lg hover:text-black transition-colors duration-200"
+                      title="Remove widget"
+                    >
+                      -
+                    </button>
+                  )}
+                  {widget.type === "stats" && <StatsWidget />}
+                  {widget.type === "clips" && <ClipsWidget />}
+                  {widget.type === "clock" && <ClockWidget />}
+                  {widget.type === "diagram" && <DiagramWidget />}
+                </div>
+              </div>
+            ))}
+          </ResponsiveGridLayout>
+        )}
       </div>
-    </div>
+    </GlassmorphismBackground>
   );
 };
 
