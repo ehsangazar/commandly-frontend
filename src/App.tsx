@@ -13,7 +13,7 @@ import Download from "@/pages/download/Download";
 import Features from "@/pages/features/Features";
 import Profile from "@/pages/profile/Profile";
 import Login from "@/pages/login/Login";
-import Dashboard from "@/pages/dashboard/home/Dashboard";
+import DashboardApp from "@/pages/dashboard/App";
 import NotFound from "@/pages/NotFound";
 import CareersSingle from "@/pages/careers/CareersSingle";
 import BlogSingle from "./pages/blog/BlogSingle";
@@ -30,8 +30,8 @@ const App = () => {
 
         {/* Dashboard Routes */}
         <Route element={<DashboardLayout />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/dashboard.html" element={<Dashboard />} />
+          <Route path="/dashboard" element={<DashboardApp />} />
+          <Route path="/dashboard.html" element={<DashboardApp />} />
         </Route>
 
         {/* Main Layout Routes */}

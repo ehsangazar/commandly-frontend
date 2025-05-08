@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   Responsive,
   WidthProvider,
@@ -36,6 +37,9 @@ interface Widget {
 }
 
 const Dashboard = () => {
+  const [searchParams] = useSearchParams();
+  const showClip = searchParams.get("clip") === "true";
+
   const { onChangeBackground } = useOutletContext<DashboardContext>();
   const [isModifyMode, setIsModifyMode] = useState(false);
   const [widgets, setWidgets] = useState<Widget[]>([]);
@@ -176,6 +180,14 @@ const Dashboard = () => {
     return (
       <div className="w-full h-full flex items-center justify-center">
         <div className="text-red-500">{error}</div>
+      </div>
+    );
+  }
+
+  if (showClip) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <ClipsWidget />
       </div>
     );
   }
