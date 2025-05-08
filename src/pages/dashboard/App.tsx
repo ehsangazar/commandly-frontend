@@ -18,7 +18,10 @@ const App = () => {
   const showClip = searchParams.get("clip") === "true";
 
   return (
-    <GlassmorphismBackground className="!backdrop-blur-2xl !bg-black/30">
+    <GlassmorphismBackground
+      className="!backdrop-blur-2xl !bg-black/30"
+      overflowY={true}
+    >
       <div className="p-6">
         {showClip ? (
           <div className="h-full">

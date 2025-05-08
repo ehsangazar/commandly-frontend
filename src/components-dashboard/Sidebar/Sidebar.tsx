@@ -314,6 +314,7 @@ const Sidebar = ({
         fullRadius={true}
         className="!backdrop-blur-2xl !bg-white/10 !h-fit"
         zIndex={2}
+        overflowY={false}
       >
         <div className="h-fit rounded-2xl w-16 flex flex-col items-center py-4 gap-2">
           <button

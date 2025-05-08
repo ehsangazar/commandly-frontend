@@ -4,6 +4,7 @@ interface GlassmorphismBackgroundProps {
   children: React.ReactNode;
   className?: string;
   fullRadius?: boolean;
+  overflowY?: boolean;
   zIndex?: number;
 }
 
@@ -11,11 +12,14 @@ const GlassmorphismBackground: React.FC<GlassmorphismBackgroundProps> = ({
   children,
   className = "",
   fullRadius = false,
+  overflowY = false,
   zIndex = 0,
 }) => {
   return (
     <div
-      className={`relative backdrop-blur-md bg-white/10 dark:bg-gray-800/40 overflow-y-scroll ${
+      className={`relative backdrop-blur-md bg-white/10 dark:bg-gray-800/40 ${
+        overflowY ? "overflow-y-scroll" : ""
+      } ${
         fullRadius ? "rounded-full" : "rounded-2xl"
       } shadow-lg border border-white/30 dark:border-gray-700/30 h-full ${className}`}
       style={{ zIndex }}

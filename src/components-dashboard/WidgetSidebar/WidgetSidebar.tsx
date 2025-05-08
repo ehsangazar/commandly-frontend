@@ -112,7 +112,10 @@ const WidgetSidebar = ({
         }}
         className="fixed top-0 right-0 h-screen w-96 z-50 widget-sidebar"
       >
-        <GlassmorphismBackground className="h-full !backdrop-blur-2xl !bg-black/20">
+        <GlassmorphismBackground
+          className="h-full !backdrop-blur-2xl !bg-black/20"
+          overflowY={true}
+        >
           {/* Header - Fixed at top */}
           <div className="sticky top-0 p-6 bg-black/20 backdrop-blur-xl border-b border-white/10">
             <div className="flex items-center justify-between">
