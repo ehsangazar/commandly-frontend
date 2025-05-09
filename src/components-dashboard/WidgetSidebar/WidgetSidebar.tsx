@@ -1,13 +1,10 @@
 import { useEffect } from "react";
 import {
-  FiX,
   FiBarChart2,
   FiClock,
   FiClipboard,
   FiPieChart,
-  FiAlertCircle,
 } from "react-icons/fi";
-import GlassmorphismBackground from "../GlassmorphismBackground";
 
 interface WidgetSidebarProps {
   isOpen: boolean;
@@ -63,7 +60,7 @@ const WidgetSidebar = ({
       title: "Clips Widget",
       description: "Save and organize text snippets",
       icon: FiClipboard,
-      preview: "/widgets/clips-preview.png",
+      preview: "/widgets/stats-preview.png",
       unique: false,
       maxInstances: 1,
     },
@@ -112,26 +109,7 @@ const WidgetSidebar = ({
         }}
         className="fixed top-0 right-0 h-screen w-96 z-50 widget-sidebar"
       >
-        <GlassmorphismBackground
-          className="h-full !backdrop-blur-2xl !bg-black/20"
-        >
-          {/* Header - Fixed at top */}
-          <div className="sticky top-0 p-6 bg-black/20 backdrop-blur-xl border-b border-white/10">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xl font-semibold text-white/90">
-                Add Widget
-              </h2>
-              <button
-                onClick={onClose}
-                className="p-2 rounded-lg hover:bg-white/10 text-white/70 hover:text-white transition-colors duration-200"
-              >
-                <FiX className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Scrollable Content */}
-          <div className="h-[calc(100vh-88px)] overflow-y-auto py-6 pl-6 pr-4 custom-scrollbar">
+          <div className="h-full overflow-y-auto py-6 pl-6 pr-4 custom-scrollbar">
             <div className="space-y-6">
               {sortedWidgets.map((widget) => {
                 const instanceCount = existingWidgets.filter(
@@ -156,21 +134,17 @@ const WidgetSidebar = ({
                       className="w-full text-left"
                       disabled={isDisabled}
                     >
-                      <div className="mb-2 flex items-center gap-2 text-white/90">
-                        <widget.icon className="w-5 h-5 text-[var(--commandly-primary)]" />
+                      <div className="flex items-center gap-2 text-white/90 justify-between">
                         <span className="font-medium">{widget.title}</span>
                         {isDisabled && (
-                          <div className="flex items-center gap-1 text-white/50 text-sm">
-                            <FiAlertCircle className="w-4 h-4" />
+                          <div className="flex items-center gap-1 text-white/50 text-xs bg-black/20 rounded-lg px-4 py-1">
                             <span>
-                              {widget.unique
-                                ? "Already added"
-                                : `Maximum ${widget.maxInstances} allowed (${instanceCount} added)`}
+                              Already added
                             </span>
                           </div>
                         )}
                       </div>
-                      <p className="text-sm text-white/70 mb-3">
+                      <p className="!text-xs text-white/70 mb-3">
                         {widget.description}
                       </p>
                       <div
@@ -200,7 +174,6 @@ const WidgetSidebar = ({
               })}
             </div>
           </div>
-        </GlassmorphismBackground>
       </div>
     </>
   );
