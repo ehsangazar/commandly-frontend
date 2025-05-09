@@ -68,75 +68,82 @@ const Sidebar = ({
   return (
     <>
       <GlassmorphismBackground
-        fullRadius={true}
-        className="!backdrop-blur-2xl !bg-white/10 !h-fit"
+        fullRadius={false}
+        className="!backdrop-blur-2xl !bg-white/10"
         zIndex={2}
-        overflowY={false}
       >
-        <div className="h-fit rounded-2xl w-16 flex flex-col items-center py-4 gap-2">
-          <button
-            onClick={() => navigate("/dashboard")}
-            className={`${buttonBaseClasses} ${
-              isBaseDashboard ? buttonActiveClasses : buttonInactiveClasses
-            }`}
-          >
-            <FiLayout className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12" />
-            <Tooltip text="Dashboard" />
-          </button>
-
-          {!hasQueryParams && (
+        <div className="h-full rounded-2xl w-16 flex flex-col items-center py-4 gap-2 justify-between">
+          <div className="flex flex-col gap-2">
             <button
-              onClick={() => onModifyModeChange(!isModifyMode)}
+              onClick={() => navigate("/dashboard")}
               className={`${buttonBaseClasses} ${
-                isModifyMode ? buttonActiveClasses : buttonInactiveClasses
+                isBaseDashboard ? buttonActiveClasses : buttonInactiveClasses
               }`}
             >
-              <FiGrid className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12" />
+              <FiLayout className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12" />
+              <Tooltip text="Dashboard" />
+            </button>
+
+            {!hasQueryParams && (
+              <button
+                onClick={() => onModifyModeChange(!isModifyMode)}
+                className={`${buttonBaseClasses} ${
+                  isModifyMode ? buttonActiveClasses : buttonInactiveClasses
+                }`}
+              >
+                <FiGrid className="w-5 h-5 transition-transform duration-300 group-hover:rotate-12" />
+                <Tooltip
+                  text={isModifyMode ? "Exit modify mode" : "Enter modify mode"}
+                />
+              </button>
+            )}
+
+            {!hasQueryParams && (
+              <button
+                onClick={() =>
+                  setIsWidgetSidebarOpen((prevState) => !prevState)
+                }
+                className={`${buttonBaseClasses} ${buttonInactiveClasses}`}
+              >
+                <FiPlus className="w-5 h-5 transition-transform duration-300 group-hover:rotate-90" />
+                <Tooltip text="Add Widget" />
+              </button>
+            )}
+
+            <button
+              onClick={handleClipsClick}
+              className={`${buttonBaseClasses} ${
+                isClipsView ? buttonActiveClasses : buttonInactiveClasses
+              }`}
+            >
+              <FiScissors className="w-5 h-5 transition-transform duration-300 group-hover:rotate-45" />
               <Tooltip
-                text={isModifyMode ? "Exit modify mode" : "Enter modify mode"}
+                text={isClipsView ? "Back to Dashboard" : "Manage Clips"}
               />
             </button>
-          )}
+          </div>
 
-          {!hasQueryParams && (
+          <div className="flex flex-col gap-2 border-t-2 border-black/30 pt-2">
             <button
-              onClick={() => setIsWidgetSidebarOpen((prevState) => !prevState)}
+              onClick={handleSettingsClick}
+              className={`${buttonBaseClasses} ${
+                isSettingsView ? buttonActiveClasses : buttonInactiveClasses
+              }`}
+            >
+              <FiSettings className="w-5 h-5 transition-transform duration-300 group-hover:rotate-45" />
+              <Tooltip
+                text={isSettingsView ? "Back to Dashboard" : "Settings"}
+              />
+            </button>
+
+            <button
+              onClick={onChangeBackground}
               className={`${buttonBaseClasses} ${buttonInactiveClasses}`}
             >
-              <FiPlus className="w-5 h-5 transition-transform duration-300 group-hover:rotate-90" />
-              <Tooltip text="Add Widget" />
+              <FiImage className="w-5 h-5 transition-transform duration-300 group-hover:rotate-45" />
+              <Tooltip text="Change background" />
             </button>
-          )}
-
-          <button
-            onClick={handleSettingsClick}
-            className={`${buttonBaseClasses} ${
-              isSettingsView ? buttonActiveClasses : buttonInactiveClasses
-            }`}
-          >
-            <FiSettings className="w-5 h-5 transition-transform duration-300 group-hover:rotate-45" />
-            <Tooltip text={isSettingsView ? "Back to Dashboard" : "Settings"} />
-          </button>
-
-          <button
-            onClick={onChangeBackground}
-            className={`${buttonBaseClasses} ${buttonInactiveClasses}`}
-          >
-            <FiImage className="w-5 h-5 transition-transform duration-300 group-hover:rotate-45" />
-            <Tooltip text="Change background" />
-          </button>
-
-          <button
-            onClick={handleClipsClick}
-            className={`${buttonBaseClasses} ${
-              isClipsView ? buttonActiveClasses : buttonInactiveClasses
-            }`}
-          >
-            <FiScissors className="w-5 h-5 transition-transform duration-300 group-hover:rotate-45" />
-            <Tooltip
-              text={isClipsView ? "Back to Dashboard" : "Manage Clips"}
-            />
-          </button>
+          </div>
         </div>
       </GlassmorphismBackground>
 

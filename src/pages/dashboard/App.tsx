@@ -21,7 +21,6 @@ const App = () => {
   return (
     <GlassmorphismBackground
       className="!backdrop-blur-2xl !bg-black/30"
-      overflowY={true}
     >
       <div className="p-6">
         {showSettings ? (
