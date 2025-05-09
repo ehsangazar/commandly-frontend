@@ -112,9 +112,6 @@ const WidgetSidebar = ({
           <div className="h-full overflow-y-auto py-6 pl-6 pr-4 custom-scrollbar">
             <div className="space-y-6">
               {sortedWidgets.map((widget) => {
-                const instanceCount = existingWidgets.filter(
-                  (w) => w.type === widget.type
-                ).length;
                 const isDisabled = isWidgetDisabled(
                   widget.type,
                   widget.maxInstances
