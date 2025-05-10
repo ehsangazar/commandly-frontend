@@ -164,7 +164,7 @@ const StatsWidget = () => {
           <div className="flex items-center gap-2">
             <button
               onClick={() => {
-                navigate("/dashboard?browser-statistics=true");
+                navigate("/dashboard.html?browser-statistics=true");
               }}
               className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-black transition-all duration-200 flex items-center gap-2"
             >

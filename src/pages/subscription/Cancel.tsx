@@ -82,7 +82,7 @@ const CancelSubscription = () => {
                 {error}
               </div>
               <button
-                onClick={() => navigate("/dashboard")}
+                onClick={() => navigate("/dashboard.html")}
                 className="inline-flex items-center gap-2 rounded-md border border-[var(--commandly-border)] bg-[var(--commandly-background)] px-4 py-2 text-sm font-medium text-[var(--commandly-text-primary)] hover:bg-[var(--commandly-hover)]"
               >
                 <FiArrowLeft className="h-4 w-4" />

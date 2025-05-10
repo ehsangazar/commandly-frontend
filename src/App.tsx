@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import Home from "@/pages/home/Home";
 import About from "@/pages/about/About";
 import Contact from "@/pages/contact/Contact";
@@ -30,7 +35,10 @@ const App = () => {
 
         {/* Dashboard Routes */}
         <Route element={<DashboardLayout />}>
-          <Route path="/dashboard" element={<DashboardApp />} />
+          <Route
+            path="/dashboard"
+            element={<Navigate to="/dashboard.html" replace />}
+          />
           <Route path="/dashboard.html" element={<DashboardApp />} />
         </Route>
 

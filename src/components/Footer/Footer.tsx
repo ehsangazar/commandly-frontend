@@ -85,7 +85,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link
-                  to="/dashboard"
+                  to="/dashboard.html"
                   className="text-[var(--commandly-text-secondary)] hover:text-[var(--commandly-primary)]"
                 >
                   Dashboard

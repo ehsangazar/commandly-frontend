@@ -90,7 +90,7 @@ const Login = () => {
 
       if (responseData.success) {
         setAuthToken(responseData.token);
-        navigate("/dashboard");
+        navigate("/dashboard.html");
       } else {
         setError(responseData.error || "Failed to verify code");
       }

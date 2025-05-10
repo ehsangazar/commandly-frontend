@@ -69,7 +69,7 @@ export default function ClipsWidget() {
             </div>
           </div>
           <button
-            onClick={() => navigate("/dashboard?clip=true")}
+            onClick={() => navigate("/dashboard.html?clip=true")}
             className="px-3 py-2 rounded-lg bg-[var(--commandly-primary)] hover:bg-[var(--commandly-primary)]/90 text-white transition-all duration-200 flex items-center gap-2 group shadow-lg shadow-[var(--commandly-primary)]/20"
           >
             <span className="text-sm font-medium">View All</span>

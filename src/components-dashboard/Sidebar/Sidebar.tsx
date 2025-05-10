@@ -48,17 +48,17 @@ const Sidebar = ({
 
   const handleClipsClick = () => {
     if (isClipsView) {
-      navigate("/dashboard");
+      navigate("/dashboard.html");
     } else {
-      navigate("/dashboard?clip=true");
+      navigate("/dashboard.html?clip=true");
     }
   };
 
   const handleSettingsClick = () => {
     if (isSettingsView) {
-      navigate("/dashboard");
+      navigate("/dashboard.html");
     } else {
-      navigate("/dashboard?settings=true");
+      navigate("/dashboard.html?settings=true");
     }
   };
 
@@ -78,7 +78,7 @@ const Sidebar = ({
         <div className="h-full rounded-2xl w-16 flex flex-col items-center py-4 gap-2 justify-between">
           <div className="flex flex-col gap-2">
             <button
-              onClick={() => navigate("/dashboard")}
+              onClick={() => navigate("/dashboard.html")}
               className={`${buttonBaseClasses} ${
                 isBaseDashboard ? buttonActiveClasses : buttonInactiveClasses
               }`}
@@ -129,7 +129,9 @@ const Sidebar = ({
               />
             </button>
             <button
-              onClick={() => navigate("/dashboard?browser-statistics=true")}
+              onClick={() =>
+                navigate("/dashboard.html?browser-statistics=true")
+              }
               className={`${buttonBaseClasses} ${
                 isBrowserStatisticsView
                   ? buttonActiveClasses

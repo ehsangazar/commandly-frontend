@@ -249,7 +249,7 @@ const Pricing = () => {
 
               <div className="mt-8">
                 <button
-                  onClick={() => navigate("/dashboard")}
+                  onClick={() => navigate("/dashboard.html")}
                   className="w-full bg-[var(--commandly-primary)] hover:bg-[var(--commandly-primary-hover)] text-white font-semibold py-3 px-6 rounded-xl transition-colors duration-200"
                 >
                   Go to Dashboard
