@@ -6,6 +6,7 @@ import {
   FiScissors,
   FiLayout,
   FiBarChart2,
+  FiMessageSquare,
 } from "react-icons/fi";
 import GlassmorphismBackground from "../GlassmorphismBackground";
 import { useState } from "react";
@@ -117,6 +118,13 @@ const Sidebar = ({
               <div className="h-1 w-full border-b-2 border-white/30" />
             )}
 
+            <button
+              onClick={() => navigate("/dashboard.html?chat=true")}
+              className={`${buttonBaseClasses} ${buttonInactiveClasses}`}
+            >
+              <FiMessageSquare className="w-5 h-5 transition-transform duration-300 group-hover:rotate-45" />
+              <Tooltip text="Chat" />
+            </button>
             <button
               onClick={handleClipsClick}
               className={`${buttonBaseClasses} ${

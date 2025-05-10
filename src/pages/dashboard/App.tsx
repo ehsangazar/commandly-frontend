@@ -4,6 +4,7 @@ import Clips from "./Clips";
 import Dashboard from "./Dashboard";
 import Settings from "./Settings";
 import BrowserStatistics from "./BrowserStatistics";
+import Chat from "./Chat";
 
 export interface Widget {
   id: string;
@@ -21,9 +22,10 @@ const App = () => {
   const showSettings = searchParams.get("settings") === "true";
   const showBrowserStatistics =
     searchParams.get("browser-statistics") === "true";
+  const showChat = searchParams.get("chat") === "true";
   return (
     <GlassmorphismBackground className="!backdrop-blur-2xl !bg-black/30">
-      <div className="p-6">
+      <div className="p-6 h-full">
         {showSettings ? (
           <Settings />
         ) : showClip ? (
@@ -32,6 +34,8 @@ const App = () => {
           </div>
         ) : showBrowserStatistics ? (
           <BrowserStatistics />
+        ) : showChat ? (
+          <Chat />
         ) : (
           <Dashboard />
         )}
