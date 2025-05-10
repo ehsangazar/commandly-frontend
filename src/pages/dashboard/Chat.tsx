@@ -230,7 +230,7 @@ const Chat = () => {
                 }`}
               >
                 <div
-                  className={`max-w-[70%] rounded-xl p-4 mb-2 shadow-md prose prose-invert break-words font-medium text-base single-message ${
+                  className={`max-w-[70%] rounded-xl p-6 mb-2 shadow-md prose prose-invert break-words font-medium text-base single-message ${
                     msg.role === "user"
                       ? "bg-[var(--commandly-primary)]/80 text-white self-end"
                       : "bg-white/10 text-white self-start"
@@ -238,13 +238,26 @@ const Chat = () => {
                   dir={getDirection(msg.content || "")}
                   style={{
                     wordBreak: "break-word",
-                    lineHeight: "1.7",
-                    fontSize: "1rem",
-                    padding: "0.25rem 0",
                   }}
                   dangerouslySetInnerHTML={{
                     __html: msg.content
-                      ? msg.content.replace(/```html|```/g, "")
+                      ? msg.content
+                          .replace(/```html|```/g, "")
+                          .replace(
+                            /<h3>/g,
+                            '<h3 class="text-xl font-bold mb-2 mt-4">'
+                          )
+                          .replace(/<p>/g, '<p class="mb-3">')
+                          .replace(/<ul>/g, '<ul class="list-disc pl-6 mb-3">')
+                          .replace(/<li>/g, '<li class="mb-1">')
+                          .replace(
+                            /<a href="([^"]+)"/g,
+                            '<a target="_blank" href="$1" class="text-[var(--commandly-primary)] hover:underline"'
+                          )
+                          .replace(
+                            /([\u{1F300}-\u{1F9FF}])/gu,
+                            '<span class="inline-block align-middle">$1</span>'
+                          )
                       : "",
                   }}
                 />
