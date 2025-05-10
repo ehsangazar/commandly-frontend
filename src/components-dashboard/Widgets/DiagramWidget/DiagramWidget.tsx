@@ -178,7 +178,6 @@ const DiagramWidget = () => {
       setAnalysisData(result.analysis);
     };
     if (stats[activePeriod].length > 0) {
-      console.log("debug stats", stats[activePeriod]);
       analyse();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
