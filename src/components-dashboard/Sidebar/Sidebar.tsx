@@ -5,6 +5,7 @@ import {
   FiImage,
   FiScissors,
   FiLayout,
+  FiBarChart2,
 } from "react-icons/fi";
 import GlassmorphismBackground from "../GlassmorphismBackground";
 import { useState } from "react";
@@ -40,6 +41,8 @@ const Sidebar = ({
     new URLSearchParams(location.search).get("clip") === "true";
   const isSettingsView =
     new URLSearchParams(location.search).get("settings") === "true";
+  const isBrowserStatisticsView =
+    new URLSearchParams(location.search).get("browser-statistics") === "true";
   const isBaseDashboard = !location.search;
   const hasQueryParams = location.search !== "";
 
@@ -110,6 +113,10 @@ const Sidebar = ({
               </button>
             )}
 
+            {!hasQueryParams && (
+              <div className="h-1 w-full border-b-2 border-white/30" />
+            )}
+
             <button
               onClick={handleClipsClick}
               className={`${buttonBaseClasses} ${
@@ -121,9 +128,20 @@ const Sidebar = ({
                 text={isClipsView ? "Back to Dashboard" : "Manage Clips"}
               />
             </button>
+            <button
+              onClick={() => navigate("/dashboard?browser-statistics=true")}
+              className={`${buttonBaseClasses} ${
+                isBrowserStatisticsView
+                  ? buttonActiveClasses
+                  : buttonInactiveClasses
+              }`}
+            >
+              <FiBarChart2 className="w-5 h-5 transition-transform duration-300 group-hover:rotate-45" />
+              <Tooltip text="Browser Statistics" />
+            </button>
           </div>
 
-          <div className="flex flex-col gap-2 border-t-2 border-black/30 pt-2">
+          <div className="flex flex-col gap-2 border-t-2 border-white/30 pt-2">
             <button
               onClick={handleSettingsClick}
               className={`${buttonBaseClasses} ${

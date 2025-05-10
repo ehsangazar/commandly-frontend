@@ -3,6 +3,7 @@ import GlassmorphismBackground from "@/components-dashboard/GlassmorphismBackgro
 import Clips from "./Clips";
 import Dashboard from "./Dashboard";
 import Settings from "./Settings";
+import BrowserStatistics from "./BrowserStatistics";
 
 export interface Widget {
   id: string;
@@ -18,10 +19,10 @@ const App = () => {
   const [searchParams] = useSearchParams();
   const showClip = searchParams.get("clip") === "true";
   const showSettings = searchParams.get("settings") === "true";
+  const showBrowserStatistics =
+    searchParams.get("browser-statistics") === "true";
   return (
-    <GlassmorphismBackground
-      className="!backdrop-blur-2xl !bg-black/30"
-    >
+    <GlassmorphismBackground className="!backdrop-blur-2xl !bg-black/30">
       <div className="p-6">
         {showSettings ? (
           <Settings />
@@ -29,6 +30,8 @@ const App = () => {
           <div className="h-full">
             <Clips />
           </div>
+        ) : showBrowserStatistics ? (
+          <BrowserStatistics />
         ) : (
           <Dashboard />
         )}

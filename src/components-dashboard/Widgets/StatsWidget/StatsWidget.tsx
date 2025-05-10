@@ -15,8 +15,8 @@ import {
   startOfMonth,
   endOfMonth,
 } from "date-fns";
-import StatsModal from "@/components-dashboard/Modals/StatsModal";
 import { getAuthToken } from "@/utils/auth";
+import { useNavigate } from "react-router-dom";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
@@ -54,7 +54,7 @@ const StatsWidget = () => {
     "daily" | "weekly" | "monthly"
   >("daily");
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
 
   const fetchStats = async () => {
     try {
@@ -163,7 +163,9 @@ const StatsWidget = () => {
           {/* Right side - Buttons */}
           <div className="flex items-center gap-2">
             <button
-              onClick={() => setIsModalOpen(true)}
+              onClick={() => {
+                navigate("/dashboard?browser-statistics=true");
+              }}
               className="px-4 py-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-black transition-all duration-200 flex items-center gap-2"
             >
               <span className="text-sm font-medium">Details</span>
@@ -249,16 +251,6 @@ const StatsWidget = () => {
           </div>
         )}
       </div>
-
-      <StatsModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        stats={stats}
-        activePeriod={activePeriod}
-        onPeriodChange={setActivePeriod}
-        isLoading={isRefreshing}
-        onRefresh={handleRefresh}
-      />
     </div>
   );
 };
