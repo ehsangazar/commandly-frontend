@@ -15,6 +15,14 @@ type ChatMessage = {
   streaming?: boolean;
 };
 
+const getDirection = (text: string) => {
+  // check if text has more than 50% of rtl characters
+  const rtlChars = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
+  const rtlCount = (text.match(rtlChars) || []).length;
+  const ltrCount = (text.match(/[a-zA-Z0-9]/g) || []).length;
+  return rtlCount > ltrCount ? "rtl" : "ltr";
+};
+
 const Chat = () => {
   const [chatGroupId, setChatGroupId] = useState<string | null>(null);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
@@ -63,8 +71,8 @@ const Chat = () => {
       });
   }, [chatGroupId]);
 
-  const handleSend = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // Extract send logic so it can be called from both handleSend and Shift+Enter
+  const doSend = async () => {
     if (!userInput.trim() || !chatGroupId || loading) return;
     setError("");
     setLoading(true);
@@ -131,6 +139,11 @@ const Chat = () => {
     }
   };
 
+  const handleSend = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await doSend();
+  };
+
   // Create a new chat group and clear history
   const handleNewChat = async () => {
     setError("");
@@ -165,6 +178,18 @@ const Chat = () => {
       textareaRef.current.style.height = "auto";
       textareaRef.current.style.height =
         textareaRef.current.scrollHeight + "px";
+    }
+  };
+
+  // Handle Shift+Enter to submit
+  const handleTextareaKeyDown = (
+    e: React.KeyboardEvent<HTMLTextAreaElement>
+  ) => {
+    if (e.key === "Enter" && (e.shiftKey || e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      if (!loading && !historyLoading && chatGroupId && userInput.trim()) {
+        doSend();
+      }
     }
   };
 
@@ -205,12 +230,23 @@ const Chat = () => {
                 }`}
               >
                 <div
-                  className={`max-w-[70%] rounded-xl p-4 mb-2 shadow-md prose prose-invert break-words font-medium text-base ${
+                  className={`max-w-[70%] rounded-xl p-4 mb-2 shadow-md prose prose-invert break-words font-medium text-base single-message ${
                     msg.role === "user"
                       ? "bg-[var(--commandly-primary)]/80 text-white self-end"
                       : "bg-white/10 text-white self-start"
                   } ${msg.streaming ? "opacity-70" : ""}`}
-                  dangerouslySetInnerHTML={{ __html: msg.content }}
+                  dir={getDirection(msg.content || "")}
+                  style={{
+                    wordBreak: "break-word",
+                    lineHeight: "1.7",
+                    fontSize: "1rem",
+                    padding: "0.25rem 0",
+                  }}
+                  dangerouslySetInnerHTML={{
+                    __html: msg.content
+                      ? msg.content.replace(/```html|```/g, "")
+                      : "",
+                  }}
                 />
               </div>
             ))
@@ -233,6 +269,7 @@ const Chat = () => {
             required
             disabled={!chatGroupId || loading || historyLoading}
             autoFocus
+            onKeyDown={handleTextareaKeyDown}
           />
           <button
             type="submit"
@@ -270,10 +307,18 @@ const Chat = () => {
                 </div>
                 <div
                   className="truncate text-white/90 text-sm"
-                  title={msg.content.replace(/<[^>]+>/g, "").slice(0, 100)}
+                  title={msg.content
+                    ?.replace(/<[^>]+>/g, "")
+                    .replace(/```html|```/g, "")
+                    .slice(0, 100)}
                 >
-                  {msg.content.replace(/<[^>]+>/g, "").slice(0, 60)}
-                  {msg.content.replace(/<[^>]+>/g, "").length > 60 ? "..." : ""}
+                  {msg.content
+                    ?.replace(/<[^>]+>/g, "")
+                    .replace(/```html|```/g, "")
+                    .slice(0, 60)}
+                  {msg.content?.replace(/<[^>]+>/g, "").length > 60
+                    ? "..."
+                    : ""}
                 </div>
               </div>
             ))}
