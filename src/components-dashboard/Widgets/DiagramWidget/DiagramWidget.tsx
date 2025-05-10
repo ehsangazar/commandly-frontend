@@ -52,12 +52,7 @@ const DiagramWidget = () => {
     weekly: [],
     monthly: [],
   });
-  const [currentData, setCurrentData] = useState<
-    {
-      category: string;
-      time: number;
-    }[]
-  >([]);
+  const [analysisData, setAnalysisData] = useState<Record<string, number>>({});
 
   const handleRefresh = () => {
     setIsRefreshing(true);
@@ -90,49 +85,46 @@ const DiagramWidget = () => {
   const fetchStats = async () => {
     try {
       const token = getAuthToken();
-
-      const fetchPeriodStats = async (startDate: Date, endDate: Date) => {
-        const params = new URLSearchParams({
-          startDate: startDate.toISOString(),
-          endDate: endDate.toISOString(),
-        });
-
-        const response = await fetch(
-          `${API_BASE_URL}/domain-time/stats?${params.toString()}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch stats");
+      let startDate: Date, endDate: Date;
+      if (activePeriod === "daily") {
+        startDate = startOfDay(new Date());
+        endDate = endOfDay(new Date());
+      } else if (activePeriod === "weekly") {
+        startDate = startOfWeek(new Date());
+        endDate = endOfWeek(new Date());
+      } else {
+        startDate = startOfMonth(new Date());
+        endDate = endOfMonth(new Date());
+      }
+      const params = new URLSearchParams({
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+      });
+      const response = await fetch(
+        `${API_BASE_URL}/domain-time/stats?${params.toString()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-
-        const data = await response.json();
-        if (data.success) {
-          return data.stats.map(
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch stats");
+      }
+      const data = await response.json();
+      if (data.success) {
+        setStats((prev) => ({
+          ...prev,
+          [activePeriod]: data.stats.map(
             (item: { domain: string; totalTime: number }) => ({
               domain: item.domain,
               time: item.totalTime,
             })
-          );
-        }
-        return [];
-      };
-
-      const [dailyStats, weeklyStats, monthlyStats] = await Promise.all([
-        fetchPeriodStats(startOfDay(new Date()), endOfDay(new Date())),
-        fetchPeriodStats(startOfWeek(new Date()), endOfWeek(new Date())),
-        fetchPeriodStats(startOfMonth(new Date()), endOfMonth(new Date())),
-      ]);
-
-      setStats({
-        daily: dailyStats,
-        weekly: weeklyStats,
-        monthly: monthlyStats,
-      });
+          ),
+        }));
+      } else {
+        setStats((prev) => ({ ...prev, [activePeriod]: [] }));
+      }
     } catch (err) {
       console.error("Failed to fetch domain time stats:", err);
     } finally {
@@ -164,33 +156,41 @@ const DiagramWidget = () => {
 
   useEffect(() => {
     fetchStats();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activePeriod]);
 
   useEffect(() => {
     const analyse = async () => {
       const result = await analyseContextToJSON({
-        prompt:
-          "Analyse the following text and return a JSON object with the results",
+        prompt: `
+          1. Analyze each domain in the input and categorize it
+          2. If a record is not in any category, choose the most appropriate one
+          3. Calculate total time spent in each category
+          4. Make sure each record is only in one category and not in multiple
+        `,
         context: JSON.stringify(stats[activePeriod]),
         format: JSON.stringify(
           categories.map((category) => ({
-            category,
-            time: "SUM_OF_MINUTES",
+            [category]: "SUM_OF_MINUTES",
           }))
         ),
       });
-      setCurrentData(Array.isArray(result.analysis) ? result.analysis : []);
+      setAnalysisData(result.analysis);
     };
     if (stats[activePeriod].length > 0) {
+      console.log("debug stats", stats[activePeriod]);
       analyse();
     }
-  }, [stats, categories, activePeriod]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stats[activePeriod]?.length, categories]);
 
   const data =
-    currentData && categories.length > 0
-      ? currentData.map((item) => ({
-          category: item.category,
-          time: Number(item.time),
+    analysisData &&
+    Object.keys(analysisData).length > 0 &&
+    categories.length > 0
+      ? Object.entries(analysisData).map(([category, time]) => ({
+          category,
+          time: Number(time),
         }))
       : [];
 
