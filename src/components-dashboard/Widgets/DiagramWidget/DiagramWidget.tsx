@@ -179,14 +179,20 @@ const DiagramWidget = () => {
           }))
         ),
       });
-      setCurrentData(result.analysis);
+      setCurrentData(Array.isArray(result.analysis) ? result.analysis : []);
     };
     if (stats[activePeriod].length > 0) {
       analyse();
     }
   }, [stats, categories, activePeriod]);
 
-  console.log("debug currentData", currentData);
+  const data =
+    currentData && categories.length > 0
+      ? currentData.map((item) => ({
+          category: item.category,
+          time: Number(item.time),
+        }))
+      : [];
 
   return (
     <div className="h-full w-full bg-black rounded-xl overflow-hidden flex flex-col">
@@ -248,10 +254,10 @@ const DiagramWidget = () => {
 
             {/* Chart */}
             <div className="flex-1 p-4">
-              {currentData && categories.length > 0 ? (
+              {data && categories.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
-                    data={currentData}
+                    data={data}
                     margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
                   >
                     <CartesianGrid
@@ -267,6 +273,10 @@ const DiagramWidget = () => {
                       stroke="rgba(255,255,255,0.5)"
                       tick={{ fill: "rgba(255,255,255,0.7)", fontSize: 12 }}
                       tickFormatter={(value) => formatTime(value)}
+                      domain={[
+                        0,
+                        (dataMax: number) => Math.ceil(dataMax * 1.15),
+                      ]}
                     />
                     <Tooltip
                       content={<CustomTooltip active={true} payload={[]} />}
