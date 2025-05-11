@@ -21,14 +21,14 @@ const Tooltip = ({
   };
 
   return (
-    <div className="relative group inline-block">
+    <span className="relative group inline-block">
       {children}
       <div
         className={`pointer-events-none absolute ${positionClasses[position]} px-2 py-1 rounded bg-gray-900 text-xs text-white opacity-0 group-hover:opacity-100 shadow-lg z-50 whitespace-nowrap transition-all duration-200 scale-95 group-hover:scale-100 ${className}`}
       >
         {text}
       </div>
-    </div>
+    </span>
   );
 };
 

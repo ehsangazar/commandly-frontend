@@ -88,7 +88,7 @@ const DiagramWidget = () => {
       prompt: `
           1. Analyze each domain in the input and categorize it
           2. If a record is not in any category, choose the most appropriate one
-          3. Calculate total time spent in each category
+          3. Every number is in seconds, Calculate total time spent in each category in seconds
           4. Make sure each record is only in one category and not in multiple
         `,
       context: JSON.stringify(stats[activePeriod]),
