@@ -7,6 +7,7 @@ import {
   startOfDay,
   startOfMonth,
   startOfWeek,
+  subDays,
 } from "date-fns";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -30,15 +31,15 @@ const API_BASE_URL =
   import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
 
 interface TimeStats {
-  daily: { domain: string; time: number }[];
+  yesterday: { domain: string; time: number }[];
   weekly: { domain: string; time: number }[];
   monthly: { domain: string; time: number }[];
 }
 
 const DiagramWidget = () => {
   const [activePeriod, setActivePeriod] = useState<
-    "daily" | "weekly" | "monthly"
-  >("daily");
+    "yesterday" | "weekly" | "monthly"
+  >("yesterday");
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [categories, setCategories] = useState<string[]>([
     "Work",
@@ -48,7 +49,7 @@ const DiagramWidget = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [newCategory, setNewCategory] = useState("");
   const [stats, setStats] = useState<TimeStats>({
-    daily: [],
+    yesterday: [],
     weekly: [],
     monthly: [],
   });
@@ -84,6 +85,24 @@ const DiagramWidget = () => {
   };
 
   const analyse = useCallback(async () => {
+    // check if data is already in local storage
+    const today = new Date();
+    let parsedData: Record<string, Record<string, Record<string, number>>> = {};
+    const todayData = localStorage.getItem(`diagram-widget-data`);
+    if (todayData) {
+      parsedData = JSON.parse(todayData);
+      if (!parsedData[today.toISOString().split("T")[0]]) {
+        localStorage.removeItem(`diagram-widget-data`);
+      } else if (parsedData[today.toISOString().split("T")[0]]) {
+        if (parsedData[today.toISOString().split("T")[0]][activePeriod]) {
+          setAnalysisData(
+            parsedData[today.toISOString().split("T")[0]][activePeriod]
+          );
+          return;
+        }
+      }
+    }
+
     const result = await analyseContextToJSON({
       prompt: `
           1. Analyze each domain in the input and categorize it
@@ -99,15 +118,20 @@ const DiagramWidget = () => {
       ),
     });
     setAnalysisData(result.analysis);
+    parsedData[new Date().toISOString().split("T")[0]] = {
+      ...parsedData[new Date().toISOString().split("T")[0]],
+      [activePeriod]: result.analysis,
+    };
+    localStorage.setItem(`diagram-widget-data`, JSON.stringify(parsedData));
   }, [activePeriod, stats, categories]);
 
   const fetchStats = async () => {
     try {
       const token = getAuthToken();
       let startDate: Date, endDate: Date;
-      if (activePeriod === "daily") {
-        startDate = startOfDay(new Date());
-        endDate = endOfDay(new Date());
+      if (activePeriod === "yesterday") {
+        startDate = startOfDay(subDays(new Date(), 1));
+        endDate = endOfDay(subDays(new Date(), 1));
       } else if (activePeriod === "weekly") {
         startDate = startOfWeek(new Date());
         endDate = endOfWeek(new Date());
@@ -180,9 +204,7 @@ const DiagramWidget = () => {
   }, [activePeriod]);
 
   useEffect(() => {
-    if (stats[activePeriod].length > 0 && categories.length > 0) {
-      analyse();
-    }
+    analyse();
   }, [activePeriod, stats, categories, analyse]);
 
   const data =
@@ -238,7 +260,7 @@ const DiagramWidget = () => {
           <div className="h-full flex flex-col">
             {/* Period Selector */}
             <div className="px-4 py-2 flex gap-2">
-              {(["daily", "weekly", "monthly"] as const).map((period) => (
+              {(["yesterday", "weekly", "monthly"] as const).map((period) => (
                 <button
                   key={period}
                   onClick={() => setActivePeriod(period)}
