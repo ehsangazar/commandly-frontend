@@ -19,7 +19,8 @@ const DashboardLayout = () => {
   const [currentBackgroundIndex, setCurrentBackgroundIndex] = useState(
     getSavedBackgroundIndex()
   );
-  const currentBackground = backgrounds[currentBackgroundIndex];
+  const currentBackground =
+    backgrounds[currentBackgroundIndex] || backgrounds[0];
   const [isModifyMode, setIsModifyMode] = useState(false);
   const [widgets, setWidgets] = useState<Widget[]>([]);
 
@@ -67,7 +68,8 @@ const DashboardLayout = () => {
   };
 
   const handleAddWidget = (widgetType: string) => {
-    if (!["stats", "clips", "clock", "diagram", "chat"].includes(widgetType)) return;
+    if (!["stats", "clips", "clock", "diagram", "chat"].includes(widgetType))
+      return;
 
     // Generate a unique ID for the new widget
     const newId = `${widgetType}-${Date.now()}`;
