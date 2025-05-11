@@ -343,7 +343,7 @@ const Chat = () => {
                         text={copiedMessageId === idx ? "Copied!" : "Copy"}
                       >
                         <button
-                          className={`p-1 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 flex items-center justify-center shadow-sm border border-transparent ${
+                          className={`cursor-pointer p-1 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 flex items-center justify-center shadow-sm border border-transparent ${
                             copiedMessageId === idx
                               ? "bg-green-500/20 text-green-400 scale-110"
                               : "hover:bg-white/10 text-white/80 hover:text-white"
@@ -495,7 +495,7 @@ const Chat = () => {
                         {showLanguageDropdown === idx && (
                           <div
                             ref={dropdownRef}
-                            className="absolute left-0 w-56 bg-black/70 backdrop-blur-xl rounded-xl shadow-2xl border border-white/20 py-2 z-50 overflow-hidden mt-2 animate-fade-in"
+                            className="absolute left-0 bottom-full w-56 bg-black/50 backdrop-blur-xl rounded-xl shadow-xl border border-white/10 py-2 z-50 overflow-hidden mb-2 animate-fade-in"
                             style={{ minWidth: 200 }}
                           >
                             <div className="max-h-[320px] overflow-y-auto">
@@ -509,7 +509,7 @@ const Chat = () => {
                                     className={`w-full text-left px-5 py-3 text-base flex items-center gap-3 transition-colors duration-150 font-medium rounded-lg mb-1 last:mb-0 focus:outline-none focus:ring-2 focus:ring-[var(--commandly-primary)]/30 focus:bg-[var(--commandly-primary)]/10 ${
                                       defaultTranslateLanguage === lang.code
                                         ? "bg-[var(--commandly-primary)]/80 text-white shadow-inner"
-                                        : "hover:bg-white/10 text-white/80 hover:text-white"
+                                        : "hover:bg-white/20 text-white/90 hover:text-white"
                                     }`}
                                     onClick={() => {
                                       setDefaultTranslateLanguage(lang.code);
