@@ -383,7 +383,10 @@ const Chat = () => {
                               : "hover:bg-white/10 text-white/80 hover:text-white"
                           }`}
                           onClick={() => {
-                            navigator.clipboard.writeText(msg.content);
+                            const newText = msg.content
+                              .replace(/```html|```/g, "")
+                              .replace(/<[^>]*>?/g, "");
+                            navigator.clipboard.writeText(newText);
                             setCopiedMessageId(idx);
                             setTimeout(() => setCopiedMessageId(null), 2000);
                           }}
