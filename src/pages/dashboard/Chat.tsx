@@ -6,6 +6,7 @@ import {
   getLastChatGroupId,
   getChatGroups,
 } from "@/utils/chat";
+import Tooltip from "@/components-dashboard/Tooltip/Tooltip";
 
 const PAGE_SIZE = 20;
 const LAST_CHAT_GROUP_KEY = "lastChatGroupId";
@@ -79,13 +80,13 @@ const Chat = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [historyLoading, setHistoryLoading] = useState(false);
-  const [hoveredAction, setHoveredAction] = useState<number | null>(null);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState<
     number | null
   >(null);
   const [defaultTranslateLanguage, setDefaultTranslateLanguage] =
     useState("en");
   const [selectedQuote, setSelectedQuote] = useState<string>("");
+  const [copiedMessageId, setCopiedMessageId] = useState<number | null>(null);
   const responseRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -337,132 +338,127 @@ const Chat = () => {
                   />
                   {msg.role === "assistant" && !msg.streaming && (
                     <div className="flex items-center gap-1 ml-2 mb-2">
-                      <button
-                        className="p-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 transform cursor-pointer flex items-center gap-1"
-                        onClick={() => {
-                          navigator.clipboard.writeText(msg.content);
-                        }}
-                        onMouseEnter={() => setHoveredAction(idx)}
-                        onMouseLeave={() => setHoveredAction(null)}
+                      <Tooltip
+                        text={copiedMessageId === idx ? "Copied!" : "Copy"}
                       >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
+                        <button
+                          className="p-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 transform cursor-pointer flex items-center gap-1"
+                          onClick={() => {
+                            navigator.clipboard.writeText(msg.content);
+                            setCopiedMessageId(idx);
+                            setTimeout(() => setCopiedMessageId(null), 2000);
+                          }}
                         >
-                          <rect
-                            width="14"
-                            height="14"
-                            x="8"
-                            y="8"
-                            rx="2"
-                            ry="2"
-                          />
-                          <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
-                        </svg>
-                        {hoveredAction === idx && (
-                          <div className="pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 px-2 py-1 rounded bg-gray-900 text-xs text-white opacity-100 shadow-lg z-50 whitespace-nowrap">
-                            Copy
-                          </div>
-                        )}
-                      </button>
-                      <button
-                        className="p-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 transform cursor-pointer flex items-center gap-1"
-                        onClick={() => setSelectedQuote(msg.content)}
-                        onMouseEnter={() => setHoveredAction(idx + 1000)}
-                        onMouseLeave={() => setHoveredAction(null)}
-                      >
-                        <svg
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            className={`transition-transform duration-200 ${
+                              copiedMessageId === idx ? "scale-110" : ""
+                            }`}
+                          >
+                            {copiedMessageId === idx ? (
+                              <path d="M20 6L9 17l-5-5" />
+                            ) : (
+                              <>
+                                <rect
+                                  width="14"
+                                  height="14"
+                                  x="8"
+                                  y="8"
+                                  rx="2"
+                                  ry="2"
+                                />
+                                <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                              </>
+                            )}
+                          </svg>
+                        </button>
+                      </Tooltip>
+                      <Tooltip text="Quote">
+                        <button
+                          className="p-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 transform cursor-pointer flex items-center gap-1"
+                          onClick={() => setSelectedQuote(msg.content)}
                         >
-                          <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z" />
-                          <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" />
-                        </svg>
-                        {hoveredAction === idx + 1000 && (
-                          <div className="pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 px-2 py-1 rounded bg-gray-900 text-xs text-white opacity-100 shadow-lg z-50 whitespace-nowrap">
-                            Quote
-                          </div>
-                        )}
-                      </button>
+                          <svg
+                            width="16"
+                            height="16"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z" />
+                            <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" />
+                          </svg>
+                        </button>
+                      </Tooltip>
                       <div className="relative group">
                         <div className="flex items-center">
-                          <button
-                            className="p-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 transform cursor-pointer flex items-center gap-1"
-                            onClick={() =>
-                              setShowLanguageDropdown(
-                                showLanguageDropdown === idx ? null : idx
-                              )
-                            }
-                            onMouseEnter={() => setHoveredAction(idx + 2000)}
-                            onMouseLeave={() => setHoveredAction(null)}
-                          >
-                            <svg
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
+                          <Tooltip text="Translate">
+                            <button
+                              className="p-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 transform cursor-pointer flex items-center gap-1"
+                              onClick={() =>
+                                setShowLanguageDropdown(
+                                  showLanguageDropdown === idx ? null : idx
+                                )
+                              }
                             >
-                              <path d="M5 8l6 6" />
-                              <path d="m4 14 6-6 2-3" />
-                              <path d="M2 5h12" />
-                              <path d="M7 2h1" />
-                              <path d="m22 22-5-10-5 10" />
-                              <path d="M14 18h6" />
-                            </svg>
-                            {hoveredAction === idx + 2000 && (
-                              <div className="pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 px-2 py-1 rounded bg-gray-900 text-xs text-white opacity-100 shadow-lg z-50 whitespace-nowrap">
-                                Translate
-                              </div>
-                            )}
-                          </button>
-                          <button
-                            ref={chevronRef}
-                            className="p-1 -ml-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 transform cursor-pointer"
-                            onClick={() =>
-                              setShowLanguageDropdown(
-                                showLanguageDropdown === idx ? null : idx
-                              )
-                            }
-                            onMouseEnter={() => setHoveredAction(idx + 3000)}
-                            onMouseLeave={() => setHoveredAction(null)}
-                          >
-                            <svg
-                              width="16"
-                              height="16"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              className={`transition-transform duration-200 ${
-                                showLanguageDropdown === idx ? "rotate-180" : ""
-                              }`}
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <path d="M5 8l6 6" />
+                                <path d="m4 14 6-6 2-3" />
+                                <path d="M2 5h12" />
+                                <path d="M7 2h1" />
+                                <path d="m22 22-5-10-5 10" />
+                                <path d="M14 18h6" />
+                              </svg>
+                            </button>
+                          </Tooltip>
+                          <Tooltip text="Language options">
+                            <button
+                              ref={chevronRef}
+                              className="p-1 -ml-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 transform cursor-pointer"
+                              onClick={() =>
+                                setShowLanguageDropdown(
+                                  showLanguageDropdown === idx ? null : idx
+                                )
+                              }
                             >
-                              <path d="m6 9 6 6 6-6" />
-                            </svg>
-                            {hoveredAction === idx + 3000 && (
-                              <div className="pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 px-2 py-1 rounded bg-gray-900 text-xs text-white opacity-100 shadow-lg z-50 whitespace-nowrap">
-                                Language options
-                              </div>
-                            )}
-                          </button>
+                              <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                className={`transition-transform duration-200 ${
+                                  showLanguageDropdown === idx
+                                    ? "rotate-180"
+                                    : ""
+                                }`}
+                              >
+                                <path d="m6 9 6 6 6-6" />
+                              </svg>
+                            </button>
+                          </Tooltip>
                         </div>
                         {showLanguageDropdown === idx && (
                           <div
