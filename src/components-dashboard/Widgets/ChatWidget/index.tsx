@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { FiZap } from 'react-icons/fi';
+import { useConfig } from '@/contexts/ConfigContext';
+import { useNavigate } from 'react-router-dom';
 
 interface ChatWidgetProps {
   onSubmit?: (message: string) => void;
@@ -7,12 +9,18 @@ interface ChatWidgetProps {
 
 const ChatWidget: React.FC<ChatWidgetProps> = ({ onSubmit }) => {
   const [message, setMessage] = useState('');
+  const { setChat } = useConfig();
+  const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (message.trim() && onSubmit) {
-      onSubmit(message);
+    if (message.trim()) {
+      setChat(message);
+      if (onSubmit) {
+        onSubmit(message);
+      }
       setMessage('');
+      navigate("/dashboard.html?chat=true")
     }
   };
 
