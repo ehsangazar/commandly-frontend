@@ -23,6 +23,45 @@ type ChatGroup = {
   ChatHistory: ChatMessage[];
 };
 
+type Language = {
+  code: string;
+  name: string;
+};
+
+const languages: Language[] = [
+  { code: "en", name: "English" },
+  { code: "es", name: "Spanish" },
+  { code: "fr", name: "French" },
+  { code: "de", name: "German" },
+  { code: "it", name: "Italian" },
+  { code: "pt", name: "Portuguese" },
+  { code: "ru", name: "Russian" },
+  { code: "ja", name: "Japanese" },
+  { code: "ko", name: "Korean" },
+  { code: "zh", name: "Chinese" },
+  { code: "ar", name: "Arabic" },
+  { code: "hi", name: "Hindi" },
+  { code: "bn", name: "Bengali" },
+  { code: "pa", name: "Punjabi" },
+  { code: "tr", name: "Turkish" },
+  { code: "nl", name: "Dutch" },
+  { code: "sv", name: "Swedish" },
+  { code: "fi", name: "Finnish" },
+  { code: "da", name: "Danish" },
+  { code: "no", name: "Norwegian" },
+  { code: "pl", name: "Polish" },
+  { code: "uk", name: "Ukrainian" },
+  { code: "cs", name: "Czech" },
+  { code: "ro", name: "Romanian" },
+  { code: "hu", name: "Hungarian" },
+  { code: "el", name: "Greek" },
+  { code: "th", name: "Thai" },
+  { code: "fa", name: "Persian" },
+  { code: "vi", name: "Vietnamese" },
+  { code: "id", name: "Indonesian" },
+  { code: "ms", name: "Malay" },
+];
+
 const getDirection = (text: string) => {
   // check if text has more than 50% of rtl characters
   const rtlChars = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
@@ -32,6 +71,7 @@ const getDirection = (text: string) => {
 };
 
 const Chat = () => {
+  const [chatGroupId, setChatGroupId] = useState<string | null>(null);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [chatGroups, setChatGroups] = useState<ChatGroup[]>([]);
   const [userInput, setUserInput] = useState("");
@@ -39,11 +79,17 @@ const Chat = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [historyLoading, setHistoryLoading] = useState(false);
+  const [hoveredAction, setHoveredAction] = useState<number | null>(null);
+  const [showLanguageDropdown, setShowLanguageDropdown] = useState<
+    number | null
+  >(null);
+  const [defaultTranslateLanguage, setDefaultTranslateLanguage] =
+    useState("en");
+  const [selectedQuote, setSelectedQuote] = useState<string>("");
   const responseRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const [selectedChatGroupId, setSelectedChatGroupId] = useState<string | null>(
-    null
-  );
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const chevronRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     const loadLastChatGroupId = async () => {
@@ -56,15 +102,15 @@ const Chat = () => {
       return lastId;
     };
     loadLastChatGroupId().then((id) => {
-      setSelectedChatGroupId(id);
+      setChatGroupId(id);
     });
   }, []);
 
   useEffect(() => {
-    if (!selectedChatGroupId) return;
+    if (!chatGroupId) return;
     setHistoryLoading(true);
     getChatGroupHistory({
-      chatGroupId: selectedChatGroupId,
+      chatGroupId: chatGroupId,
       page: 1,
       limit: PAGE_SIZE,
     })
@@ -85,10 +131,10 @@ const Chat = () => {
     getChatGroups({ userId: "1" }).then((groups: ChatGroup[]) => {
       setChatGroups(groups?.filter((group) => group.ChatHistory.length > 0));
     });
-  }, [selectedChatGroupId]);
+  }, [chatGroupId]);
 
   const doSend = async () => {
-    if (!userInput.trim() || !selectedChatGroupId || loading) return;
+    if (!userInput.trim() || !chatGroupId || loading) return;
     setError("");
     setLoading(true);
     let responseHtml = "";
@@ -101,7 +147,7 @@ const Chat = () => {
       const stream = await sendSimpleChat({
         userInput,
         context,
-        selectedChatGroupId,
+        selectedChatGroupId: chatGroupId,
       });
       if (stream && typeof stream.getReader === "function") {
         const reader = stream.getReader();
@@ -172,7 +218,7 @@ const Chat = () => {
     setContext("");
     try {
       const newId = await createChatGroup();
-      setSelectedChatGroupId(newId);
+      setChatGroupId(newId);
       localStorage.setItem(LAST_CHAT_GROUP_KEY, newId);
     } catch (err) {
       setError(
@@ -185,10 +231,10 @@ const Chat = () => {
 
   // Save chatGroupId to localStorage when it changes
   useEffect(() => {
-    if (selectedChatGroupId) {
-      localStorage.setItem(LAST_CHAT_GROUP_KEY, selectedChatGroupId);
+    if (chatGroupId) {
+      localStorage.setItem(LAST_CHAT_GROUP_KEY, chatGroupId);
     }
-  }, [selectedChatGroupId]);
+  }, [chatGroupId]);
 
   // Auto-grow textarea
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -206,12 +252,7 @@ const Chat = () => {
   ) => {
     if (e.key === "Enter" && (e.shiftKey || e.ctrlKey || e.metaKey)) {
       e.preventDefault();
-      if (
-        !loading &&
-        !historyLoading &&
-        selectedChatGroupId &&
-        userInput.trim()
-      ) {
+      if (!loading && !historyLoading && chatGroupId && userInput.trim()) {
         doSend();
       }
     }
@@ -247,7 +288,9 @@ const Chat = () => {
             <div className="flex items-center justify-center h-full">
               <div className="flex flex-col items-center gap-3">
                 <div className="w-8 h-8 border-4 border-[var(--commandly-primary)]/20 border-t-[var(--commandly-primary)] rounded-full animate-spin"></div>
-                <p className="text-white/60 animate-pulse">Loading chat history...</p>
+                <p className="text-white/60 animate-pulse">
+                  Loading chat history...
+                </p>
               </div>
             </div>
           ) : (
@@ -258,38 +301,223 @@ const Chat = () => {
                   msg.role === "user" ? "justify-end" : "justify-start"
                 } animate-fade-in`}
               >
-                <div
-                  className={`max-w-[70%] rounded-xl p-6 mb-2 shadow-md prose prose-invert break-words font-medium text-base single-message transition-all duration-300 ease-in-out transform hover:scale-[1.02] ${
-                    msg.role === "user"
-                      ? "bg-[var(--commandly-primary)]/80 text-white self-end"
-                      : "bg-white/10 text-white self-start"
-                  } ${msg.streaming ? "opacity-70" : ""}`}
-                  dir={getDirection(msg.content || "")}
-                  style={{
-                    wordBreak: "break-word",
-                  }}
-                  dangerouslySetInnerHTML={{
-                    __html: msg.content
-                      ? msg.content
-                          .replace(/```html|```/g, "")
-                          .replace(
-                            /<h3>/g,
-                            '<h3 class="text-xl font-bold mb-2 mt-4">'
-                          )
-                          .replace(/<p>/g, '<p class="mb-3">')
-                          .replace(/<ul>/g, '<ul class="list-disc pl-6 mb-3">')
-                          .replace(/<li>/g, '<li class="mb-1">')
-                          .replace(
-                            /<a href="([^"]+)"/g,
-                            '<a target="_blank" href="$1" class="text-[var(--commandly-primary)] hover:underline"'
-                          )
-                          .replace(
-                            /([\u{1F300}-\u{1F9FF}])/gu,
-                            '<span class="inline-block align-middle">$1</span>'
-                          )
-                      : "",
-                  }}
-                />
+                <div className="flex flex-col">
+                  <div
+                    className={`max-w-[70%] rounded-xl p-6 mb-2 shadow-md prose prose-invert font-medium text-base single-message transition-all duration-300 ease-in-out transform hover:scale-[1.02] ${
+                      msg.role === "user"
+                        ? "bg-[var(--commandly-primary)]/80 text-white self-end"
+                        : "bg-white/10 text-white self-start"
+                    } ${msg.streaming ? "opacity-70" : ""}`}
+                    dir={getDirection(msg.content || "")}
+                    style={{}}
+                    dangerouslySetInnerHTML={{
+                      __html: msg.content
+                        ? msg.content
+                            .replace(/```html|```/g, "")
+                            .replace(
+                              /<h3>/g,
+                              '<h3 class="text-xl font-bold mb-2 mt-4">'
+                            )
+                            .replace(/<p>/g, '<p class="mb-3">')
+                            .replace(
+                              /<ul>/g,
+                              '<ul class="list-disc pl-6 mb-3">'
+                            )
+                            .replace(/<li>/g, '<li class="mb-1">')
+                            .replace(
+                              /<a href="([^"]+)"/g,
+                              '<a target="_blank" href="$1" class="text-[var(--commandly-primary)] hover:underline"'
+                            )
+                            .replace(
+                              /([\u{1F300}-\u{1F9FF}])/gu,
+                              '<span class="inline-block align-middle">$1</span>'
+                            )
+                        : "",
+                    }}
+                  />
+                  {msg.role === "assistant" && !msg.streaming && (
+                    <div className="flex items-center gap-1 ml-2 mb-2">
+                      <button
+                        className="p-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 transform cursor-pointer flex items-center gap-1"
+                        onClick={() => {
+                          navigator.clipboard.writeText(msg.content);
+                        }}
+                        onMouseEnter={() => setHoveredAction(idx)}
+                        onMouseLeave={() => setHoveredAction(null)}
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <rect
+                            width="14"
+                            height="14"
+                            x="8"
+                            y="8"
+                            rx="2"
+                            ry="2"
+                          />
+                          <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
+                        </svg>
+                        {hoveredAction === idx && (
+                          <div className="pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 px-2 py-1 rounded bg-gray-900 text-xs text-white opacity-100 shadow-lg z-50 whitespace-nowrap">
+                            Copy
+                          </div>
+                        )}
+                      </button>
+                      <button
+                        className="p-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 transform cursor-pointer flex items-center gap-1"
+                        onClick={() => setSelectedQuote(msg.content)}
+                        onMouseEnter={() => setHoveredAction(idx + 1000)}
+                        onMouseLeave={() => setHoveredAction(null)}
+                      >
+                        <svg
+                          width="16"
+                          height="16"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z" />
+                          <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" />
+                        </svg>
+                        {hoveredAction === idx + 1000 && (
+                          <div className="pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 px-2 py-1 rounded bg-gray-900 text-xs text-white opacity-100 shadow-lg z-50 whitespace-nowrap">
+                            Quote
+                          </div>
+                        )}
+                      </button>
+                      <div className="relative group">
+                        <div className="flex items-center">
+                          <button
+                            className="p-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 transform cursor-pointer flex items-center gap-1"
+                            onClick={() =>
+                              setShowLanguageDropdown(
+                                showLanguageDropdown === idx ? null : idx
+                              )
+                            }
+                            onMouseEnter={() => setHoveredAction(idx + 2000)}
+                            onMouseLeave={() => setHoveredAction(null)}
+                          >
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M5 8l6 6" />
+                              <path d="m4 14 6-6 2-3" />
+                              <path d="M2 5h12" />
+                              <path d="M7 2h1" />
+                              <path d="m22 22-5-10-5 10" />
+                              <path d="M14 18h6" />
+                            </svg>
+                            {hoveredAction === idx + 2000 && (
+                              <div className="pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 px-2 py-1 rounded bg-gray-900 text-xs text-white opacity-100 shadow-lg z-50 whitespace-nowrap">
+                                Translate
+                              </div>
+                            )}
+                          </button>
+                          <button
+                            ref={chevronRef}
+                            className="p-1 -ml-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 transform cursor-pointer"
+                            onClick={() =>
+                              setShowLanguageDropdown(
+                                showLanguageDropdown === idx ? null : idx
+                              )
+                            }
+                            onMouseEnter={() => setHoveredAction(idx + 3000)}
+                            onMouseLeave={() => setHoveredAction(null)}
+                          >
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className={`transition-transform duration-200 ${
+                                showLanguageDropdown === idx ? "rotate-180" : ""
+                              }`}
+                            >
+                              <path d="m6 9 6 6 6-6" />
+                            </svg>
+                            {hoveredAction === idx + 3000 && (
+                              <div className="pointer-events-none absolute left-1/2 top-full mt-1 -translate-x-1/2 px-2 py-1 rounded bg-gray-900 text-xs text-white opacity-100 shadow-lg z-50 whitespace-nowrap">
+                                Language options
+                              </div>
+                            )}
+                          </button>
+                        </div>
+                        {showLanguageDropdown === idx && (
+                          <div
+                            ref={dropdownRef}
+                            className="absolute left-0 w-48 bg-gray-800 rounded-lg shadow-lg border border-white/10 py-1 z-50 overflow-hidden mt-1"
+                          >
+                            <div className="max-h-[300px] overflow-y-auto">
+                              {languages
+                                .sort((a) =>
+                                  a.code === defaultTranslateLanguage ? -1 : 1
+                                )
+                                .map((lang) => (
+                                  <button
+                                    key={lang.code}
+                                    className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 transition-colors duration-150 ${
+                                      defaultTranslateLanguage === lang.code
+                                        ? "bg-[var(--commandly-primary)]/20 text-[var(--commandly-primary)] font-semibold"
+                                        : "hover:bg-white/10 text-white/70"
+                                    }`}
+                                    onClick={() => {
+                                      setDefaultTranslateLanguage(lang.code);
+                                      setShowLanguageDropdown(null);
+                                      // Here you would typically call your translation API
+                                      // For now, we'll just show an alert
+                                      alert(
+                                        `Translation to ${lang.name} would happen here`
+                                      );
+                                    }}
+                                  >
+                                    {defaultTranslateLanguage === lang.code && (
+                                      <svg
+                                        width="16"
+                                        height="16"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                      >
+                                        <polyline points="20 6 9 17 4 12" />
+                                      </svg>
+                                    )}
+                                    <span className="font-medium">
+                                      {lang.name}
+                                    </span>
+                                  </button>
+                                ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
             ))
           )}
@@ -298,35 +526,66 @@ const Chat = () => {
         {/* Chat Input */}
         <form
           onSubmit={handleSend}
-          className="p-4 pt-0 md:pl-6 md:pr-6 flex gap-2 sticky bottom-0"
+          className="p-4 pt-0 md:pl-6 md:pr-6 flex flex-col gap-2 sticky bottom-0"
         >
-          <textarea
-            value={userInput}
-            onChange={handleInputChange}
-            ref={textareaRef}
-            rows={1}
-            style={{ resize: "none", overflow: "hidden" }}
-            className="flex-1 px-4 py-3 rounded-lg bg-black/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[var(--commandly-primary)]/20 focus:bg-black/30 transition-all duration-200 min-h-[44px] max-h-40"
-            placeholder="Type your message..."
-            required
-            disabled={!selectedChatGroupId || loading || historyLoading}
-            autoFocus
-            onKeyDown={handleTextareaKeyDown}
-          />
-          <button
-            type="submit"
-            className="px-6 py-2 rounded-lg bg-[var(--commandly-primary)] hover:bg-[var(--commandly-primary)]/90 text-white font-semibold transition-all duration-300 ease-in-out transform hover:scale-[1.05] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            disabled={!selectedChatGroupId || loading || historyLoading}
-          >
-            {loading ? (
-              <>
-                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-                <span>Sending...</span>
-              </>
-            ) : (
-              "Send"
-            )}
-          </button>
+          <div className="flex gap-2">
+            <textarea
+              value={userInput}
+              onChange={handleInputChange}
+              ref={textareaRef}
+              rows={1}
+              style={{ resize: "none", overflow: "hidden" }}
+              className="flex-1 px-4 py-3 rounded-lg bg-black/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[var(--commandly-primary)]/20 focus:bg-black/30 transition-all duration-200 min-h-[44px] max-h-40"
+              placeholder="Type your message..."
+              required
+              disabled={!chatGroupId || loading || historyLoading}
+              autoFocus
+              onKeyDown={handleTextareaKeyDown}
+            />
+            <button
+              type="submit"
+              className="px-6 py-2 rounded-lg bg-[var(--commandly-primary)] hover:bg-[var(--commandly-primary)]/90 text-white font-semibold transition-all duration-300 ease-in-out transform hover:scale-[1.05] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              disabled={!chatGroupId || loading || historyLoading}
+            >
+              {loading ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                  <span>Sending...</span>
+                </>
+              ) : (
+                "Send"
+              )}
+            </button>
+          </div>
+          {selectedQuote && (
+            <div className="relative bg-white/5 rounded-lg border border-white/10 p-3">
+              <div className="flex justify-between items-start gap-2">
+                <div className="text-sm text-white/70 line-clamp-2">
+                  {selectedQuote
+                    ?.replace(/```html|```/g, "")
+                    ?.replace(/<[^>]*>?/g, "")}
+                </div>
+                <button
+                  onClick={() => setSelectedQuote("")}
+                  className="p-1 hover:bg-white/10 rounded-lg transition-colors"
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M18 6 6 18" />
+                    <path d="m6 6 12 12" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          )}
         </form>
         {error && <div className="text-red-400 mt-2 px-4">{error}</div>}
       </div>
@@ -343,12 +602,14 @@ const Chat = () => {
                   <span className="text-2xl">💬</span>
                 </div>
                 <p>No chat history</p>
-                <p className="text-sm text-white/40">Start a new conversation</p>
+                <p className="text-sm text-white/40">
+                  Start a new conversation
+                </p>
               </div>
             )}
             {chatGroups.map((group, idx) => (
               <div
-                onClick={() => setSelectedChatGroupId(group.id)}
+                onClick={() => setChatGroupId(group.id)}
                 key={idx}
                 className={`rounded-lg px-3 py-2 cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-[1.02] ${
                   idx === chatGroups.length - 1
@@ -356,7 +617,7 @@ const Chat = () => {
                     : "hover:bg-white/10 border border-transparent"
                 }
                 ${
-                  selectedChatGroupId === group.id
+                  chatGroupId === group.id
                     ? "bg-[var(--commandly-primary)]/20 border border-[var(--commandly-primary)]/40 scale-[1.02]"
                     : ""
                 }`}
