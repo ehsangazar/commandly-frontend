@@ -337,21 +337,24 @@ const Chat = () => {
                     }}
                   />
                   {msg.role === "assistant" && !msg.streaming && (
-                    <div className="flex items-center gap-1 ml-2 mb-2">
-                      <Tooltip
-                        text={copiedMessageId === idx ? "Copied!" : "Copy"}
-                      >
+                    <div className="flex items-center gap-2 ml-2 mb-2">
+                      <Tooltip text={copiedMessageId === idx ? "Copied!" : "Copy"}>
                         <button
-                          className="p-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 transform cursor-pointer flex items-center gap-1"
+                          className={`p-1 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 flex items-center justify-center shadow-sm border border-transparent ${
+                            copiedMessageId === idx
+                              ? "bg-green-500/20 text-green-400 scale-110"
+                              : "hover:bg-white/10 text-white/80 hover:text-white"
+                          }`}
                           onClick={() => {
                             navigator.clipboard.writeText(msg.content);
                             setCopiedMessageId(idx);
                             setTimeout(() => setCopiedMessageId(null), 2000);
                           }}
+                          style={{ minWidth: 32, minHeight: 32 }}
                         >
                           <svg
-                            width="16"
-                            height="16"
+                            width="20"
+                            height="20"
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
@@ -359,21 +362,14 @@ const Chat = () => {
                             strokeLinecap="round"
                             strokeLinejoin="round"
                             className={`transition-transform duration-200 ${
-                              copiedMessageId === idx ? "scale-110" : ""
+                              copiedMessageId === idx ? "scale-110 text-green-400" : ""
                             }`}
                           >
                             {copiedMessageId === idx ? (
                               <path d="M20 6L9 17l-5-5" />
                             ) : (
                               <>
-                                <rect
-                                  width="14"
-                                  height="14"
-                                  x="8"
-                                  y="8"
-                                  rx="2"
-                                  ry="2"
-                                />
+                                <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
                                 <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
                               </>
                             )}
@@ -382,12 +378,13 @@ const Chat = () => {
                       </Tooltip>
                       <Tooltip text="Quote">
                         <button
-                          className="p-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 transform cursor-pointer flex items-center gap-1"
+                          className="p-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 flex items-center justify-center text-white/80 hover:text-white shadow-sm border border-transparent"
+                          style={{ minWidth: 32, minHeight: 32 }}
                           onClick={() => setSelectedQuote(msg.content)}
                         >
                           <svg
-                            width="16"
-                            height="16"
+                            width="20"
+                            height="20"
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
@@ -401,10 +398,11 @@ const Chat = () => {
                         </button>
                       </Tooltip>
                       <div className="relative group">
-                        <div className="flex items-center">
+                        <div className="flex items-center gap-0.5">
                           <Tooltip text="Translate">
                             <button
-                              className="p-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 transform cursor-pointer flex items-center gap-1"
+                              className="p-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 flex items-center justify-center text-white/80 hover:text-white shadow-sm border border-transparent"
+                              style={{ minWidth: 32, minHeight: 32 }}
                               onClick={() =>
                                 setShowLanguageDropdown(
                                   showLanguageDropdown === idx ? null : idx
@@ -412,8 +410,8 @@ const Chat = () => {
                               }
                             >
                               <svg
-                                width="16"
-                                height="16"
+                                width="20"
+                                height="20"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
@@ -433,7 +431,8 @@ const Chat = () => {
                           <Tooltip text="Language options">
                             <button
                               ref={chevronRef}
-                              className="p-1 -ml-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 transform cursor-pointer"
+                              className="p-1 -ml-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 flex items-center justify-center text-white/80 hover:text-white shadow-sm border border-transparent"
+                              style={{ minWidth: 32, minHeight: 32 }}
                               onClick={() =>
                                 setShowLanguageDropdown(
                                   showLanguageDropdown === idx ? null : idx
@@ -441,8 +440,8 @@ const Chat = () => {
                               }
                             >
                               <svg
-                                width="16"
-                                height="16"
+                                width="20"
+                                height="20"
                                 viewBox="0 0 24 24"
                                 fill="none"
                                 stroke="currentColor"
@@ -450,9 +449,7 @@ const Chat = () => {
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                                 className={`transition-transform duration-200 ${
-                                  showLanguageDropdown === idx
-                                    ? "rotate-180"
-                                    : ""
+                                  showLanguageDropdown === idx ? "rotate-180" : ""
                                 }`}
                               >
                                 <path d="m6 9 6 6 6-6" />
