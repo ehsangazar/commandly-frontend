@@ -11,6 +11,7 @@ import {
   getDefaultLanguage,
   setDefaultLanguage,
 } from "@/utils/getDefaultLanguage";
+import { useConfig } from "@/contexts/ConfigContext";
 
 const PAGE_SIZE = 20;
 const LAST_CHAT_GROUP_KEY = "lastChatGroupId";
@@ -77,6 +78,7 @@ const getDirection = (text: string) => {
 };
 
 const Chat = () => {
+  const { chat, setChat } = useConfig();
   const [chatGroupId, setChatGroupId] = useState<string | null>(null);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [chatGroups, setChatGroups] = useState<ChatGroup[]>([]);
@@ -97,6 +99,31 @@ const Chat = () => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const chevronRef = useRef<HTMLButtonElement>(null);
+  const submitRef = useRef<HTMLButtonElement>(null);
+  const newChatRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const handleChatUpdate = async () => {
+      if (chat) {
+        // First create a new chat and wait for it to complete
+        const newChatId = await handleNewChat();
+        if (!newChatId) return; // Stop if chat creation failed
+        
+        // Then set the input
+        setUserInput(chat);
+        // Clear the context
+        setChat("");
+        // Finally submit the form
+        if (submitRef.current) {
+          setTimeout(() => {
+            submitRef.current?.click();
+          }, 1000);
+        }
+      }
+    };
+
+    handleChatUpdate();
+  }, [chat]);
 
   useEffect(() => {
     const loadLastChatGroupId = async () => {
@@ -227,10 +254,12 @@ const Chat = () => {
       const newId = await createChatGroup();
       setChatGroupId(newId);
       localStorage.setItem(LAST_CHAT_GROUP_KEY, newId);
+      return newId;
     } catch (err) {
       setError(
         err instanceof Error ? err.message : "Failed to create chat group"
       );
+      return null;
     } finally {
       setHistoryLoading(false);
     }
@@ -311,6 +340,7 @@ const Chat = () => {
             </p>
           </div>
           <button
+            ref={newChatRef}
             onClick={handleNewChat}
             className="ml-auto px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium border border-white/10 transition-all duration-300 ease-in-out transform"
             type="button"
@@ -608,6 +638,7 @@ const Chat = () => {
             />
             <button
               type="submit"
+              ref={submitRef}
               className="px-6 py-2 rounded-lg bg-[var(--commandly-primary)] hover:bg-[var(--commandly-primary)]/90 text-white font-semibold transition-all duration-300 ease-in-out transform hover:scale-[1.05] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               disabled={!chatGroupId || loading || historyLoading}
             >

@@ -4,6 +4,7 @@ import {
   FiClock,
   FiClipboard,
   FiPieChart,
+  FiMessageSquare,
 } from "react-icons/fi";
 
 interface WidgetSidebarProps {
@@ -70,6 +71,15 @@ const WidgetSidebar = ({
       description: "Display time and date",
       icon: FiClock,
       preview: "/widgets/clock-preview.png",
+      unique: false,
+      maxInstances: 1,
+    },
+    {
+      type: "chat",
+      title: "Chat Widget",
+      description: "Quick message input",
+      icon: FiMessageSquare,
+      preview: "/widgets/chat-preview.png",
       unique: false,
       maxInstances: 1,
     },
@@ -147,8 +157,8 @@ const WidgetSidebar = ({
                       <div
                         className={`relative rounded-xl border border-white/20 overflow-hidden transition-all duration-300 ${
                           !isDisabled
-                            ? "group-hover:border-white/40 group-hover:shadow-lg"
-                            : ""
+                          ? "group-hover:border-white/40 group-hover:shadow-lg"
+                          : ""
                         }`}
                       >
                         <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40 z-10" />
@@ -160,8 +170,8 @@ const WidgetSidebar = ({
                         <div
                           className={`absolute inset-0 ${
                             !isDisabled
-                              ? "bg-[var(--commandly-primary)]/0 group-hover:bg-[var(--commandly-primary)]/10"
-                              : ""
+                            ? "bg-[var(--commandly-primary)]/0 group-hover:bg-[var(--commandly-primary)]/10"
+                            : ""
                           } transition-colors duration-300`}
                         />
                       </div>

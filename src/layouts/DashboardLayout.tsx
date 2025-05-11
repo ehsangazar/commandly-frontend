@@ -57,6 +57,7 @@ const DashboardLayout = () => {
     clips: { w: 4, h: 3 },
     clock: { w: 2, h: 2 },
     diagram: { w: 4, h: 3 },
+    chat: { w: 3, h: 1 },
   };
 
   const handleBackgroundChange = () => {
@@ -66,7 +67,7 @@ const DashboardLayout = () => {
   };
 
   const handleAddWidget = (widgetType: string) => {
-    if (!["stats", "clips", "clock", "diagram"].includes(widgetType)) return;
+    if (!["stats", "clips", "clock", "diagram", "chat"].includes(widgetType)) return;
 
     // Generate a unique ID for the new widget
     const newId = `${widgetType}-${Date.now()}`;

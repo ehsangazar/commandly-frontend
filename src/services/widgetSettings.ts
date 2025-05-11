@@ -2,7 +2,7 @@ import { getAuthToken } from "@/utils/auth";
 
 interface Widget {
   id: string;
-  type: "stats" | "clips" | "clock" | "diagram";
+  type: "stats" | "clips" | "clock" | "diagram" | "chat";
   x: number;
   y: number;
   w: number;
