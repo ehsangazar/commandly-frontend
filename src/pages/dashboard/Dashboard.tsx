@@ -12,6 +12,7 @@ import StatsWidget from "@/components-dashboard/Widgets/StatsWidget/StatsWidget"
 import ClipsWidget from "@/components-dashboard/Widgets/ClipsWidget/ClipsWidget";
 import ClockWidget from "@/components-dashboard/Widgets/ClockWidget/ClockWidget";
 import DiagramWidget from "@/components-dashboard/Widgets/DiagramWidget/DiagramWidget";
+import ChatWidget from "@/components-dashboard/Widgets/ChatWidget/index";
 import {
   getWidgetSettings,
   updateWidgetSettings,
@@ -32,6 +33,7 @@ const Dashboard = () => {
     useOutletContext<DashboardContext>();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  console.log(widgets);
 
   useEffect(() => {
     const loadWidgets = async () => {
@@ -174,6 +176,7 @@ const Dashboard = () => {
               {widget.type === "clips" && <ClipsWidget />}
               {widget.type === "clock" && <ClockWidget />}
               {widget.type === "diagram" && <DiagramWidget />}
+              {widget.type === "chat" && <ChatWidget />}
             </div>
           </div>
         ))}

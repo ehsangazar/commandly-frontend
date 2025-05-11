@@ -1,9 +1,9 @@
 import { getAuthToken } from "./auth";
 
-// const API_BASE_URL =
-//   import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
 
-const API_BASE_URL = "http://localhost:7070";
+// const API_BASE_URL = "http://localhost:7070";
 
 export async function createChatGroup() {
   const token = getAuthToken();

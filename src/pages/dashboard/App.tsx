@@ -8,7 +8,7 @@ import Chat from "./Chat";
 
 export interface Widget {
   id: string;
-  type: "stats" | "clips" | "clock" | "diagram";
+  type: "stats" | "clips" | "clock" | "diagram" | "chat";
   x: number;
   y: number;
   w: number;
