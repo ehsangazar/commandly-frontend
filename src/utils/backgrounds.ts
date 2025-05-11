@@ -1,12 +1,12 @@
 // High-quality, subtle background images that work well with glassmorphism
 export const backgrounds = [
   {
-    url: "https://commandly.dev/backgrounds/background-1.jpeg",
+    url: "https://commandly.dev/backgrounds/background1.jpeg",
     credit: "Unsplash - Modestas Urbonas",
     color: "from-purple-500/30 to-blue-500/30", // Tailwind gradient colors for overlay
   },
   {
-    url: "https://commandly.dev/backgrounds/background-2.jpeg",
+    url: "https://commandly.dev/backgrounds/background2.jpeg",
     credit: "Unsplash - Pawel Czerwinski",
     color: "from-indigo-500/30 to-cyan-500/30",
   },
