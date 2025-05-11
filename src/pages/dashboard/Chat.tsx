@@ -261,7 +261,7 @@ const Chat = () => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row h-full w-full min-h-0">
+    <div className="flex flex-col lg:flex-row h-full w-full min-h-0">
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col h-full min-h-0 pr-0 md:pr-8">
         <div className="flex items-center gap-4 mb-6 pt-6 pl-6">
@@ -285,7 +285,7 @@ const Chat = () => {
             New Chat
           </button>
         </div>
-        <div className="flex-1 overflow-y-auto p-0 md:pl-6 md:pr-6 md:pb-4 space-y-4 min-h-0">
+        <div className="flex-1 overflow-y-auto p-0 md:pl-6 md:pr-6 md:pb-4 space-y-4 min-h-0 mb-2 border-b border-white/10">
           {historyLoading ? (
             <div className="flex items-center justify-center h-full">
               <div className="flex flex-col items-center gap-3">
@@ -305,7 +305,7 @@ const Chat = () => {
               >
                 <div className="flex flex-col">
                   <div
-                    className={`max-w-[70%] rounded-xl p-6 mb-2 shadow-md prose prose-invert font-medium text-base single-message transition-all duration-300 ease-in-out transform hover:scale-[1.02] ${
+                    className={`max-w-[80%] rounded-xl p-6 mb-2 shadow-md prose prose-invert font-medium text-base single-message transition-all duration-300 ease-in-out transform hover:scale-[1.02] ${
                       msg.role === "user"
                         ? "bg-[var(--commandly-primary)]/80 text-white self-end"
                         : "bg-white/10 text-white self-start"
@@ -388,9 +388,11 @@ const Chat = () => {
                           </svg>
                         </button>
                       </Tooltip>
-                      <Tooltip text={quotedMessageId === idx ? "Quoted!" : "Quote"}>
+                      <Tooltip
+                        text={quotedMessageId === idx ? "Quoted!" : "Quote"}
+                      >
                         <button
-                          className={`p-1 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 flex items-center justify-center shadow-sm border border-transparent ${
+                          className={`cursor-pointer p-1 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 flex items-center justify-center shadow-sm border border-transparent ${
                             quotedMessageId === idx
                               ? "bg-blue-500/20 text-blue-400 scale-110"
                               : "hover:bg-white/10 text-white/80 hover:text-white"
@@ -412,7 +414,9 @@ const Chat = () => {
                             strokeLinecap="round"
                             strokeLinejoin="round"
                             className={`transition-transform duration-200 ${
-                              quotedMessageId === idx ? "scale-110 text-blue-400" : ""
+                              quotedMessageId === idx
+                                ? "scale-110 text-blue-400"
+                                : ""
                             }`}
                           >
                             {quotedMessageId === idx ? (
@@ -430,7 +434,7 @@ const Chat = () => {
                         <div className="flex items-center gap-0.5">
                           <Tooltip text="Translate">
                             <button
-                              className="p-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 flex items-center justify-center text-white/80 hover:text-white shadow-sm border border-transparent"
+                              className="cursor-pointer p-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 flex items-center justify-center text-white/80 hover:text-white shadow-sm border border-transparent"
                               style={{ minWidth: 32, minHeight: 32 }}
                               onClick={() =>
                                 setShowLanguageDropdown(
@@ -460,7 +464,7 @@ const Chat = () => {
                           <Tooltip text="Language options">
                             <button
                               ref={chevronRef}
-                              className="p-1 -ml-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 flex items-center justify-center text-white/80 hover:text-white shadow-sm border border-transparent"
+                              className="cursor-pointer p-1 -ml-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 flex items-center justify-center text-white/80 hover:text-white shadow-sm border border-transparent"
                               style={{ minWidth: 32, minHeight: 32 }}
                               onClick={() =>
                                 setShowLanguageDropdown(
@@ -551,7 +555,7 @@ const Chat = () => {
         {/* Chat Input */}
         <form
           onSubmit={handleSend}
-          className="p-4 pt-0 md:pl-6 md:pr-6 flex flex-col gap-2 sticky bottom-0"
+          className="p-0 pt-0 md:pl-6 md:pr-6 flex flex-col gap-2 sticky bottom-0"
         >
           <div className="flex gap-2">
             <textarea
@@ -615,12 +619,12 @@ const Chat = () => {
         {error && <div className="text-red-400 mt-2 px-4">{error}</div>}
       </div>
       {/* Sidebar as a floating box */}
-      <div className="w-full md:w-80 flex-shrink-0 md:mt-6 md:mr-6 md:mb-6 md:ml-0 mt-8 md:relative min-h-0">
+      <div className="w-full lg:w-80 flex-shrink-0 md:mt-6 md:mr-6 md:mb-6 md:ml-0 mt-8 md:relative min-h-0">
         <div className="bg-white/5 rounded-xl shadow-lg border border-white/10 h-full flex flex-col md:sticky md:top-6 min-h-0">
           <div className="p-4 border-b border-white/10 text-lg font-semibold text-white/80">
             Chat History
           </div>
-          <div className="flex-1 overflow-y-auto p-4 space-y-2 min-h-0">
+          <div className="flex-1 overflow-y-p-4 auto p-4 space-y-2 min-h-0">
             {chatGroups.length === 0 && !historyLoading && (
               <div className="flex flex-col items-center justify-center text-white/50 text-center mt-8 gap-3">
                 <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
