@@ -7,6 +7,10 @@ import {
   getChatGroups,
 } from "@/utils/chat";
 import Tooltip from "@/components-dashboard/Tooltip/Tooltip";
+import {
+  getDefaultLanguage,
+  setDefaultLanguage,
+} from "@/utils/getDefaultLanguage";
 
 const PAGE_SIZE = 20;
 const LAST_CHAT_GROUP_KEY = "lastChatGroupId";
@@ -64,10 +68,11 @@ const languages: Language[] = [
 ];
 
 const getDirection = (text: string) => {
+  const newText = text.replace(/```html|```/g, "").replace(/<[^>]*>?/g, "");
   // check if text has more than 50% of rtl characters
   const rtlChars = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
-  const rtlCount = (text.match(rtlChars) || []).length;
-  const ltrCount = (text.match(/[a-zA-Z0-9]/g) || []).length;
+  const rtlCount = (newText.match(rtlChars) || []).length;
+  const ltrCount = (newText.match(/[a-zA-Z0-9]/g) || []).length;
   return rtlCount > ltrCount ? "rtl" : "ltr";
 };
 
@@ -76,16 +81,16 @@ const Chat = () => {
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [chatGroups, setChatGroups] = useState<ChatGroup[]>([]);
   const [userInput, setUserInput] = useState("");
-  const [context, setContext] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [historyLoading, setHistoryLoading] = useState(false);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState<
     number | null
   >(null);
-  const [defaultTranslateLanguage, setDefaultTranslateLanguage] =
-    useState("en");
-  const [selectedQuote, setSelectedQuote] = useState<string>("");
+  const [defaultTranslateLanguage, setDefaultTranslateLanguage] = useState(
+    getDefaultLanguage()
+  );
+  const [selectedQuote, setSelectedQuote] = useState<string | null>(null);
   const [copiedMessageId, setCopiedMessageId] = useState<number | null>(null);
   const [quotedMessageId, setQuotedMessageId] = useState<number | null>(null);
   const responseRef = useRef<HTMLDivElement>(null);
@@ -148,7 +153,7 @@ const Chat = () => {
     try {
       const stream = await sendSimpleChat({
         userInput,
-        context,
+        context: selectedQuote || "",
         selectedChatGroupId: chatGroupId,
       });
       if (stream && typeof stream.getReader === "function") {
@@ -193,6 +198,7 @@ const Chat = () => {
         });
       }
       setUserInput("");
+      setSelectedQuote(null);
       setTimeout(() => {
         if (responseRef.current) {
           responseRef.current.scrollIntoView({ behavior: "smooth" });
@@ -217,7 +223,6 @@ const Chat = () => {
     setHistoryLoading(true);
     setChatHistory([]);
     setUserInput("");
-    setContext("");
     try {
       const newId = await createChatGroup();
       setChatGroupId(newId);
@@ -260,6 +265,35 @@ const Chat = () => {
     }
   };
 
+  const handleTranslate = async (text: string) => {
+    setUserInput(`Translate to ${defaultTranslateLanguage}`);
+    setSelectedQuote(text);
+    setTimeout(() => {
+      doSend();
+    }, 100);
+  };
+
+  // Close language dropdown on outside click
+  useEffect(() => {
+    if (showLanguageDropdown === null) return;
+    function handleClickOutside(event: MouseEvent) {
+      const dropdown = dropdownRef.current;
+      const chevron = chevronRef.current;
+      if (
+        dropdown &&
+        !dropdown.contains(event.target as Node) &&
+        chevron &&
+        !chevron.contains(event.target as Node)
+      ) {
+        setShowLanguageDropdown(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showLanguageDropdown]);
+
   return (
     <div className="flex flex-col lg:flex-row h-full w-full min-h-0">
       {/* Main Chat Area */}
@@ -278,7 +312,7 @@ const Chat = () => {
           </div>
           <button
             onClick={handleNewChat}
-            className="ml-auto px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium border border-white/10 transition-all duration-300 ease-in-out transform hover:scale-[1.05] active:scale-[0.98]"
+            className="ml-auto px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium border border-white/10 transition-all duration-300 ease-in-out transform"
             type="button"
             disabled={historyLoading || loading}
           >
@@ -305,10 +339,10 @@ const Chat = () => {
               >
                 <div className="flex flex-col">
                   <div
-                    className={`max-w-[80%] rounded-xl p-6 mb-2 shadow-md prose prose-invert font-medium text-base single-message transition-all duration-300 ease-in-out transform hover:scale-[1.02] ${
+                    className={`max-w-[80%] rounded-xl mb-2 prose prose-invert font-medium text-base single-message transition-all duration-300 ease-in-out transform ${
                       msg.role === "user"
-                        ? "bg-[var(--commandly-primary)]/80 text-white self-end"
-                        : "bg-white/10 text-white self-start"
+                        ? "bg-[var(--commandly-primary)]/80 text-white self-end  min-w-[max-content] p-4"
+                        : "text-white"
                     } ${msg.streaming ? "opacity-70" : ""}`}
                     dir={getDirection(msg.content || "")}
                     style={{}}
@@ -338,18 +372,21 @@ const Chat = () => {
                     }}
                   />
                   {msg.role === "assistant" && !msg.streaming && (
-                    <div className="flex items-center gap-2 ml-2 mb-2">
+                    <div className="flex items-center gap-2">
                       <Tooltip
                         text={copiedMessageId === idx ? "Copied!" : "Copy"}
                       >
                         <button
-                          className={`p-1 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 flex items-center justify-center shadow-sm border border-transparent ${
+                          className={`cursor-pointer p-1 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 flex items-center justify-center shadow-sm border border-transparent ${
                             copiedMessageId === idx
                               ? "bg-green-500/20 text-green-400 scale-110"
                               : "hover:bg-white/10 text-white/80 hover:text-white"
                           }`}
                           onClick={() => {
-                            navigator.clipboard.writeText(msg.content);
+                            const newText = msg.content
+                              .replace(/```html|```/g, "")
+                              .replace(/<[^>]*>?/g, "");
+                            navigator.clipboard.writeText(newText);
                             setCopiedMessageId(idx);
                             setTimeout(() => setCopiedMessageId(null), 2000);
                           }}
@@ -430,72 +467,74 @@ const Chat = () => {
                           </svg>
                         </button>
                       </Tooltip>
-                      <div className="relative group">
+                      <div className="relative">
                         <div className="flex items-center gap-0.5">
-                          <Tooltip text="Translate">
-                            <button
-                              className="cursor-pointer p-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 flex items-center justify-center text-white/80 hover:text-white shadow-sm border border-transparent"
-                              style={{ minWidth: 32, minHeight: 32 }}
-                              onClick={() =>
-                                setShowLanguageDropdown(
-                                  showLanguageDropdown === idx ? null : idx
-                                )
-                              }
-                            >
-                              <svg
-                                width="20"
-                                height="20"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
+                          <div className="relative">
+                            <Tooltip text="Translate">
+                              <button
+                                className="cursor-pointer p-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 flex items-center justify-center text-white/80 hover:text-white shadow-sm border border-transparent"
+                                style={{ minWidth: 32, minHeight: 32 }}
+                                onClick={() => {
+                                  handleTranslate(msg.content);
+                                }}
                               >
-                                <path d="M5 8l6 6" />
-                                <path d="m4 14 6-6 2-3" />
-                                <path d="M2 5h12" />
-                                <path d="M7 2h1" />
-                                <path d="m22 22-5-10-5 10" />
-                                <path d="M14 18h6" />
-                              </svg>
-                            </button>
-                          </Tooltip>
-                          <Tooltip text="Language options">
-                            <button
-                              ref={chevronRef}
-                              className="cursor-pointer p-1 -ml-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 flex items-center justify-center text-white/80 hover:text-white shadow-sm border border-transparent"
-                              style={{ minWidth: 32, minHeight: 32 }}
-                              onClick={() =>
-                                setShowLanguageDropdown(
-                                  showLanguageDropdown === idx ? null : idx
-                                )
-                              }
-                            >
-                              <svg
-                                width="20"
-                                height="20"
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                className={`transition-transform duration-200 ${
-                                  showLanguageDropdown === idx
-                                    ? "rotate-180"
-                                    : ""
-                                }`}
+                                <svg
+                                  width="20"
+                                  height="20"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                >
+                                  <path d="M5 8l6 6" />
+                                  <path d="m4 14 6-6 2-3" />
+                                  <path d="M2 5h12" />
+                                  <path d="M7 2h1" />
+                                  <path d="m22 22-5-10-5 10" />
+                                  <path d="M14 18h6" />
+                                </svg>
+                              </button>
+                            </Tooltip>
+                          </div>
+                          <div className="relative">
+                            <Tooltip text="Language options">
+                              <button
+                                ref={chevronRef}
+                                className="cursor-pointer p-1 -ml-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 flex items-center justify-center text-white/80 hover:text-white shadow-sm border border-transparent"
+                                style={{ minWidth: 32, minHeight: 32 }}
+                                onClick={() =>
+                                  setShowLanguageDropdown(
+                                    showLanguageDropdown === idx ? null : idx
+                                  )
+                                }
                               >
-                                <path d="m6 9 6 6 6-6" />
-                              </svg>
-                            </button>
-                          </Tooltip>
+                                <svg
+                                  width="20"
+                                  height="20"
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  className={`transition-transform duration-200 ${
+                                    showLanguageDropdown === idx
+                                      ? "rotate-180"
+                                      : ""
+                                  }`}
+                                >
+                                  <path d="m6 9 6 6 6-6" />
+                                </svg>
+                              </button>
+                            </Tooltip>
+                          </div>
                         </div>
                         {showLanguageDropdown === idx && (
                           <div
                             ref={dropdownRef}
-                            className="absolute left-0 w-56 bg-black/70 backdrop-blur-xl rounded-xl shadow-2xl border border-white/20 py-2 z-50 overflow-hidden mt-2 animate-fade-in"
+                            className="absolute left-0 bottom-full w-56 bg-black/50 backdrop-blur-xl rounded-xl shadow-xl border border-white/10 py-2 z-50 overflow-hidden mb-2 animate-fade-in"
                             style={{ minWidth: 200 }}
                           >
                             <div className="max-h-[320px] overflow-y-auto">
@@ -506,19 +545,15 @@ const Chat = () => {
                                 .map((lang) => (
                                   <button
                                     key={lang.code}
-                                    className={`w-full text-left px-5 py-3 text-base flex items-center gap-3 transition-colors duration-150 font-medium rounded-lg mb-1 last:mb-0 focus:outline-none focus:ring-2 focus:ring-[var(--commandly-primary)]/30 focus:bg-[var(--commandly-primary)]/10 ${
+                                    className={`cursor-pointer w-full text-left px-5 py-3 text-base flex items-center gap-3 transition-colors duration-150 font-medium rounded-lg mb-1 last:mb-0 focus:outline-none focus:ring-2 focus:ring-[var(--commandly-primary)]/30 focus:bg-[var(--commandly-primary)]/10 ${
                                       defaultTranslateLanguage === lang.code
                                         ? "bg-[var(--commandly-primary)]/80 text-white shadow-inner"
-                                        : "hover:bg-white/10 text-white/80 hover:text-white"
+                                        : "hover:bg-white/20 text-white/90 hover:text-white"
                                     }`}
                                     onClick={() => {
                                       setDefaultTranslateLanguage(lang.code);
                                       setShowLanguageDropdown(null);
-                                      // Here you would typically call your translation API
-                                      // For now, we'll just show an alert
-                                      alert(
-                                        `Translation to ${lang.name} would happen here`
-                                      );
+                                      setDefaultLanguage(lang.code);
                                     }}
                                     style={{ minHeight: 44 }}
                                   >
@@ -595,7 +630,7 @@ const Chat = () => {
                     ?.replace(/<[^>]*>?/g, "")}
                 </div>
                 <button
-                  onClick={() => setSelectedQuote("")}
+                  onClick={() => setSelectedQuote(null)}
                   className="p-1 hover:bg-white/10 rounded-lg transition-colors"
                 >
                   <svg

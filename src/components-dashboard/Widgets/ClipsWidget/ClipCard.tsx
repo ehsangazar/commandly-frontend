@@ -26,7 +26,8 @@ export default function ClipsCard({
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
+    const newText = text.replace(/```html|```/g, "").replace(/<[^>]*>?/g, "");
+    navigator.clipboard.writeText(newText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
