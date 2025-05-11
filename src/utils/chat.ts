@@ -7,7 +7,7 @@ const API_BASE_URL = "http://localhost:7070";
 
 export async function createChatGroup() {
   const token = getAuthToken();
-  const res = await fetch(`${API_BASE_URL}/ai/create-chat-group`, {
+  const res = await fetch(`${API_BASE_URL}/chat/create-chat-group`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -24,20 +24,20 @@ export async function createChatGroup() {
 export async function sendSimpleChat({
   userInput,
   context,
-  chatGroupId,
+  selectedChatGroupId,
 }: {
   userInput: string;
   context: string;
-  chatGroupId: string;
+  selectedChatGroupId: string;
 }) {
   const token = getAuthToken();
-  const res = await fetch(`${API_BASE_URL}/ai/simple-chat`, {
+  const res = await fetch(`${API_BASE_URL}/chat/simple-chat`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ userInput, context, chatGroupId }),
+    body: JSON.stringify({ userInput, context, selectedChatGroupId }),
   });
   if (res.headers.get("content-type")?.includes("text/event-stream")) {
     return res.body;
@@ -58,7 +58,7 @@ export async function getChatGroups({
 }) {
   const token = getAuthToken();
   const res = await fetch(
-    `${API_BASE_URL}/ai/chat-groups?userId=${userId}&page=${page}&limit=${limit}`,
+    `${API_BASE_URL}/chat/chat-groups?userId=${userId}&page=${page}&limit=${limit}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -82,7 +82,7 @@ export async function getChatGroupHistory({
 }) {
   const token = getAuthToken();
   const res = await fetch(
-    `${API_BASE_URL}/ai/chat-group/${chatGroupId}?page=${page}&limit=${limit}`,
+    `${API_BASE_URL}/chat/chat-group/${chatGroupId}?page=${page}&limit=${limit}`,
     {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -97,7 +97,7 @@ export async function getChatGroupHistory({
 
 export async function getLastChatGroupId() {
   const token = getAuthToken();
-  const res = await fetch(`${API_BASE_URL}/ai/chat-groups`, {
+  const res = await fetch(`${API_BASE_URL}/chat/chat-groups`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },

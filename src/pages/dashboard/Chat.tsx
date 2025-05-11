@@ -4,6 +4,7 @@ import {
   sendSimpleChat,
   getChatGroupHistory,
   getLastChatGroupId,
+  getChatGroups,
 } from "@/utils/chat";
 
 const PAGE_SIZE = 20;
@@ -15,6 +16,13 @@ type ChatMessage = {
   streaming?: boolean;
 };
 
+type ChatGroup = {
+  id: string;
+  name: string;
+  createdAt: string;
+  ChatHistory: ChatMessage[];
+};
+
 const getDirection = (text: string) => {
   // check if text has more than 50% of rtl characters
   const rtlChars = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
@@ -24,8 +32,8 @@ const getDirection = (text: string) => {
 };
 
 const Chat = () => {
-  const [chatGroupId, setChatGroupId] = useState<string | null>(null);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
+  const [chatGroups, setChatGroups] = useState<ChatGroup[]>([]);
   const [userInput, setUserInput] = useState("");
   const [context, setContext] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,8 +41,10 @@ const Chat = () => {
   const [historyLoading, setHistoryLoading] = useState(false);
   const responseRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [selectedChatGroupId, setSelectedChatGroupId] = useState<string | null>(
+    null
+  );
 
-  // Load last used chat group or create a new one
   useEffect(() => {
     const loadLastChatGroupId = async () => {
       const lastId = localStorage.getItem(LAST_CHAT_GROUP_KEY);
@@ -46,15 +56,18 @@ const Chat = () => {
       return lastId;
     };
     loadLastChatGroupId().then((id) => {
-      setChatGroupId(id);
+      setSelectedChatGroupId(id);
     });
   }, []);
 
-  // Fetch chat history when chatGroupId changes
   useEffect(() => {
-    if (!chatGroupId) return;
+    if (!selectedChatGroupId) return;
     setHistoryLoading(true);
-    getChatGroupHistory({ chatGroupId, page: 1, limit: PAGE_SIZE })
+    getChatGroupHistory({
+      chatGroupId: selectedChatGroupId,
+      page: 1,
+      limit: PAGE_SIZE,
+    })
       .then((history) => setChatHistory(history.reverse()))
       .catch((err) =>
         setError(
@@ -69,11 +82,13 @@ const Chat = () => {
           }
         }, 100);
       });
-  }, [chatGroupId]);
+    getChatGroups({ userId: "1" }).then((groups: ChatGroup[]) => {
+      setChatGroups(groups?.filter((group) => group.ChatHistory.length > 0));
+    });
+  }, [selectedChatGroupId]);
 
-  // Extract send logic so it can be called from both handleSend and Shift+Enter
   const doSend = async () => {
-    if (!userInput.trim() || !chatGroupId || loading) return;
+    if (!userInput.trim() || !selectedChatGroupId || loading) return;
     setError("");
     setLoading(true);
     let responseHtml = "";
@@ -83,7 +98,11 @@ const Chat = () => {
       { content: "", role: "assistant", streaming: true },
     ]);
     try {
-      const stream = await sendSimpleChat({ userInput, context, chatGroupId });
+      const stream = await sendSimpleChat({
+        userInput,
+        context,
+        selectedChatGroupId,
+      });
       if (stream && typeof stream.getReader === "function") {
         const reader = stream.getReader();
         let done = false;
@@ -153,7 +172,7 @@ const Chat = () => {
     setContext("");
     try {
       const newId = await createChatGroup();
-      setChatGroupId(newId);
+      setSelectedChatGroupId(newId);
       localStorage.setItem(LAST_CHAT_GROUP_KEY, newId);
     } catch (err) {
       setError(
@@ -166,10 +185,10 @@ const Chat = () => {
 
   // Save chatGroupId to localStorage when it changes
   useEffect(() => {
-    if (chatGroupId) {
-      localStorage.setItem(LAST_CHAT_GROUP_KEY, chatGroupId);
+    if (selectedChatGroupId) {
+      localStorage.setItem(LAST_CHAT_GROUP_KEY, selectedChatGroupId);
     }
-  }, [chatGroupId]);
+  }, [selectedChatGroupId]);
 
   // Auto-grow textarea
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -187,7 +206,12 @@ const Chat = () => {
   ) => {
     if (e.key === "Enter" && (e.shiftKey || e.ctrlKey || e.metaKey)) {
       e.preventDefault();
-      if (!loading && !historyLoading && chatGroupId && userInput.trim()) {
+      if (
+        !loading &&
+        !historyLoading &&
+        selectedChatGroupId &&
+        userInput.trim()
+      ) {
         doSend();
       }
     }
@@ -280,14 +304,14 @@ const Chat = () => {
             className="flex-1 px-4 py-3 rounded-lg bg-black/20 text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-[var(--commandly-primary)]/20 focus:bg-black/30 transition-all duration-200 min-h-[44px] max-h-40"
             placeholder="Type your message..."
             required
-            disabled={!chatGroupId || loading || historyLoading}
+            disabled={!selectedChatGroupId || loading || historyLoading}
             autoFocus
             onKeyDown={handleTextareaKeyDown}
           />
           <button
             type="submit"
             className="px-6 py-2 rounded-lg bg-[var(--commandly-primary)] hover:bg-[var(--commandly-primary)]/90 text-white font-semibold transition-all duration-200"
-            disabled={!chatGroupId || loading || historyLoading}
+            disabled={!selectedChatGroupId || loading || historyLoading}
           >
             {loading ? "Sending..." : "Send"}
           </button>
@@ -301,37 +325,39 @@ const Chat = () => {
             Chat History
           </div>
           <div className="flex-1 overflow-y-auto p-4 space-y-2 min-h-0">
-            {chatHistory.length === 0 && !historyLoading && (
+            {chatGroups.length === 0 && !historyLoading && (
               <div className="text-white/50 text-center mt-8">
-                No messages yet.
+                No chat history
               </div>
             )}
-            {chatHistory.map((msg, idx) => (
+            {chatGroups.map((group, idx) => (
               <div
+                onClick={() => setSelectedChatGroupId(group.id)}
                 key={idx}
                 className={`rounded-lg px-3 py-2 cursor-pointer transition-all duration-150 ${
-                  idx === chatHistory.length - 1
+                  idx === chatGroups.length - 1
                     ? "bg-[var(--commandly-primary)]/20 border border-[var(--commandly-primary)]/40"
                     : "hover:bg-white/10 border border-transparent"
+                }
+                ${
+                  selectedChatGroupId === group.id
+                    ? "bg-[var(--commandly-primary)]/20 border border-[var(--commandly-primary)]/40"
+                    : ""
                 }`}
               >
                 <div className="text-xs text-white/60 mb-1">
-                  {msg.role === "user" ? "You" : "AI"}
+                  {group["ChatHistory"].length > 0
+                    ? group["ChatHistory"][0].content
+                        .slice(0, 100)
+                        .replace(/```html|```/g, "")
+                        .replace(/<[^>]*>?/g, "")
+                    : "No messages"}
                 </div>
                 <div
                   className="truncate text-white/90 text-sm"
-                  title={msg.content
-                    ?.replace(/<[^>]+>/g, "")
-                    .replace(/```html|```/g, "")
-                    .slice(0, 100)}
+                  title={group.name}
                 >
-                  {msg.content
-                    ?.replace(/<[^>]+>/g, "")
-                    .replace(/```html|```/g, "")
-                    .slice(0, 60)}
-                  {msg.content?.replace(/<[^>]+>/g, "").length > 60
-                    ? "..."
-                    : ""}
+                  {group.name}
                 </div>
               </div>
             ))}
