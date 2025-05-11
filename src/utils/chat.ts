@@ -31,13 +31,17 @@ export async function sendSimpleChat({
   selectedChatGroupId: string;
 }) {
   const token = getAuthToken();
-  const res = await fetch(`${API_BASE_URL}/chat/simple-chat`, {
+  const res = await fetch(`${API_BASE_URL}/ai/simple-chat`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify({ userInput, context, selectedChatGroupId }),
+    body: JSON.stringify({
+      userInput,
+      context,
+      chatGroupId: selectedChatGroupId,
+    }),
   });
   if (res.headers.get("content-type")?.includes("text/event-stream")) {
     return res.body;
