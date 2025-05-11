@@ -8,7 +8,7 @@ import {
   startOfMonth,
   startOfWeek,
 } from "date-fns";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   FiRefreshCw,
   FiBarChart2,
@@ -82,6 +82,24 @@ const DiagramWidget = () => {
     return hours > 0 ? `${hours}h ${mins}m` : `${mins}m`;
   };
 
+  const analyse = useCallback(async () => {
+    const result = await analyseContextToJSON({
+      prompt: `
+          1. Analyze each domain in the input and categorize it
+          2. If a record is not in any category, choose the most appropriate one
+          3. Calculate total time spent in each category
+          4. Make sure each record is only in one category and not in multiple
+        `,
+      context: JSON.stringify(stats[activePeriod]),
+      format: JSON.stringify(
+        categories.map((category) => ({
+          [category]: "SUM_OF_MINUTES",
+        }))
+      ),
+    });
+    setAnalysisData(result.analysis);
+  }, [activePeriod, stats, categories]);
+
   const fetchStats = async () => {
     try {
       const token = getAuthToken();
@@ -113,14 +131,15 @@ const DiagramWidget = () => {
       }
       const data = await response.json();
       if (data.success) {
+        const newStats = data.stats.map(
+          (item: { domain: string; totalTime: number }) => ({
+            domain: item.domain,
+            time: item.totalTime,
+          })
+        );
         setStats((prev) => ({
           ...prev,
-          [activePeriod]: data.stats.map(
-            (item: { domain: string; totalTime: number }) => ({
-              domain: item.domain,
-              time: item.totalTime,
-            })
-          ),
+          [activePeriod]: newStats,
         }));
       } else {
         setStats((prev) => ({ ...prev, [activePeriod]: [] }));
@@ -160,28 +179,10 @@ const DiagramWidget = () => {
   }, [activePeriod]);
 
   useEffect(() => {
-    const analyse = async () => {
-      const result = await analyseContextToJSON({
-        prompt: `
-          1. Analyze each domain in the input and categorize it
-          2. If a record is not in any category, choose the most appropriate one
-          3. Calculate total time spent in each category
-          4. Make sure each record is only in one category and not in multiple
-        `,
-        context: JSON.stringify(stats[activePeriod]),
-        format: JSON.stringify(
-          categories.map((category) => ({
-            [category]: "SUM_OF_MINUTES",
-          }))
-        ),
-      });
-      setAnalysisData(result.analysis);
-    };
-    if (stats[activePeriod].length > 0) {
+    if (stats[activePeriod].length > 0 && categories.length > 0) {
       analyse();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [stats[activePeriod]?.length, categories]);
+  }, [activePeriod, stats, categories, analyse]);
 
   const data =
     analysisData &&
