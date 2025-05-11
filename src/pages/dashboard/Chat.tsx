@@ -338,7 +338,9 @@ const Chat = () => {
                   />
                   {msg.role === "assistant" && !msg.streaming && (
                     <div className="flex items-center gap-2 ml-2 mb-2">
-                      <Tooltip text={copiedMessageId === idx ? "Copied!" : "Copy"}>
+                      <Tooltip
+                        text={copiedMessageId === idx ? "Copied!" : "Copy"}
+                      >
                         <button
                           className={`p-1 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 flex items-center justify-center shadow-sm border border-transparent ${
                             copiedMessageId === idx
@@ -362,14 +364,23 @@ const Chat = () => {
                             strokeLinecap="round"
                             strokeLinejoin="round"
                             className={`transition-transform duration-200 ${
-                              copiedMessageId === idx ? "scale-110 text-green-400" : ""
+                              copiedMessageId === idx
+                                ? "scale-110 text-green-400"
+                                : ""
                             }`}
                           >
                             {copiedMessageId === idx ? (
                               <path d="M20 6L9 17l-5-5" />
                             ) : (
                               <>
-                                <rect width="14" height="14" x="8" y="8" rx="2" ry="2" />
+                                <rect
+                                  width="14"
+                                  height="14"
+                                  x="8"
+                                  y="8"
+                                  rx="2"
+                                  ry="2"
+                                />
                                 <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2" />
                               </>
                             )}
@@ -449,7 +460,9 @@ const Chat = () => {
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
                                 className={`transition-transform duration-200 ${
-                                  showLanguageDropdown === idx ? "rotate-180" : ""
+                                  showLanguageDropdown === idx
+                                    ? "rotate-180"
+                                    : ""
                                 }`}
                               >
                                 <path d="m6 9 6 6 6-6" />
@@ -460,9 +473,10 @@ const Chat = () => {
                         {showLanguageDropdown === idx && (
                           <div
                             ref={dropdownRef}
-                            className="absolute left-0 w-48 bg-gray-800 rounded-lg shadow-lg border border-white/10 py-1 z-50 overflow-hidden mt-1"
+                            className="absolute left-0 w-56 bg-black/70 backdrop-blur-xl rounded-xl shadow-2xl border border-white/20 py-2 z-50 overflow-hidden mt-2 animate-fade-in"
+                            style={{ minWidth: 200 }}
                           >
-                            <div className="max-h-[300px] overflow-y-auto">
+                            <div className="max-h-[320px] overflow-y-auto">
                               {languages
                                 .sort((a) =>
                                   a.code === defaultTranslateLanguage ? -1 : 1
@@ -470,10 +484,10 @@ const Chat = () => {
                                 .map((lang) => (
                                   <button
                                     key={lang.code}
-                                    className={`w-full text-left px-4 py-2 text-sm flex items-center gap-2 transition-colors duration-150 ${
+                                    className={`w-full text-left px-5 py-3 text-base flex items-center gap-3 transition-colors duration-150 font-medium rounded-lg mb-1 last:mb-0 focus:outline-none focus:ring-2 focus:ring-[var(--commandly-primary)]/30 focus:bg-[var(--commandly-primary)]/10 ${
                                       defaultTranslateLanguage === lang.code
-                                        ? "bg-[var(--commandly-primary)]/20 text-[var(--commandly-primary)] font-semibold"
-                                        : "hover:bg-white/10 text-white/70"
+                                        ? "bg-[var(--commandly-primary)]/80 text-white shadow-inner"
+                                        : "hover:bg-white/10 text-white/80 hover:text-white"
                                     }`}
                                     onClick={() => {
                                       setDefaultTranslateLanguage(lang.code);
@@ -484,24 +498,24 @@ const Chat = () => {
                                         `Translation to ${lang.name} would happen here`
                                       );
                                     }}
+                                    style={{ minHeight: 44 }}
                                   >
                                     {defaultTranslateLanguage === lang.code && (
                                       <svg
-                                        width="16"
-                                        height="16"
+                                        width="20"
+                                        height="20"
                                         viewBox="0 0 24 24"
                                         fill="none"
                                         stroke="currentColor"
                                         strokeWidth="2"
                                         strokeLinecap="round"
                                         strokeLinejoin="round"
+                                        className="text-white"
                                       >
                                         <polyline points="20 6 9 17 4 12" />
                                       </svg>
                                     )}
-                                    <span className="font-medium">
-                                      {lang.name}
-                                    </span>
+                                    <span>{lang.name}</span>
                                   </button>
                                 ))}
                             </div>
