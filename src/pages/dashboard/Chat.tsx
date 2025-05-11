@@ -87,6 +87,7 @@ const Chat = () => {
     useState("en");
   const [selectedQuote, setSelectedQuote] = useState<string>("");
   const [copiedMessageId, setCopiedMessageId] = useState<number | null>(null);
+  const [quotedMessageId, setQuotedMessageId] = useState<number | null>(null);
   const responseRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -387,11 +388,19 @@ const Chat = () => {
                           </svg>
                         </button>
                       </Tooltip>
-                      <Tooltip text="Quote">
+                      <Tooltip text={quotedMessageId === idx ? "Quoted!" : "Quote"}>
                         <button
-                          className="p-1 rounded-lg hover:bg-white/10 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 flex items-center justify-center text-white/80 hover:text-white shadow-sm border border-transparent"
+                          className={`p-1 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 flex items-center justify-center shadow-sm border border-transparent ${
+                            quotedMessageId === idx
+                              ? "bg-blue-500/20 text-blue-400 scale-110"
+                              : "hover:bg-white/10 text-white/80 hover:text-white"
+                          }`}
                           style={{ minWidth: 32, minHeight: 32 }}
-                          onClick={() => setSelectedQuote(msg.content)}
+                          onClick={() => {
+                            setSelectedQuote(msg.content);
+                            setQuotedMessageId(idx);
+                            setTimeout(() => setQuotedMessageId(null), 2000);
+                          }}
                         >
                           <svg
                             width="20"
@@ -402,9 +411,18 @@ const Chat = () => {
                             strokeWidth="2"
                             strokeLinecap="round"
                             strokeLinejoin="round"
+                            className={`transition-transform duration-200 ${
+                              quotedMessageId === idx ? "scale-110 text-blue-400" : ""
+                            }`}
                           >
-                            <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z" />
-                            <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" />
+                            {quotedMessageId === idx ? (
+                              <path d="M20 6L9 17l-5-5" />
+                            ) : (
+                              <>
+                                <path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z" />
+                                <path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z" />
+                              </>
+                            )}
                           </svg>
                         </button>
                       </Tooltip>
