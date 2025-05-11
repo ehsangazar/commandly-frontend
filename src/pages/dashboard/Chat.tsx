@@ -235,7 +235,7 @@ const Chat = () => {
           </div>
           <button
             onClick={handleNewChat}
-            className="ml-auto px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium border border-white/10 transition-all duration-200"
+            className="ml-auto px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white font-medium border border-white/10 transition-all duration-300 ease-in-out transform hover:scale-[1.05] active:scale-[0.98]"
             type="button"
             disabled={historyLoading || loading}
           >
@@ -244,17 +244,22 @@ const Chat = () => {
         </div>
         <div className="flex-1 overflow-y-auto p-0 md:pl-6 md:pr-6 md:pb-4 space-y-4 min-h-0">
           {historyLoading ? (
-            <div className="text-white/60 p-6">Loading chat history...</div>
+            <div className="flex items-center justify-center h-full">
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-8 h-8 border-4 border-[var(--commandly-primary)]/20 border-t-[var(--commandly-primary)] rounded-full animate-spin"></div>
+                <p className="text-white/60 animate-pulse">Loading chat history...</p>
+              </div>
+            </div>
           ) : (
             chatHistory.map((msg, idx) => (
               <div
                 key={idx}
                 className={`flex ${
                   msg.role === "user" ? "justify-end" : "justify-start"
-                }`}
+                } animate-fade-in`}
               >
                 <div
-                  className={`max-w-[70%] rounded-xl p-6 mb-2 shadow-md prose prose-invert break-words font-medium text-base single-message ${
+                  className={`max-w-[70%] rounded-xl p-6 mb-2 shadow-md prose prose-invert break-words font-medium text-base single-message transition-all duration-300 ease-in-out transform hover:scale-[1.02] ${
                     msg.role === "user"
                       ? "bg-[var(--commandly-primary)]/80 text-white self-end"
                       : "bg-white/10 text-white self-start"
@@ -310,10 +315,17 @@ const Chat = () => {
           />
           <button
             type="submit"
-            className="px-6 py-2 rounded-lg bg-[var(--commandly-primary)] hover:bg-[var(--commandly-primary)]/90 text-white font-semibold transition-all duration-200"
+            className="px-6 py-2 rounded-lg bg-[var(--commandly-primary)] hover:bg-[var(--commandly-primary)]/90 text-white font-semibold transition-all duration-300 ease-in-out transform hover:scale-[1.05] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             disabled={!selectedChatGroupId || loading || historyLoading}
           >
-            {loading ? "Sending..." : "Send"}
+            {loading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+                <span>Sending...</span>
+              </>
+            ) : (
+              "Send"
+            )}
           </button>
         </form>
         {error && <div className="text-red-400 mt-2 px-4">{error}</div>}
@@ -326,22 +338,26 @@ const Chat = () => {
           </div>
           <div className="flex-1 overflow-y-auto p-4 space-y-2 min-h-0">
             {chatGroups.length === 0 && !historyLoading && (
-              <div className="text-white/50 text-center mt-8">
-                No chat history
+              <div className="flex flex-col items-center justify-center text-white/50 text-center mt-8 gap-3">
+                <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center">
+                  <span className="text-2xl">💬</span>
+                </div>
+                <p>No chat history</p>
+                <p className="text-sm text-white/40">Start a new conversation</p>
               </div>
             )}
             {chatGroups.map((group, idx) => (
               <div
                 onClick={() => setSelectedChatGroupId(group.id)}
                 key={idx}
-                className={`rounded-lg px-3 py-2 cursor-pointer transition-all duration-150 ${
+                className={`rounded-lg px-3 py-2 cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-[1.02] ${
                   idx === chatGroups.length - 1
                     ? "bg-[var(--commandly-primary)]/20 border border-[var(--commandly-primary)]/40"
                     : "hover:bg-white/10 border border-transparent"
                 }
                 ${
                   selectedChatGroupId === group.id
-                    ? "bg-[var(--commandly-primary)]/20 border border-[var(--commandly-primary)]/40"
+                    ? "bg-[var(--commandly-primary)]/20 border border-[var(--commandly-primary)]/40 scale-[1.02]"
                     : ""
                 }`}
               >
