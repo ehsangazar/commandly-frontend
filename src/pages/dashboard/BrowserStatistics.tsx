@@ -142,9 +142,9 @@ export default function BrowserStatistics() {
   }
 
   return (
-    <div>
+    <div className="h-full">
       {/* Header */}
-      <div className="border-b border-white/10">
+      <div className=" border-b border-white/20 pb-4 mb-4">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-[var(--commandly-primary)]/20 flex items-center justify-center">
@@ -176,7 +176,7 @@ export default function BrowserStatistics() {
         </div>
 
         {/* Time Period Tabs */}
-        <div className="flex gap-1 rounded-lg bg-white/5 p-1 mb-6">
+        <div className="flex gap-1 rounded-lg bg-white/5 p-1">
           {(["daily", "weekly", "monthly"] as const).map((period) => (
             <button
               key={period}
@@ -194,7 +194,12 @@ export default function BrowserStatistics() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+      <div
+        className="flex-1 overflow-y-auto custom-scrollbar"
+        style={{
+          height: "calc(100% - 180px)",
+        }}
+      >
         {error ? (
           <div className="h-[300px] flex flex-col items-center justify-center text-white/50 gap-4">
             <div className="w-16 h-16 rounded-xl bg-red-500/20 flex items-center justify-center">

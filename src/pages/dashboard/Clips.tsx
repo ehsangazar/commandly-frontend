@@ -173,7 +173,7 @@ const Clips = () => {
   return (
     <div className="h-full">
       {/* Header */}
-      <div className=" border-b border-white/40 pb-4 mb-4">
+      <div className=" border-b border-white/20 pb-4 mb-4">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-xl bg-[var(--commandly-primary)]/20 flex items-center justify-center">
@@ -206,7 +206,7 @@ const Clips = () => {
       <div
         className="flex-1 overflow-y-auto custom-scrollbar"
         style={{
-          height: "calc(100% - 200px)",
+          height: "calc(100% - 150px)",
         }}
       >
         {loading && page === 1 ? (
