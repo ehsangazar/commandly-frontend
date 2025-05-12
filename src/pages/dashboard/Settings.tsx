@@ -17,6 +17,7 @@ import {
 } from "react-icons/fi";
 import { getAuthToken, removeAuthToken } from "@/utils/auth";
 import languages from "@/configs/languages";
+import { useConfig } from "@/contexts/ConfigContext";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
@@ -61,10 +62,10 @@ interface UserSettings {
 }
 
 export default function Settings() {
+  const { settings, setSettings } = useConfig();
   const navigate = useNavigate();
   const [user, setUser] = useState<User | null>(null);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
-  const [settings, setSettings] = useState<UserSettings | null>(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
