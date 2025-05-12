@@ -10,13 +10,13 @@ import {
   FiSettings,
   FiRefreshCw,
   FiMoon,
-  FiSun,
-  FiCopy,
   FiMessageSquare,
   FiClipboard,
   FiGlobe,
+  FiCopy,
 } from "react-icons/fi";
 import { getAuthToken, removeAuthToken } from "@/utils/auth";
+import languages from "@/configs/languages";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
@@ -65,7 +65,6 @@ export default function Settings() {
   const [user, setUser] = useState<User | null>(null);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [settings, setSettings] = useState<UserSettings | null>(null);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -128,7 +127,6 @@ export default function Settings() {
   }, [navigate]);
 
   const handleLogout = () => {
-    setLoading(true);
     removeAuthToken();
     navigate("/dashboard.html");
   };
@@ -212,12 +210,12 @@ export default function Settings() {
   }
 
   return (
-    <div>
+    <div className="h-full">
       {/* Header */}
-      <div className="border-b border-white/10">
-        <div className="flex items-center justify-between mb-6">
+      <div className="border-b border-white/10 bg-black/20 backdrop-blur-xl sticky top-0 z-10">
+        <div className="flex items-center justify-between p-6">
           <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-xl bg-[var(--commandly-primary)]/20 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-[var(--commandly-primary)]/20 flex items-center justify-center shadow-lg shadow-[var(--commandly-primary)]/10 transition-all duration-300 hover:bg-[var(--commandly-primary)]/30">
               <FiSettings className="h-6 w-6 text-[var(--commandly-primary)]" />
             </div>
             <div>
@@ -231,10 +229,15 @@ export default function Settings() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
+      <div
+        className="flex-1 overflow-y-auto p-6 custom-scrollbar"
+        style={{
+          height: "calc(100% - 100px)",
+        }}
+      >
         {error ? (
           <div className="h-[300px] flex flex-col items-center justify-center text-white/50 gap-4">
-            <div className="w-16 h-16 rounded-xl bg-red-500/20 flex items-center justify-center">
+            <div className="w-16 h-16 rounded-xl bg-red-500/20 flex items-center justify-center shadow-lg shadow-red-500/10">
               <FiAlertCircle className="h-8 w-8 text-red-400" />
             </div>
             <div className="text-center">
@@ -243,101 +246,113 @@ export default function Settings() {
             </div>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {/* User Profile Card */}
-            <div className="rounded-xl bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 p-5 transition-all duration-200 cursor-pointer">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-[var(--commandly-primary)]/20 flex items-center justify-center">
-                  <FiUser className="w-6 h-6 text-[var(--commandly-primary)]" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-medium text-white/90">
-                    User Profile
-                  </h3>
-                  <p className="text-sm text-white/60">Account information</p>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="flex items-center justify-between p-4 rounded-lg bg-black/20">
-                  <div className="flex items-center gap-3">
-                    <FiMail className="w-5 h-5 text-white/70" />
-                    <span className="text-white/90">{user?.email}</span>
+          <div className="mx-auto space-y-6">
+            {/* Top Row - Profile and Subscription */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* User Profile Card */}
+              <div className="rounded-xl bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 p-6 transition-all duration-300 ease-in-out transform hover:scale-[1.01] shadow-lg shadow-black/20">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-[var(--commandly-primary)]/20 flex items-center justify-center shadow-lg shadow-[var(--commandly-primary)]/10">
+                    <FiUser className="h-6 w-6 text-[var(--commandly-primary)]" />
                   </div>
-                  {user?.isVerified && (
-                    <div className="flex items-center gap-2 px-3 py-1 rounded-lg bg-green-500/20 text-green-300 border border-green-500/30">
-                      <FiCheckCircle className="w-4 h-4" />
-                      <span className="text-sm font-medium">Verified</span>
-                    </div>
-                  )}
+                  <div>
+                    <h3 className="text-lg font-semibold text-white/90">
+                      Profile
+                    </h3>
+                    <p className="text-sm text-white/60">
+                      Your account information
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3 text-white/80">
+                    <FiMail className="h-5 w-5 text-[var(--commandly-primary)]" />
+                    <span>{user?.email}</span>
+                    {user?.isVerified ? (
+                      <FiCheckCircle className="h-4 w-4 text-green-400" />
+                    ) : (
+                      <span className="text-sm text-yellow-400">
+                        (Unverified)
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-3 text-white/80">
+                    <FiClipboard className="h-5 w-5 text-[var(--commandly-primary)]" />
+                    <span>
+                      Member since {formatDate(user?.createdAt || "")}
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleLogout}
+                    className="mt-4 flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 transition-colors duration-200"
+                  >
+                    <FiLogOut className="h-5 w-5" />
+                    <span>Logout</span>
+                  </button>
                 </div>
               </div>
-            </div>
 
-            {/* Subscription Card */}
-            <div className="rounded-xl bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 p-5 transition-all duration-200 cursor-pointer">
-              <div className="flex items-center gap-4 mb-6">
-                <div className="w-12 h-12 rounded-xl bg-[var(--commandly-primary)]/20 flex items-center justify-center">
-                  <FiCreditCard className="w-6 h-6 text-[var(--commandly-primary)]" />
+              {/* Subscription Card */}
+              <div className="rounded-xl bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 p-6 transition-all duration-300 ease-in-out transform hover:scale-[1.01] shadow-lg shadow-black/20">
+                <div className="flex items-center gap-4 mb-6">
+                  <div className="w-12 h-12 rounded-xl bg-[var(--commandly-primary)]/20 flex items-center justify-center shadow-lg shadow-[var(--commandly-primary)]/10">
+                    <FiCreditCard className="h-6 w-6 text-[var(--commandly-primary)]" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold text-white/90">
+                      Subscription
+                    </h3>
+                    <p className="text-sm text-white/60">Your current plan</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-lg font-medium text-white/90">
-                    Subscription
-                  </h3>
-                  <p className="text-sm text-white/60">Plan details</p>
-                </div>
-              </div>
-
-              <div className="space-y-4">
                 {subscription ? (
-                  <>
-                    <div className="p-4 rounded-lg bg-black/20">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-white/60">Current Plan</span>
-                        <span className="text-white/90 font-medium">
-                          {subscription.plan.name}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-white/60">Next Billing</span>
-                        <span className="text-white/90">
-                          {formatDate(subscription.currentPeriodEnd)}
-                        </span>
-                      </div>
+                  <div className="space-y-4">
+                    <div className="flex items-center gap-3 text-white/80">
+                      <FiCheckCircle className="h-5 w-5 text-green-400" />
+                      <span className="font-medium">
+                        {subscription.plan.name}
+                      </span>
                     </div>
-                    <div className="p-4 rounded-lg bg-black/20">
-                      <div className="flex items-center justify-between">
-                        <span className="text-white/60">Status</span>
-                        <span
-                          className={`px-3 py-1 rounded-lg text-sm font-medium ${
-                            subscription.status === "active"
-                              ? "bg-green-500/20 text-green-300 border border-green-500/30"
-                              : "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
-                          }`}
-                        >
-                          {subscription.status.charAt(0).toUpperCase() +
-                            subscription.status.slice(1)}
-                        </span>
-                      </div>
+                    <div className="flex items-center gap-3 text-white/80">
+                      <FiRefreshCw className="h-5 w-5 text-[var(--commandly-primary)]" />
+                      <span>
+                        Renews on {formatDate(subscription.currentPeriodEnd)}
+                      </span>
                     </div>
-                  </>
+                    <div className="mt-4">
+                      <h4 className="text-sm font-medium text-white/70 mb-2">
+                        Plan Features:
+                      </h4>
+                      <ul className="space-y-2">
+                        {subscription.plan.features.map((feature, index) => (
+                          <li
+                            key={index}
+                            className="flex items-center gap-2 text-white/60"
+                          >
+                            <FiCheckCircle className="h-4 w-4 text-green-400" />
+                            <span>{feature}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
                 ) : (
-                  <div className="p-4 rounded-lg bg-black/20 text-center">
+                  <div className="text-center py-4">
                     <p className="text-white/60">No active subscription</p>
                   </div>
                 )}
               </div>
             </div>
 
-            {/* Preferences Card */}
-            <div className="lg:col-span-2 rounded-xl bg-white/5 hover:bg-white/10 backdrop-blur-sm border border-white/10 p-5 transition-all duration-200">
+            {/* Preferences Section */}
+            <div className="rounded-xl bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 p-6 transition-all duration-300 ease-in-out transform hover:scale-[1.01] shadow-lg shadow-black/20">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-[var(--commandly-primary)]/20 flex items-center justify-center">
-                    <FiSettings className="w-6 h-6 text-[var(--commandly-primary)]" />
+                  <div className="w-12 h-12 rounded-xl bg-[var(--commandly-primary)]/20 flex items-center justify-center shadow-lg shadow-[var(--commandly-primary)]/10">
+                    <FiGlobe className="h-6 w-6 text-[var(--commandly-primary)]" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-medium text-white/90">
+                    <h3 className="text-lg font-semibold text-white/90">
                       Preferences
                     </h3>
                     <p className="text-sm text-white/60">
@@ -348,82 +363,72 @@ export default function Settings() {
                 <button
                   onClick={handleResetSettings}
                   disabled={isSaving}
-                  className="flex items-center gap-2 px-4 py-2 bg-white/10 text-white/80 rounded-lg hover:bg-white/20 border border-white/10 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white/80 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <FiRefreshCw
-                    className={`w-4 h-4 ${isSaving ? "animate-spin" : ""}`}
+                    className={`h-5 w-5 ${isSaving ? "animate-spin" : ""}`}
                   />
-                  <span className="text-sm font-medium">
-                    {isSaving ? "Resetting..." : "Reset to Defaults"}
-                  </span>
+                  <span>{isSaving ? "Resetting..." : "Reset to Defaults"}</span>
                 </button>
               </div>
 
-              <div className="space-y-4">
-                {/* Theme Setting */}
-                <div className="p-4 rounded-lg bg-black/20">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      {settings?.theme === "dark" ? (
-                        <FiMoon className="w-5 h-5 text-white/70" />
-                      ) : (
-                        <FiSun className="w-5 h-5 text-white/70" />
-                      )}
-                      <span className="text-white/90">Theme</span>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Theme and Language Settings */}
+                <div className="space-y-4">
+                  <div className="p-4 rounded-lg bg-black/20 border border-white/5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <FiMoon className="h-5 w-5 text-[var(--commandly-primary)]" />
+                        <span className="text-white/80">Theme</span>
+                      </div>
+                      <select
+                        value={settings?.theme || "light"}
+                        onChange={(e) =>
+                          handleSettingsUpdate({ theme: e.target.value })
+                        }
+                        className="bg-black/30 text-white/90 rounded-lg px-3 py-1.5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--commandly-primary)]/20"
+                      >
+                        <option value="light">Light</option>
+                        <option value="dark">Dark</option>
+                      </select>
                     </div>
-                    <select
-                      value={settings?.theme || "light"}
-                      onChange={(e) =>
-                        handleSettingsUpdate({ theme: e.target.value })
-                      }
-                      className="bg-black/30 text-white/90 rounded-lg px-3 py-1.5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--commandly-primary)]/20"
-                    >
-                      <option value="light">Light</option>
-                      <option value="dark">Dark</option>
-                    </select>
                   </div>
-                </div>
 
-                {/* Default Translation Language */}
-                <div className="p-4 rounded-lg bg-black/20">
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-3">
-                      <FiGlobe className="w-5 h-5 text-white/70" />
-                      <span className="text-white/90">
-                        Default Translation Language
-                      </span>
+                  <div className="p-4 rounded-lg bg-black/20 border border-white/5">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <FiGlobe className="h-5 w-5 text-[var(--commandly-primary)]" />
+                        <span className="text-white/80">Default Language</span>
+                      </div>
+                      <select
+                        value={settings?.defaultTranslationLanguage || "en"}
+                        onChange={(e) =>
+                          handleSettingsUpdate({
+                            defaultTranslationLanguage: e.target.value,
+                          })
+                        }
+                        className="bg-black/30 text-white/90 rounded-lg px-3 py-1.5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--commandly-primary)]/20"
+                      >
+                        {languages.map((language) => (
+                          <option key={language.code} value={language.code}>
+                            {language.name}
+                          </option>
+                        ))}
+                      </select>
                     </div>
-                    <select
-                      value={settings?.defaultTranslationLanguage || "en"}
-                      onChange={(e) =>
-                        handleSettingsUpdate({
-                          defaultTranslationLanguage: e.target.value,
-                        })
-                      }
-                      className="bg-black/30 text-white/90 rounded-lg px-3 py-1.5 border border-white/10 focus:outline-none focus:ring-2 focus:ring-[var(--commandly-primary)]/20"
-                    >
-                      <option value="en">English</option>
-                      <option value="es">Spanish</option>
-                      <option value="fr">French</option>
-                      <option value="de">German</option>
-                      <option value="it">Italian</option>
-                      <option value="pt">Portuguese</option>
-                      <option value="ru">Russian</option>
-                      <option value="ja">Japanese</option>
-                      <option value="ko">Korean</option>
-                      <option value="zh">Chinese</option>
-                    </select>
                   </div>
                 </div>
 
                 {/* Button Visibility Settings */}
-                <div className="p-4 rounded-lg bg-black/20">
-                  <h4 className="text-white/90 mb-4">Button Visibility</h4>
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium text-white/70 mb-2">
+                    Button Visibility
+                  </h4>
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-black/20 border border-white/5">
                       <div className="flex items-center gap-3">
-                        <FiCopy className="w-5 h-5 text-white/70" />
-                        <span className="text-white/90">Show Copy Button</span>
+                        <FiCopy className="h-5 w-5 text-[var(--commandly-primary)]" />
+                        <span className="text-white/80">Show Copy Button</span>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
                         <input
@@ -439,10 +444,11 @@ export default function Settings() {
                         <div className="w-11 h-6 bg-black/30 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[var(--commandly-primary)]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--commandly-primary)]"></div>
                       </label>
                     </div>
-                    <div className="flex items-center justify-between">
+
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-black/20 border border-white/5">
                       <div className="flex items-center gap-3">
-                        <FiMessageSquare className="w-5 h-5 text-white/70" />
-                        <span className="text-white/90">Show Quote Button</span>
+                        <FiMessageSquare className="h-5 w-5 text-[var(--commandly-primary)]" />
+                        <span className="text-white/80">Show Quote Button</span>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
                         <input
@@ -458,10 +464,11 @@ export default function Settings() {
                         <div className="w-11 h-6 bg-black/30 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[var(--commandly-primary)]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--commandly-primary)]"></div>
                       </label>
                     </div>
-                    <div className="flex items-center justify-between">
+
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-black/20 border border-white/5">
                       <div className="flex items-center gap-3">
-                        <FiClipboard className="w-5 h-5 text-white/70" />
-                        <span className="text-white/90">Show Clip Button</span>
+                        <FiClipboard className="h-5 w-5 text-[var(--commandly-primary)]" />
+                        <span className="text-white/80">Show Clip Button</span>
                       </div>
                       <label className="relative inline-flex items-center cursor-pointer">
                         <input
@@ -477,10 +484,11 @@ export default function Settings() {
                         <div className="w-11 h-6 bg-black/30 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[var(--commandly-primary)]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--commandly-primary)]"></div>
                       </label>
                     </div>
-                    <div className="flex items-center justify-between">
+
+                    <div className="flex items-center justify-between p-3 rounded-lg bg-black/20 border border-white/5">
                       <div className="flex items-center gap-3">
-                        <FiGlobe className="w-5 h-5 text-white/70" />
-                        <span className="text-white/90">
+                        <FiGlobe className="h-5 w-5 text-[var(--commandly-primary)]" />
+                        <span className="text-white/80">
                           Show Translate Button
                         </span>
                       </div>
@@ -501,20 +509,6 @@ export default function Settings() {
                   </div>
                 </div>
               </div>
-            </div>
-
-            {/* Logout Button */}
-            <div className="lg:col-span-2 flex justify-end">
-              <button
-                onClick={handleLogout}
-                disabled={loading}
-                className="flex items-center gap-2 px-4 py-2 bg-red-500/20 text-red-300 rounded-lg hover:bg-red-500/30 border border-red-500/30 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-              >
-                <FiLogOut className="w-4 h-4" />
-                <span className="text-sm font-medium">
-                  {loading ? "Logging out..." : "Logout"}
-                </span>
-              </button>
             </div>
           </div>
         )}
