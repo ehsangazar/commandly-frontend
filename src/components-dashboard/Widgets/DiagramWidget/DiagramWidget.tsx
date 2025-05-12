@@ -85,6 +85,10 @@ const DiagramWidget = () => {
   };
 
   const analyse = useCallback(async () => {
+    if (stats[activePeriod].length === 0) {
+      return;
+    }
+
     // check if data is already in local storage
     const today = new Date();
     let parsedData: Record<string, Record<string, Record<string, number>>> = {};
