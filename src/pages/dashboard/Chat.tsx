@@ -7,10 +7,6 @@ import {
   getChatGroups,
 } from "@/utils/chat";
 import Tooltip from "@/components-dashboard/Tooltip/Tooltip";
-import {
-  getDefaultLanguage,
-  setDefaultLanguage,
-} from "@/utils/getDefaultLanguage";
 import { useConfig } from "@/contexts/ConfigContext";
 import languages from "@/configs/languages";
 
@@ -40,7 +36,8 @@ const getDirection = (text: string) => {
 };
 
 const Chat = () => {
-  const { chat, setChat } = useConfig();
+  const { chat, setChat, settings } = useConfig();
+  console.log(settings);
   const [chatGroupId, setChatGroupId] = useState<string | null>(null);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [chatGroups, setChatGroups] = useState<ChatGroup[]>([]);
@@ -52,7 +49,7 @@ const Chat = () => {
     number | null
   >(null);
   const [defaultTranslateLanguage, setDefaultTranslateLanguage] = useState(
-    getDefaultLanguage()
+    settings?.defaultTranslationLanguage || "en"
   );
   const [selectedQuote, setSelectedQuote] = useState<string | null>(null);
   const [copiedMessageId, setCopiedMessageId] = useState<number | null>(null);
@@ -545,7 +542,6 @@ const Chat = () => {
                                     onClick={() => {
                                       setDefaultTranslateLanguage(lang.code);
                                       setShowLanguageDropdown(null);
-                                      setDefaultLanguage(lang.code);
                                     }}
                                     style={{ minHeight: 44 }}
                                   >

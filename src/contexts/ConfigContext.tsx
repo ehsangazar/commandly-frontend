@@ -1,4 +1,5 @@
 import { UserSettings } from "@/pages/dashboard/Settings";
+import { getAuthToken } from "@/utils/auth";
 import React, {
   createContext,
   useContext,
@@ -51,13 +52,21 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({
 
   useEffect(() => {
     const fetchSettings = async () => {
-      const response = await fetch(`${API_BASE_URL}/settings`);
+      const response = await fetch(`${API_BASE_URL}/settings`, {
+        headers: {
+          Authorization: `Bearer ${getAuthToken()}`,
+        },
+      });
       const data = await response.json();
-      setSettings(data);
+      setSettings(data?.settings);
     };
 
     fetchSettings();
   }, []);
+
+  if (settings === null) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <ConfigContext.Provider value={value}>{children}</ConfigContext.Provider>
