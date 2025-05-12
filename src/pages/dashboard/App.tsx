@@ -24,7 +24,7 @@ const App = () => {
     searchParams.get("browser-statistics") === "true";
   const showChat = searchParams.get("chat") === "true";
   return (
-    <GlassmorphismBackground className="!backdrop-blur-2xl !bg-black/30">
+    <GlassmorphismBackground className="!backdrop-blur-2xl !bg-black/50">
       <div className="p-6 h-full">
         {showSettings ? (
           <Settings />

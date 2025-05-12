@@ -23,7 +23,6 @@ import DashboardApp from "@/pages/dashboard/App";
 import NotFound from "@/pages/NotFound";
 import CareersSingle from "@/pages/careers/CareersSingle";
 import BlogSingle from "./pages/blog/BlogSingle";
-import Chat from "@/pages/chat/Chat";
 import "./App.css";
 import MainLayout from "./layouts/MainLayout";
 import DashboardLayout from "./layouts/DashboardLayout";
@@ -43,7 +42,6 @@ const App = () => {
               element={<Navigate to="/dashboard.html" replace />}
             />
             <Route path="/dashboard.html" element={<DashboardApp />} />
-            <Route path="/chat" element={<Chat />} />
           </Route>
 
           {/* Main Layout Routes */}
