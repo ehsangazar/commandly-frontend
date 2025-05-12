@@ -1,3 +1,4 @@
+import { UserSettings } from "@/pages/dashboard/Settings";
 import React, {
   createContext,
   useContext,
@@ -31,16 +32,6 @@ interface ConfigProviderProps {
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
-
-interface UserSettings {
-  theme: "light" | "dark";
-  defaultTranslationLanguage: string;
-  showCopyButton: boolean;
-  showQuoteButton: boolean;
-  showClipButton: boolean;
-  showTranslateButton: boolean;
-  disableIslandForSpecificDomains: string[];
-}
 
 export const ConfigProvider: React.FC<ConfigProviderProps> = ({
   children,

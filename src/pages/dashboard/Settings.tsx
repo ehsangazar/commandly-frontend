@@ -47,7 +47,7 @@ interface Subscription {
   plan: Plan;
 }
 
-interface UserSettings {
+export interface UserSettings {
   id: string;
   userId: string;
   theme: string;
