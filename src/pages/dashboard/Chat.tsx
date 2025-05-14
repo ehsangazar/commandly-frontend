@@ -133,6 +133,11 @@ const Chat = () => {
       { content: userInput, role: "user" },
       { content: "", role: "assistant", streaming: true },
     ]);
+    setTimeout(() => {
+      if (responseRef.current) {
+        responseRef.current.scrollIntoView({ behavior: "smooth" });
+      }
+    }, 100);
     try {
       const stream = await sendSimpleChat({
         userInput,
@@ -158,6 +163,11 @@ const Chat = () => {
               };
               return updated;
             });
+            setTimeout(() => {
+              if (responseRef.current) {
+                responseRef.current.scrollIntoView({ behavior: "smooth" });
+              }
+            }, 100);
           }
         }
         setChatHistory((prev) => {
@@ -181,9 +191,10 @@ const Chat = () => {
         });
       }
       setUserInput("");
-      setSelectedQuote(null);
       setTimeout(() => {
         if (responseRef.current) {
+          setQuotedMessageId((messageId) => (messageId ? messageId + 1 : null));
+          setSelectedQuote(chatHistory[chatHistory.length - 1].content);
           responseRef.current.scrollIntoView({ behavior: "smooth" });
         }
       }, 100);
@@ -575,7 +586,7 @@ const Chat = () => {
               </div>
             ))
           )}
-          <div ref={responseRef} />
+          <div ref={responseRef} className="h-10" />
         </div>
         {/* Chat Input */}
         <form
