@@ -37,7 +37,6 @@ const getDirection = (text: string) => {
 
 const Chat = () => {
   const { chat, setChat, settings } = useConfig();
-  console.log(settings);
   const [chatGroupId, setChatGroupId] = useState<string | null>(null);
   const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [chatGroups, setChatGroups] = useState<ChatGroup[]>([]);
@@ -64,20 +63,14 @@ const Chat = () => {
   useEffect(() => {
     const handleChatUpdate = async () => {
       if (chat) {
-        // First create a new chat and wait for it to complete
         const newChatId = await handleNewChat();
-        if (!newChatId) return; // Stop if chat creation failed
+        if (!newChatId) return;
 
-        // Then set the input
         setUserInput(chat);
-        // Clear the context
         setChat("");
-        // Finally submit the form
-        if (submitRef.current) {
-          setTimeout(() => {
-            submitRef.current?.click();
-          }, 1000);
-        }
+        setTimeout(async () => {
+          await doSend();
+        }, 1000);
       }
     };
 
@@ -246,6 +239,11 @@ const Chat = () => {
     e: React.KeyboardEvent<HTMLTextAreaElement>
   ) => {
     if (e.key === "Enter" && (e.shiftKey || e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      setUserInput(userInput + "\n");
+      return;
+    }
+    if (e.key === "Enter" && !e.shiftKey && !e.ctrlKey && !e.metaKey) {
       e.preventDefault();
       if (!loading && !historyLoading && chatGroupId && userInput.trim()) {
         doSend();
@@ -595,7 +593,7 @@ const Chat = () => {
               onKeyDown={handleTextareaKeyDown}
             />
             <button
-              type="submit"
+              type="button"
               ref={submitRef}
               className="px-6 py-2 rounded-lg bg-[var(--commandly-primary)] hover:bg-[var(--commandly-primary)]/90 text-white font-semibold transition-all duration-300 ease-in-out transform hover:scale-[1.05] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               disabled={!chatGroupId || loading || historyLoading}
