@@ -138,6 +138,7 @@ const Chat = () => {
         responseRef.current.scrollIntoView({ behavior: "smooth" });
       }
     }, 100);
+    setUserInput("");
     try {
       const stream = await sendSimpleChat({
         userInput,
@@ -167,7 +168,7 @@ const Chat = () => {
               if (responseRef.current) {
                 responseRef.current.scrollIntoView({ behavior: "smooth" });
               }
-            }, 100);
+            }, 0);
           }
         }
         setChatHistory((prev) => {
@@ -193,8 +194,6 @@ const Chat = () => {
       setUserInput("");
       setTimeout(() => {
         if (responseRef.current) {
-          setQuotedMessageId((messageId) => (messageId ? messageId + 1 : null));
-          setSelectedQuote(chatHistory[chatHistory.length - 1].content);
           responseRef.current.scrollIntoView({ behavior: "smooth" });
         }
       }, 100);
@@ -202,6 +201,15 @@ const Chat = () => {
       setError(err instanceof Error ? err.message : "Failed to send chat");
       setChatHistory((prev) => prev.slice(0, -1));
     } finally {
+      console.log("debug finished");
+      setTimeout(() => {
+        if (responseRef.current) {
+          responseRef.current.scrollIntoView({ behavior: "smooth" });
+          setSelectedQuote(
+            responseHtml?.replace(/```html|```/g, "").replace(/<[^>]*>?/g, "")
+          );
+        }
+      }, 100);
       setLoading(false);
     }
   };
@@ -586,7 +594,7 @@ const Chat = () => {
               </div>
             ))
           )}
-          <div ref={responseRef} className="h-10" />
+          <div ref={responseRef} className="h-10 mt-10" />
         </div>
         {/* Chat Input */}
         <form
