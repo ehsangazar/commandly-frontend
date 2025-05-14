@@ -349,10 +349,10 @@ const Chat = () => {
               >
                 <div className="flex flex-col">
                   <div
-                    className={`max-w-[80%] rounded-xl mb-2 prose prose-invert font-medium text-base single-message transition-all duration-300 ease-in-out transform ${
+                    className={`rounded-xl mb-2 prose prose-invert font-medium text-base single-message transition-all duration-300 ease-in-out transform text-white p-4 ${
                       msg.role === "user"
-                        ? "bg-[var(--commandly-primary)]/80 text-white self-end  min-w-[max-content] p-4"
-                        : "text-white"
+                        ? "bg-[var(--commandly-primary)]/80 ml-10"
+                        : "mr-10"
                     } ${msg.streaming ? "opacity-70" : ""}`}
                     dir={getDirection(msg.content || "")}
                     style={{}}
@@ -686,11 +686,7 @@ const Chat = () => {
               <div
                 onClick={() => setChatGroupId(group.id)}
                 key={idx}
-                className={`rounded-lg px-3 py-2 cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-[1.02] ${
-                  idx === chatGroups.length - 1
-                    ? "bg-[var(--commandly-primary)]/20 border border-[var(--commandly-primary)]/40"
-                    : "hover:bg-white/10 border border-transparent"
-                }
+                className={`rounded-lg px-3 py-2 cursor-pointer transition-all duration-300 ease-in-out transform hover:scale-[1.02] 
                 ${
                   chatGroupId === group.id
                     ? "bg-[var(--commandly-primary)]/20 border border-[var(--commandly-primary)]/40 scale-[1.02]"
