@@ -33,7 +33,6 @@ const Dashboard = () => {
     useOutletContext<DashboardContext>();
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  console.log(widgets);
 
   useEffect(() => {
     const loadWidgets = async () => {
