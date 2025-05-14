@@ -59,7 +59,7 @@ const Chat = () => {
   const chevronRef = useRef<HTMLButtonElement>(null);
   const submitRef = useRef<HTMLButtonElement>(null);
   const newChatRef = useRef<HTMLButtonElement>(null);
-
+  const formRef = useRef<HTMLFormElement>(null);
   useEffect(() => {
     const handleChatUpdate = async () => {
       if (chat) {
@@ -69,7 +69,11 @@ const Chat = () => {
         setUserInput(chat);
         setChat("");
         setTimeout(async () => {
-          await doSend();
+          if (formRef.current) {
+            formRef.current.dispatchEvent(
+              new Event("submit", { bubbles: true })
+            );
+          }
         }, 1000);
       }
     };
@@ -575,6 +579,7 @@ const Chat = () => {
         </div>
         {/* Chat Input */}
         <form
+          ref={formRef}
           onSubmit={handleSend}
           className="p-0 pt-0 md:pl-6 md:pr-6 flex flex-col gap-2 sticky bottom-0"
         >
