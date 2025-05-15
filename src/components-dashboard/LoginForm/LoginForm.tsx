@@ -36,12 +36,14 @@ const LoginForm = () => {
     register: registerEmail,
     handleSubmit: handleSubmitEmail,
     formState: { errors: emailErrors },
+    reset: resetEmailForm,
   } = useForm<EmailFormData>();
 
   const {
     register: registerCode,
     handleSubmit: handleSubmitCode,
     formState: { errors: codeErrors },
+    reset: resetCodeForm,
   } = useForm<CodeFormData>();
 
   useEffect(() => {
@@ -66,6 +68,8 @@ const LoginForm = () => {
 
       if (responseData.success) {
         setStep("code");
+        resetCodeForm();
+        resetEmailForm();
       } else {
         setError(responseData.error || "Failed to send verification code");
       }
@@ -183,6 +187,7 @@ const LoginForm = () => {
                       <FiMail className="h-5 w-5 text-gray-400 dark:text-gray-300 group-hover:text-purple-500 transition-colors duration-300" />
                     </div>
                     <input
+                      key={"input-email"}
                       id="email"
                       type="email"
                       className={`w-full pl-11 pr-4 py-3.5 rounded-2xl border ${
@@ -238,6 +243,7 @@ const LoginForm = () => {
                       <FiKey className="h-5 w-5 text-gray-400 dark:text-gray-300 group-hover:text-purple-500 transition-colors duration-300" />
                     </div>
                     <input
+                      key={"input-code"}
                       id="code"
                       type={showPassword ? "text" : "password"}
                       className={`w-full pl-11 pr-12 py-3.5 rounded-2xl border ${
