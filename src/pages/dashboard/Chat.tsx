@@ -358,29 +358,125 @@ const Chat = () => {
                     style={{}}
                     dangerouslySetInnerHTML={{
                       __html: msg.content
-                        ? msg.content
-                            .replace(/```html|```/g, "")
-                            .replace(
-                              /<h3>/g,
-                              '<h3 class="text-xl font-bold mb-2 mt-4">'
-                            )
-                            .replace(/<p>/g, '<p class="mb-3">')
-                            .replace(
-                              /<ul>/g,
-                              '<ul class="list-disc pl-6 mb-3">'
-                            )
-                            .replace(/<li>/g, '<li class="mb-1">')
-                            .replace(
-                              /<a href="([^"]+)"/g,
-                              '<a target="_blank" href="$1" class="text-[var(--commandly-primary)] hover:underline"'
-                            )
-                            .replace(
-                              /([\u{1F300}-\u{1F9FF}])/gu,
-                              '<span class="inline-block align-middle">$1</span>'
-                            )
+                        ? msg.content.replace(/```html|```/g, "")
                         : "",
                     }}
                   />
+                  {/* Style for .single-message and its children */}
+                  <style>{`
+                    .single-message {
+                      font-size: 1.08rem;
+                      line-height: 1.7;
+                      padding: 1.1rem 1.5rem;
+                      border-radius: 1.1rem;
+                    }
+                    .single-message h3 {
+                      font-size: 1.5rem;
+                      font-weight: 800;
+                      margin-bottom: 0.6rem;
+                      margin-top: 1.1rem;
+                      color: white;
+                      letter-spacing: -0.01em;
+                    }
+                    .single-message p {
+                      font-size: 1.08rem;
+                      margin-bottom: 0.7rem;
+                      line-height: 1.7;
+                      color: #fff;
+                    }
+                    .single-message ul {
+                      list-style-type: disc;
+                      padding-left: 1.5rem;
+                      margin-bottom: 0.8rem;
+                    }
+                    .single-message li {
+                      font-size: 1.08rem;
+                      margin-bottom: 0.4rem;
+                      line-height: 1.6;
+                      color: #fff;
+                      display: flex;
+                      align-items: flex-start;
+                      gap: 0.5em;
+                    }
+                    .single-message a {
+                      color: white;
+                      font-weight: 600;
+                      border-bottom: 2px solid rgba(255,255,255,0.5);
+                      transition: color 0.18s;
+                      word-break: break-all;
+                    }
+                    .single-message a:hover {
+                      color: white;
+                      border-bottom: 2px solid rgba(255,255,255,1);
+                    }
+                    .single-message span.emoji {
+                      display: inline-block;
+                      vertical-align: middle;
+                      font-size: 1.2em;
+                      margin-right: 0.1em;
+                    }
+                    .single-message code, .single-message pre {
+                      background: rgba(255,255,255,0.08);
+                      color: #ffe;
+                      border-radius: 0.4em;
+                      padding: 0.15em 0.4em;
+                      font-size: 0.98em;
+                      font-family: 'Fira Mono', 'Consolas', 'Menlo', monospace;
+                    }
+                  `}</style>
+                  {msg.streaming && loading && (
+                    <div className="flex items-start gap-2 w-full chat-message-animate mb-2">
+                      <div className="relative max-w-[70%] px-3 py-1.5 rounded-full bg-[var(--commandly-primary)]/80 shadow-lg flex items-center gap-2 animate-pulse-subtle">
+                        <span className="text-white font-medium text-sm mr-1 tracking-normal">
+                          Thinking…
+                        </span>
+                        <div className="flex items-center gap-1">
+                          <span className="loading-dot-bounce" />
+                          <span
+                            className="loading-dot-bounce"
+                            style={{ animationDelay: "0.15s" }}
+                          />
+                          <span
+                            className="loading-dot-bounce"
+                            style={{ animationDelay: "0.3s" }}
+                          />
+                        </div>
+                        <style>{`
+                        .loading-dot-bounce {
+                          display: inline-block;
+                          width: 0.38em;
+                          height: 0.38em;
+                          background: white;
+                          border-radius: 50%;
+                          margin: 0 0.08em;
+                          opacity: 0.85;
+                          animation: loadingBounce 1.1s infinite cubic-bezier(0.4,0,0.2,1);
+                        }
+                        @keyframes loadingBounce {
+                          0%, 80%, 100% {
+                            transform: translateY(0) scale(0.85);
+                            opacity: 0.5;
+                          }
+                          40% {
+                            transform: translateY(-0.25em) scale(1.05);
+                            opacity: 1;
+                          }
+                        }
+                        .animate-pulse-subtle {
+                          animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+                        }
+                        @keyframes pulse-subtle {
+                          0%, 100% {
+                            opacity: 1;
+                          }
+                          50% {
+                            opacity: 0.92;
+                          }
+                        }
+                      `}</style>
+                      </div>
+                    </div>
+                  )}
                   {msg.role === "assistant" && !msg.streaming && (
                     <div className="flex items-center gap-2">
                       <Tooltip
