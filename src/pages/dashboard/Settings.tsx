@@ -129,7 +129,9 @@ export default function Settings() {
 
   const handleLogout = () => {
     removeAuthToken();
-    navigate("/dashboard.html");
+    setTimeout(() => {
+      navigate("/dashboard.html");
+    }, 200);
   };
 
   const handleSettingsUpdate = async (updates: Partial<UserSettings>) => {
@@ -406,7 +408,7 @@ export default function Settings() {
                   </div>
                   <button
                     onClick={handleLogout}
-                    className="mt-4 flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 transition-colors duration-200"
+                    className="mt-4 flex items-center gap-2 px-4 py-2 rounded-lg bg-red-500/20 hover:bg-red-500/30 text-red-400 transition-colors duration-200 cursor-pointer"
                   >
                     <FiLogOut className="h-5 w-5" />
                     <span>Logout</span>

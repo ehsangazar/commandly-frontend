@@ -41,6 +41,7 @@ const Login = () => {
     register: registerCode,
     handleSubmit: handleSubmitCode,
     formState: { errors: codeErrors },
+    reset: resetCodeForm,
   } = useForm<CodeFormData>();
 
   const onEmailSubmit = async (data: EmailFormData) => {
@@ -60,6 +61,7 @@ const Login = () => {
       const responseData = await response.json();
 
       if (responseData.success) {
+        resetCodeForm();
         setStep("code");
       } else {
         setError(responseData.error || "Failed to send verification code");
@@ -178,6 +180,7 @@ const Login = () => {
                       <FiMail className="h-5 w-5 text-[var(--commandly-text-secondary)]" />
                     </div>
                     <input
+                      key={"input-email"}
                       id="email"
                       type="email"
                       className={`w-full pl-10 pr-4 py-3 rounded-lg border ${
@@ -231,6 +234,7 @@ const Login = () => {
                       <FiKey className="h-5 w-5 text-[var(--commandly-text-secondary)]" />
                     </div>
                     <input
+                      key={"input-code"}
                       id="code"
                       type={showPassword ? "text" : "password"}
                       className={`w-full pl-10 pr-12 py-3 rounded-lg border ${

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
-import { getAuthToken } from "@/utils/auth";
+import { getAuthToken, setAuthToken } from "@/utils/auth";
 import {
   backgrounds,
   getSavedBackgroundIndex,
@@ -25,33 +25,40 @@ const DashboardLayout = () => {
   const [isModifyMode, setIsModifyMode] = useState(false);
   const [widgets, setWidgets] = useState<Widget[]>([]);
 
+  const checkAuth = async () => {
+    const token = getAuthToken();
+    if (!token) {
+      setIsAuthenticated(false);
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const data = await response.json();
+      setIsAuthenticated(data.success);
+    } catch (err) {
+      console.error("Failed to validate token:", err);
+      setIsAuthenticated(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const checkAuth = async () => {
-      const token = getAuthToken();
-      if (!token) {
-        setIsAuthenticated(false);
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const response = await fetch(`${API_BASE_URL}/auth/me`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = await response.json();
-        setIsAuthenticated(data.success);
-      } catch (err) {
-        console.error("Failed to validate token:", err);
-        setIsAuthenticated(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkAuth();
+    if (chrome?.storage?.local) {
+      chrome.storage.local.get("commandly_token").then((result) => {
+        setAuthToken(result.commandly_token);
+        checkAuth();
+      });
+    } else {
+      checkAuth();
+    }
   }, []);
 
   const widgetSizes = {

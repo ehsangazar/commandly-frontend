@@ -1,3 +1,5 @@
+/// <reference types="chrome" />
+
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { setAuthToken } from "@/utils/auth";
@@ -93,6 +95,9 @@ const LoginForm = () => {
 
       if (responseData.success) {
         setAuthToken(responseData.token);
+        if (chrome?.storage?.local) {
+          chrome.storage.local.set({ commandly_token: responseData.token });
+        }
         window.location.reload();
       } else {
         setError(responseData.error || "Failed to verify code");

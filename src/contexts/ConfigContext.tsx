@@ -12,7 +12,7 @@ interface ConfigContextType {
   theme: "light" | "dark";
   chat: string;
   setChat: (value: string) => void;
-  settings: UserSettings | null;
+  settings: UserSettings;
   setSettings: (value: UserSettings) => void;
 }
 
@@ -20,7 +20,19 @@ const defaultConfig: ConfigContextType = {
   theme: "light",
   chat: "",
   setChat: () => {},
-  settings: null,
+  settings: {
+    id: "",
+    userId: "",
+    theme: "light",
+    defaultTranslationLanguage: "en",
+    showCopyButton: true,
+    showQuoteButton: true,
+    showClipButton: true,
+    showTranslateButton: true,
+    disableIslandForSpecificDomains: [],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  },
   setSettings: () => {},
 };
 
@@ -39,7 +51,9 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({
   config = {},
 }) => {
   const [chat, setChat] = useState("");
-  const [settings, setSettings] = useState<UserSettings | null>(null);
+  const [settings, setSettings] = useState<UserSettings>(
+    defaultConfig.settings
+  );
 
   const value = {
     ...defaultConfig,
@@ -58,15 +72,11 @@ export const ConfigProvider: React.FC<ConfigProviderProps> = ({
         },
       });
       const data = await response.json();
-      setSettings(data?.settings);
+      setSettings(data?.settings || defaultConfig.settings);
     };
 
     fetchSettings();
   }, []);
-
-  if (settings === null) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <ConfigContext.Provider value={value}>{children}</ConfigContext.Provider>
