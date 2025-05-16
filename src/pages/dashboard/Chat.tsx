@@ -393,7 +393,7 @@ const Chat = () => {
                       margin-bottom: 0.4rem;
                       line-height: 1.6;
                       color: #fff;
-                      display: flex;
+                      display: block;
                       align-items: flex-start;
                       gap: 0.5em;
                     }
@@ -414,7 +414,8 @@ const Chat = () => {
                       font-size: 1.2em;
                       margin-right: 0.1em;
                     }
-                    .single-message code, .single-message pre {
+                    .single-message pre {
+                      margin: 0.5rem 0;
                       background: rgba(255,255,255,0.08);
                       color: #ffe;
                       border-radius: 0.4em;
