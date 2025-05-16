@@ -163,7 +163,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div>
+    <div className="h-full overflow-y-auto custom-scrollbar">
       <ResponsiveGridLayout
         className="layout"
         layouts={layouts}
