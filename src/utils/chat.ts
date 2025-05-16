@@ -47,7 +47,13 @@ export async function sendSimpleChat({
     return res.body;
   }
   const data = await res.json();
-  if (!data.success) throw new Error(data.error || "Failed to send chat");
+
+  if (!data.success) {
+    if (data.error.includes("Daily request limit exceeded")) {
+      throw new Error("429");
+    }
+    throw new Error(data.error || "Failed to send chat");
+  }
   return data.text;
 }
 

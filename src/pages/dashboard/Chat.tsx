@@ -9,6 +9,8 @@ import {
 import Tooltip from "@/components-dashboard/Tooltip/Tooltip";
 import { useConfig } from "@/contexts/ConfigContext";
 import languages from "@/configs/languages";
+import { getPlans, Plan } from "@/utils/fetchPlanes";
+import { handleCheckout } from "@/utils/handleCheckout";
 
 const PAGE_SIZE = 20;
 const LAST_CHAT_GROUP_KEY = "lastChatGroupId";
@@ -59,6 +61,8 @@ const Chat = () => {
   const submitRef = useRef<HTMLButtonElement>(null);
   const newChatRef = useRef<HTMLButtonElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
+  const [chatLimitError, setChatLimitError] = useState<string | null>(null);
+
   useEffect(() => {
     const handleChatUpdate = async () => {
       if (chat) {
@@ -197,10 +201,14 @@ const Chat = () => {
         }
       }, 100);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to send chat");
+      console.log("debug err", err);
+      if (err instanceof Error && err.message.includes("429")) {
+        setChatLimitError("limit");
+      } else {
+        setError(err instanceof Error ? err.message : "Failed to send chat");
+      }
       setChatHistory((prev) => prev.slice(0, -1));
     } finally {
-      console.log("debug finished");
       setTimeout(() => {
         if (responseRef.current) {
           responseRef.current.scrollIntoView({ behavior: "smooth" });
@@ -301,6 +309,14 @@ const Chat = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showLanguageDropdown]);
+
+  const handleUpgrade = async () => {
+    const { plans } = await getPlans();
+    const paidPlan = plans.find((p: Plan) => p.price > 0);
+    if (paidPlan) {
+      await handleCheckout(paidPlan.id);
+    }
+  };
 
   return (
     <div className="flex flex-col lg:flex-row h-full w-full min-h-0">
@@ -715,6 +731,7 @@ const Chat = () => {
             <button
               type="button"
               ref={submitRef}
+              onClick={handleSend}
               className="px-6 py-2 rounded-lg bg-[var(--commandly-primary)] hover:bg-[var(--commandly-primary)]/90 text-white font-semibold transition-all duration-300 ease-in-out transform hover:scale-[1.05] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               disabled={!chatGroupId || loading || historyLoading}
             >
@@ -759,6 +776,25 @@ const Chat = () => {
           )}
         </form>
         {error && <div className="text-red-400 mt-2 px-4">{error}</div>}
+        {chatLimitError === "limit" && (
+          <div className="flex flex-col items-center text-center gap-3 animate-fade-in mt-8 mb-8 px-6 py-8 rounded-2xl bg-gradient-to-br from-indigo-900/60 via-indigo-800/50 to-black/60 border border-indigo-500/30 shadow-2xl backdrop-blur-xl">
+            <span className="text-5xl mb-2 animate-bounce">🚫</span>
+            <h3 className="text-white font-bold text-xl mb-1">
+              You've reached your daily chat limit
+            </h3>
+            <p className="text-white/70 text-base mb-2">
+              Upgrade your plan to unlock more daily chats and insights.
+            </p>
+            {/* If you have usage info, show it here */}
+            {/* <p className="text-white/40 text-sm mb-2">Used 10 of 10 chats today</p> */}
+            <button
+              onClick={handleUpgrade}
+              className="cursor-pointer mt-2 px-6 py-3 rounded-lg bg-gradient-to-r from-indigo-500 via-purple-500 to-indigo-600 hover:from-indigo-600 hover:to-purple-600 text-white font-semibold text-base shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            >
+              Upgrade Now
+            </button>
+          </div>
+        )}
       </div>
       {/* Sidebar as a floating box */}
       <div className="w-full lg:w-80 flex-shrink-0 md:mt-6 md:mr-6 md:mb-6 md:ml-0 mt-8 md:relative min-h-0">

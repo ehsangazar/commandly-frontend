@@ -2,6 +2,7 @@ import { getAuthToken } from "./auth";
 
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "https://commandly-backend.fly.dev";
+
 export const handleCheckout = async (planId: string) => {
   try {
     const token = await getAuthToken();
@@ -16,7 +17,7 @@ export const handleCheckout = async (planId: string) => {
 
     const data = await response.json();
     if (data.success) {
-      window.location.href = data.checkoutUrl;
+      window.open(data.checkoutUrl, "_blank");
     } else {
       throw new Error(data.error || "Failed to create checkout session");
     }

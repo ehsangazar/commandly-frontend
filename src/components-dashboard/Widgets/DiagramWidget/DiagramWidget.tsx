@@ -1,5 +1,8 @@
 import { analyseContextToJSON } from "@/utils/analyseContextToJSON";
 import { getAuthToken } from "@/utils/auth";
+import { getPlans } from "@/utils/fetchPlanes";
+import { Plan } from "@/utils/fetchPlanes";
+import { handleCheckout } from "@/utils/handleCheckout";
 import {
   endOfDay,
   endOfMonth,
@@ -290,7 +293,13 @@ const DiagramWidget = () => {
         }))
       : [];
 
-  console.log("debug data", data);
+  const handleUpgrade = async () => {
+    const { plans } = await getPlans();
+    const paidPlan = plans.find((p: Plan) => p.price > 0);
+    if (paidPlan) {
+      await handleCheckout(paidPlan.id);
+    }
+  };
 
   return (
     <div className="h-full w-full bg-black/80 backdrop-blur-xl border border-white/10 shadow-lg rounded-xl overflow-hidden flex flex-col">
@@ -391,10 +400,8 @@ const DiagramWidget = () => {
                       insights.
                     </p>
                     <button
-                      onClick={() =>
-                        alert("Upgrade functionality coming soon!")
-                      }
-                      className="mt-2 inline-block px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium transition-all duration-200"
+                      onClick={handleUpgrade}
+                      className="cursor-pointer mt-2 inline-block px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium transition-all duration-200"
                     >
                       Upgrade Now
                     </button>{" "}
