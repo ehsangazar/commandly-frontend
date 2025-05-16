@@ -137,6 +137,31 @@ const Dashboard = () => {
     );
   }
 
+  if (widgets.length === 0) {
+    return (
+      <div className="w-full h-full flex items-center justify-center">
+        <div className="text-center text-white/80 space-y-4">
+          <h2 className="text-2xl font-semibold">No Widgets Added Yet</h2>
+          <p className="max-w-md">
+            <span className="block font-semibold text-lg mb-2">
+              Click the{" "}
+              <span className="inline-block bg-white/10 rounded px-2 py-1 mx-1 text-white font-bold text-xl align-middle">
+                +
+              </span>{" "}
+              button on the left sidebar{" "}
+              <span className="inline-block align-middle">⬅️</span> to add your
+              first widget.
+            </span>
+            <span className="block mt-2">
+              You can add widgets like Stats, Clips, Clock, Diagram, or Chat to
+              customize your dashboard.
+            </span>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
       <ResponsiveGridLayout

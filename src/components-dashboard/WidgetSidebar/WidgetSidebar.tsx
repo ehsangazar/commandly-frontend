@@ -43,7 +43,7 @@ const WidgetSidebar = ({
       title: "Stats Widget",
       description: "Track your browsing statistics",
       icon: FiBarChart2,
-      preview: "/widgets/stats-preview.png",
+      preview: "https://commandly.dev/widgets/stats-preview.png",
       unique: true,
       maxInstances: 1,
     },
@@ -52,7 +52,7 @@ const WidgetSidebar = ({
       title: "Usage Chart",
       description: "Visualize website usage with charts",
       icon: FiPieChart,
-      preview: "/widgets/diagram-preview.png",
+      preview: "https://commandly.dev/widgets/diagram-preview.png",
       unique: true,
       maxInstances: 1,
     },
@@ -61,7 +61,7 @@ const WidgetSidebar = ({
       title: "Clips Widget",
       description: "Save and organize text snippets",
       icon: FiClipboard,
-      preview: "/widgets/stats-preview.png",
+      preview: "https://commandly.dev/widgets/stats-preview.png",
       unique: false,
       maxInstances: 1,
     },
@@ -70,7 +70,7 @@ const WidgetSidebar = ({
       title: "Clock Widget",
       description: "Display time and date",
       icon: FiClock,
-      preview: "/widgets/clock-preview.png",
+      preview: "https://commandly.dev/widgets/clock-preview.png",
       unique: false,
       maxInstances: 1,
     },
@@ -79,7 +79,7 @@ const WidgetSidebar = ({
       title: "Chat Widget",
       description: "Quick message input",
       icon: FiMessageSquare,
-      preview: "/widgets/chat-preview.png",
+      preview: "https://commandly.dev/widgets/chat-preview.png",
       unique: false,
       maxInstances: 1,
     },
@@ -119,68 +119,66 @@ const WidgetSidebar = ({
         }}
         className="fixed top-0 right-0 h-screen w-96 z-50 widget-sidebar"
       >
-          <div className="h-full overflow-y-auto py-6 pl-6 pr-4 custom-scrollbar">
-            <div className="space-y-6">
-              {sortedWidgets.map((widget) => {
-                const isDisabled = isWidgetDisabled(
-                  widget.type,
-                  widget.maxInstances
-                );
-                return (
-                  <div
-                    key={widget.type}
-                    className={`group ${isDisabled ? "opacity-50" : ""}`}
+        <div className="h-full overflow-y-auto py-6 pl-6 pr-4 custom-scrollbar">
+          <div className="space-y-6">
+            {sortedWidgets.map((widget) => {
+              const isDisabled = isWidgetDisabled(
+                widget.type,
+                widget.maxInstances
+              );
+              return (
+                <div
+                  key={widget.type}
+                  className={`group ${isDisabled ? "opacity-50" : ""}`}
+                >
+                  <button
+                    onClick={() => {
+                      if (!isDisabled) {
+                        onAddWidget(widget.type);
+                        onClose();
+                      }
+                    }}
+                    className="w-full text-left"
+                    disabled={isDisabled}
                   >
-                    <button
-                      onClick={() => {
-                        if (!isDisabled) {
-                          onAddWidget(widget.type);
-                          onClose();
-                        }
-                      }}
-                      className="w-full text-left"
-                      disabled={isDisabled}
-                    >
-                      <div className="flex items-center gap-2 text-white/90 justify-between">
-                        <span className="font-medium">{widget.title}</span>
-                        {isDisabled && (
-                          <div className="flex items-center gap-1 text-white/50 text-xs bg-black/20 rounded-lg px-4 py-1">
-                            <span>
-                              Already added
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                      <p className="!text-xs text-white/70 mb-3">
-                        {widget.description}
-                      </p>
-                      <div
-                        className={`relative rounded-xl border border-white/20 overflow-hidden transition-all duration-300 ${
-                          !isDisabled
+                    <div className="flex items-center gap-2 text-white/90 justify-between">
+                      <span className="font-medium">{widget.title}</span>
+                      {isDisabled && (
+                        <div className="flex items-center gap-1 text-white/50 text-xs bg-black/20 rounded-lg px-4 py-1">
+                          <span>Already added</span>
+                        </div>
+                      )}
+                    </div>
+                    <p className="!text-xs text-white/70 mb-3">
+                      {widget.description}
+                    </p>
+                    <div
+                      className={`relative rounded-xl border border-white/20 overflow-hidden transition-all duration-300 ${
+                        !isDisabled
                           ? "group-hover:border-white/40 group-hover:shadow-lg"
                           : ""
-                        }`}
-                      >
-                        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40 z-10" />
-                        <img
-                          src={widget.preview}
-                          alt={`${widget.title} preview`}
-                          className="w-full h-48 object-cover"
-                        />
-                        <div
-                          className={`absolute inset-0 ${
-                            !isDisabled
+                      }`}
+                    >
+                      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/40 z-10" />
+                      <img
+                        src={widget.preview}
+                        alt={`${widget.title} preview`}
+                        className="w-full h-48 object-cover"
+                      />
+                      <div
+                        className={`absolute inset-0 ${
+                          !isDisabled
                             ? "bg-[var(--commandly-primary)]/0 group-hover:bg-[var(--commandly-primary)]/10"
                             : ""
-                          } transition-colors duration-300`}
-                        />
-                      </div>
-                    </button>
-                  </div>
-                );
-              })}
-            </div>
+                        } transition-colors duration-300`}
+                      />
+                    </div>
+                  </button>
+                </div>
+              );
+            })}
           </div>
+        </div>
       </div>
     </>
   );
