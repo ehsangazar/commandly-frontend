@@ -57,7 +57,7 @@ export const getAuthToken = (): string | null => {
 export const removeAuthToken = () => {
   // Remove from both storage locations
   localStorage.removeItem(TOKEN_KEY);
-  if (chrome.storage.local) {
+  if (chrome?.storage?.local) {
     chrome.storage.local.remove(TOKEN_KEY);
   }
   Cookies.remove(TOKEN_KEY, { path: "/" });
