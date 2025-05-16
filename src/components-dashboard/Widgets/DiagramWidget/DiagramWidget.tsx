@@ -53,11 +53,24 @@ const DiagramWidget = () => {
     weekly: [],
     monthly: [],
   });
-  const [analysisData, setAnalysisData] = useState<Record<string, number>>({});
+  const [analysisData, setAnalysisData] = useState<Record<
+    string,
+    number
+  > | null>(null);
+  const [statsLoading, setStatsLoading] = useState(false);
+  const [analysisLoading, setAnalysisLoading] = useState(false);
+  const [statsError, setStatsError] = useState<string | null>(null);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
+
+  const today = new Date();
+  const yesterday = new Date(today.getTime() - 86400000);
+  const yesterdayISO = yesterday.toISOString().split("T")[0];
 
   const handleRefresh = () => {
     setIsRefreshing(true);
-    setTimeout(() => setIsRefreshing(false), 1000);
+    setStatsError(null);
+    setAnalysisError(null);
+    fetchStats();
   };
 
   const handleAddCategory = () => {
@@ -85,51 +98,102 @@ const DiagramWidget = () => {
   };
 
   const analyse = useCallback(async () => {
+    setAnalysisError(null);
+    setAnalysisLoading(true);
     if (stats[activePeriod].length === 0) {
+      setAnalysisData(null);
+      setAnalysisLoading(false);
       return;
     }
-
-    // check if data is already in local storage
-    const today = new Date();
-    let parsedData: Record<string, Record<string, Record<string, number>>> = {};
-    const todayData = localStorage.getItem(`diagram-widget-data`);
-    if (todayData) {
-      parsedData = JSON.parse(todayData);
-      if (!parsedData[today.toISOString().split("T")[0]]) {
-        localStorage.removeItem(`diagram-widget-data`);
-      } else if (parsedData[today.toISOString().split("T")[0]]) {
-        if (parsedData[today.toISOString().split("T")[0]][activePeriod]) {
-          setAnalysisData(
-            parsedData[today.toISOString().split("T")[0]][activePeriod]
-          );
-          return;
+    try {
+      // Clean up old cache entries
+      const today = new Date();
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith("diagram-widget-analysis-")) {
+          // Extract the date range from the key
+          const parts = key.split("-");
+          const startDateStr = parts[parts.length - 2];
+          const endDateStr = parts[parts.length - 1];
+          if (key.includes("-yesterday-")) {
+            // Only keep if both start and end date are exactly yesterday
+            const startDateDay = startDateStr.split("T")[0];
+            const endDateDay = endDateStr.split("T")[0];
+            if (startDateDay !== yesterdayISO || endDateDay !== yesterdayISO) {
+              localStorage.removeItem(key);
+            }
+          } else {
+            // For other periods, keep if today is within the date range (inclusive)
+            const start = new Date(startDateStr);
+            const end = new Date(endDateStr);
+            const todayDate = new Date(
+              today.getFullYear(),
+              today.getMonth(),
+              today.getDate()
+            );
+            if (todayDate < start || todayDate > end) {
+              localStorage.removeItem(key);
+            }
+          }
         }
       }
-    }
-
-    const result = await analyseContextToJSON({
-      prompt: `
+      // Cache for every period, category, and date range
+      let startDate: Date, endDate: Date;
+      if (activePeriod === "yesterday") {
+        startDate = startOfDay(subDays(today, 1));
+        endDate = endOfDay(subDays(today, 1));
+      } else if (activePeriod === "weekly") {
+        startDate = startOfWeek(today);
+        endDate = endOfWeek(today);
+      } else {
+        startDate = startOfMonth(today);
+        endDate = endOfMonth(today);
+      }
+      const categoriesKey = categories.join(",");
+      const cacheKey = `diagram-widget-analysis-${activePeriod}-${categoriesKey}-${startDate.toISOString()}-${endDate.toISOString()}`;
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        setAnalysisData(JSON.parse(cached));
+        setAnalysisLoading(false);
+        return;
+      }
+      const result = await analyseContextToJSON({
+        prompt: `
           1. Analyze each domain in the input and categorize it
           2. If a record is not in any category, choose the most appropriate one
           3. Every number is in seconds, Calculate total time spent in each category in seconds
           4. Make sure each record is only in one category and not in multiple
         `,
-      context: JSON.stringify(stats[activePeriod]),
-      format: JSON.stringify(
-        categories.map((category) => ({
-          [category]: "SUM_OF_MINUTES",
-        }))
-      ),
-    });
-    setAnalysisData(result.analysis);
-    parsedData[new Date().toISOString().split("T")[0]] = {
-      ...parsedData[new Date().toISOString().split("T")[0]],
-      [activePeriod]: result.analysis,
-    };
-    localStorage.setItem(`diagram-widget-data`, JSON.stringify(parsedData));
+        context: JSON.stringify(stats[activePeriod]),
+        format: JSON.stringify(
+          categories.map((category) => ({
+            [category]: "SUM_OF_MINUTES",
+          }))
+        ),
+      });
+
+      setAnalysisData(result.analysis);
+      if (cacheKey) {
+        localStorage.setItem(cacheKey, JSON.stringify(result.analysis));
+      }
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message === "Daily request limit exceeded"
+      ) {
+        setAnalysisError("limit");
+      } else {
+        setAnalysisError("Failed to analyze data. Please try again later.");
+      }
+      setAnalysisData(null);
+    } finally {
+      setAnalysisLoading(false);
+    }
   }, [activePeriod, stats, categories]);
 
   const fetchStats = async () => {
+    setStatsLoading(true);
+    setStatsError(null);
     try {
       const token = getAuthToken();
       let startDate: Date, endDate: Date;
@@ -172,10 +236,13 @@ const DiagramWidget = () => {
         }));
       } else {
         setStats((prev) => ({ ...prev, [activePeriod]: [] }));
+        setStatsError("No data available for this period.");
       }
-    } catch (err) {
-      console.error("Failed to fetch domain time stats:", err);
+    } catch {
+      setStats((prev) => ({ ...prev, [activePeriod]: [] }));
+      setStatsError("Failed to fetch stats. Please try again later.");
     } finally {
+      setStatsLoading(false);
       setIsRefreshing(false);
     }
   };
@@ -202,6 +269,8 @@ const DiagramWidget = () => {
     return null;
   };
 
+  console.log("debug stats", stats);
+
   useEffect(() => {
     fetchStats();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -221,8 +290,10 @@ const DiagramWidget = () => {
         }))
       : [];
 
+  console.log("debug data", data);
+
   return (
-    <div className="h-full w-full bg-black rounded-xl overflow-hidden flex flex-col">
+    <div className="h-full w-full bg-black/80 backdrop-blur-xl border border-white/10 shadow-lg rounded-xl overflow-hidden flex flex-col">
       {/* Top Bar */}
       <div className="px-4 py-2.5 border-b border-white/10 flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -235,9 +306,14 @@ const DiagramWidget = () => {
           <button
             onClick={handleRefresh}
             className="p-2.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all duration-200 disabled:opacity-50"
+            disabled={statsLoading || analysisLoading}
           >
             <FiRefreshCw
-              className={`w-4 h-4 ${isRefreshing ? "animate-spin" : ""}`}
+              className={`w-4 h-4 ${
+                isRefreshing || statsLoading || analysisLoading
+                  ? "animate-spin"
+                  : ""
+              }`}
             />
           </button>
           <button
@@ -247,6 +323,7 @@ const DiagramWidget = () => {
                 ? "bg-white/20 text-white"
                 : "bg-white/10 hover:bg-white/20 text-white"
             }`}
+            disabled={statsLoading || analysisLoading}
           >
             <FiSettings className="w-4 h-4" />
           </button>
@@ -268,11 +345,12 @@ const DiagramWidget = () => {
                 <button
                   key={period}
                   onClick={() => setActivePeriod(period)}
-                  className={`px-2.5 py-1 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`px-2.5 py-1 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer ${
                     activePeriod === period
                       ? "bg-white/10 text-white"
                       : "text-white/50 hover:text-white/70 hover:bg-white/5"
                   }`}
+                  disabled={statsLoading || analysisLoading}
                 >
                   {period.charAt(0).toUpperCase() + period.slice(1)}
                 </button>
@@ -281,7 +359,55 @@ const DiagramWidget = () => {
 
             {/* Chart */}
             <div className="flex-1 p-4">
-              {data && categories.length > 0 ? (
+              {statsLoading ? (
+                <div className="h-full flex items-center justify-center">
+                  <div className="flex flex-col items-center gap-2 text-white/60">
+                    <FiRefreshCw className="w-8 h-8 animate-spin" />
+                    <span>Loading statistics...</span>
+                  </div>
+                </div>
+              ) : statsError ? (
+                <div className="h-full flex items-center justify-center">
+                  <div className="text-center text-red-400">
+                    <p>{statsError}</p>
+                  </div>
+                </div>
+              ) : analysisLoading ? (
+                <div className="h-full flex items-center justify-center">
+                  <div className="flex flex-col items-center gap-2 text-white/60">
+                    <FiRefreshCw className="w-8 h-8 animate-spin" />
+                    <span>Analyzing data...</span>
+                  </div>
+                </div>
+              ) : analysisError === "limit" ? (
+                <div className="h-full flex items-center justify-center">
+                  <div className="flex flex-col items-center text-center gap-2 animate-fade-in">
+                    <span className="text-4xl">🚫</span>
+                    <p className="text-white/80 mb-1 text-base font-semibold">
+                      You've reached your daily analysis limit
+                    </p>
+                    <p className="text-white/50 text-sm max-w-xs">
+                      Upgrade your plan to unlock more daily analyses and
+                      insights.
+                    </p>
+                    <button
+                      onClick={() =>
+                        alert("Upgrade functionality coming soon!")
+                      }
+                      className="mt-2 inline-block px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-medium transition-all duration-200"
+                    >
+                      Upgrade Now
+                    </button>{" "}
+                    {/* TODO: Implement real upgrade logic */}
+                  </div>
+                </div>
+              ) : analysisError ? (
+                <div className="h-full flex items-center justify-center">
+                  <div className="text-center text-red-400">
+                    <p>{analysisError}</p>
+                  </div>
+                </div>
+              ) : data?.length > 0 && categories.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart
                     data={data}
@@ -321,14 +447,15 @@ const DiagramWidget = () => {
                 </ResponsiveContainer>
               ) : (
                 <div className="h-full flex items-center justify-center">
-                  <div className="text-center">
-                    <p className="text-white/70 mb-2">No categories selected</p>
-                    <button
-                      onClick={() => setIsSettingsOpen(true)}
-                      className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all duration-200 text-sm"
-                    >
-                      Add Categories
-                    </button>
+                  <div className="flex flex-col items-center text-center gap-2 animate-fade-in">
+                    <FiBarChart2 className="w-10 h-10 text-white/30 animate-pulse" />
+                    <p className="text-white/70 mb-1 text-base font-medium">
+                      No data available yet for this period
+                    </p>
+                    <p className="text-white/40 text-sm max-w-xs">
+                      Please be patient as your activity is being collected.
+                      Come back later to see your usage by category.
+                    </p>
                   </div>
                 </div>
               )}
@@ -354,10 +481,12 @@ const DiagramWidget = () => {
                     onKeyPress={handleKeyPress}
                     placeholder="Enter new category..."
                     className="flex-1 px-2 py-1.5 rounded-lg bg-white/5 border border-white/10 text-white placeholder:text-white/30 focus:outline-none focus:border-white/20 text-sm"
+                    disabled={statsLoading || analysisLoading}
                   />
                   <button
                     onClick={handleAddCategory}
                     className="px-2 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all duration-200 flex items-center gap-1.5 text-sm"
+                    disabled={statsLoading || analysisLoading}
                   >
                     <FiPlus className="w-3.5 h-3.5" />
                     <span>Add</span>
@@ -375,6 +504,7 @@ const DiagramWidget = () => {
                         <button
                           onClick={() => handleRemoveCategory(category)}
                           className="p-1 rounded hover:bg-white/10 transition-all duration-200"
+                          disabled={statsLoading || analysisLoading}
                         >
                           <FiX className="w-4 h-4 text-white/50" />
                         </button>

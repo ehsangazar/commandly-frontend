@@ -34,6 +34,9 @@ export async function analyseContextToJSON({
 
   if (!response.ok) {
     const error = await response.json();
+    if (error.error === "Daily request limit exceeded") {
+      throw new Error("Daily request limit exceeded");
+    }
     throw new Error(error.error || "Failed to analyse text");
   }
 
