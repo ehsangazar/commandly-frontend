@@ -23,8 +23,14 @@ const App = () => {
   const showBrowserStatistics =
     searchParams.get("browser-statistics") === "true";
   const showChat = searchParams.get("chat") === "true";
+
+  const glassmorthBackground =
+    searchParams.size > 0
+      ? "!backdrop-blur-2xl !bg-black/60"
+      : "!backdrop-blur-2xl !bg-white/10";
+
   return (
-    <GlassmorphismBackground className="!backdrop-blur-2xl !bg-black/50">
+    <GlassmorphismBackground className={glassmorthBackground}>
       <div className="p-6 h-full">
         {showSettings ? (
           <Settings />

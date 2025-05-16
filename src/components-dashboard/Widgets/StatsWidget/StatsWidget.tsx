@@ -26,123 +26,94 @@ interface DomainStats {
   time: number;
 }
 
-interface TimeStats {
-  daily: DomainStats[];
-  weekly: DomainStats[];
-  monthly: DomainStats[];
-}
-
 const StatsWidget = () => {
-  const [stats, setStats] = useState<TimeStats>({
-    daily: [
-      { domain: "github.com", time: 7200 },
-      { domain: "google.com", time: 3600 },
-      { domain: "stackoverflow.com", time: 1800 },
-    ],
-    weekly: [
-      { domain: "github.com", time: 25200 },
-      { domain: "google.com", time: 12600 },
-      { domain: "stackoverflow.com", time: 7200 },
-    ],
-    monthly: [
-      { domain: "github.com", time: 108000 },
-      { domain: "google.com", time: 54000 },
-      { domain: "stackoverflow.com", time: 28800 },
-    ],
-  });
+  const [stats, setStats] = useState<DomainStats[]>([]);
   const [activePeriod, setActivePeriod] = useState<
     "daily" | "weekly" | "monthly"
   >("daily");
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const fetchStats = async () => {
+  const fetchStats = async (period: "daily" | "weekly" | "monthly") => {
+    setLoading(true);
     try {
       const token = getAuthToken();
-
-      const fetchPeriodStats = async (startDate: Date, endDate: Date) => {
-        const params = new URLSearchParams({
-          startDate: startDate.toISOString(),
-          endDate: endDate.toISOString(),
-        });
-
-        const response = await fetch(
-          `${API_BASE_URL}/domain-time/stats?${params.toString()}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch stats");
-        }
-
-        const data = await response.json();
-        if (data.success) {
-          return data.stats.map(
-            (item: { domain: string; totalTime: number }) => ({
-              domain: item.domain,
-              time: item.totalTime,
-            })
-          );
-        }
-        return [];
-      };
-
-      const [dailyStats, weeklyStats, monthlyStats] = await Promise.all([
-        fetchPeriodStats(startOfDay(new Date()), endOfDay(new Date())),
-        fetchPeriodStats(startOfWeek(new Date()), endOfWeek(new Date())),
-        fetchPeriodStats(startOfMonth(new Date()), endOfMonth(new Date())),
-      ]);
-
-      setStats({
-        daily: dailyStats,
-        weekly: weeklyStats,
-        monthly: monthlyStats,
+      let startDate: Date, endDate: Date;
+      if (period === "daily") {
+        startDate = startOfDay(new Date());
+        endDate = endOfDay(new Date());
+      } else if (period === "weekly") {
+        startDate = startOfWeek(new Date());
+        endDate = endOfWeek(new Date());
+      } else {
+        startDate = startOfMonth(new Date());
+        endDate = endOfMonth(new Date());
+      }
+      const params = new URLSearchParams({
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
       });
+      const response = await fetch(
+        `${API_BASE_URL}/domain-time/stats?${params.toString()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error("Failed to fetch stats");
+      }
+      const data = await response.json();
+      if (data.success) {
+        setStats(
+          data.stats.map((item: { domain: string; totalTime: number }) => ({
+            domain: item.domain,
+            time: item.totalTime,
+          }))
+        );
+      } else {
+        setStats([]);
+      }
     } catch (err) {
       console.error("Failed to fetch domain time stats:", err);
+      setStats([]);
     } finally {
+      setLoading(false);
       setIsRefreshing(false);
     }
   };
 
   useEffect(() => {
-    fetchStats();
-  }, []);
+    fetchStats(activePeriod);
+  }, [activePeriod]);
 
   const handleRefresh = () => {
     setIsRefreshing(true);
-    // Add refresh logic here
-    setTimeout(() => setIsRefreshing(false), 1000);
+    fetchStats(activePeriod);
   };
 
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
-
     if (hours > 0) {
       return `${hours}h ${minutes}m`;
     }
     return `${minutes}m`;
   };
 
-  const getMaxTime = (period: "daily" | "weekly" | "monthly") => {
-    return Math.max(...stats[period].map((item) => item.time));
+  const getMaxTime = () => {
+    return Math.max(1, ...stats.map((item) => item.time));
   };
 
-  const getBarWidth = (
-    time: number,
-    period: "daily" | "weekly" | "monthly"
-  ) => {
-    const maxTime = getMaxTime(period);
+  const getBarWidth = (time: number) => {
+    const maxTime = getMaxTime();
     return `${(time / maxTime) * 100}%`;
   };
 
   return (
-    <div className="bg-black backdrop-blur-xl border border-white/10 shadow-lg h-full w-full rounded-xl flex flex-col">
+    <div className="bg-black/90 backdrop-blur-4xl border border-white/10 shadow-lg h-full w-full rounded-xl flex flex-col">
       {/* Top Bar */}
       <div className="p-4 border-b border-white/10">
         <div className="flex items-center justify-between">
@@ -173,11 +144,13 @@ const StatsWidget = () => {
             </button>
             <button
               onClick={handleRefresh}
-              disabled={isRefreshing}
+              disabled={isRefreshing || loading}
               className="p-3 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all duration-200 disabled:opacity-50"
             >
               <FiRefreshCw
-                className={`h-4 w-4 ${isRefreshing ? "animate-spin" : ""}`}
+                className={`h-4 w-4 ${
+                  isRefreshing || loading ? "animate-spin" : ""
+                }`}
               />
             </button>
           </div>
@@ -189,7 +162,7 @@ const StatsWidget = () => {
             <button
               key={period}
               onClick={() => setActivePeriod(period)}
-              className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-all duration-200 ${
+              className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-all duration-200 cursor-pointer ${
                 activePeriod === period
                   ? "bg-white/10 text-white shadow-sm"
                   : "text-white/60 hover:text-white hover:bg-white/5"
@@ -202,9 +175,16 @@ const StatsWidget = () => {
       </div>
 
       {/* Data Display */}
-      <div className="flex-1 py-2 pl-4 pr-1 overflow-y-auto custom-scrollbar my-2">
-        {stats[activePeriod].length === 0 ? (
-          <div className="h-full flex flex-col items-center justify-center text-white/50 gap-1">
+      <div className="flex-1 py-2 px-4 overflow-y-auto custom-scrollbar my-2">
+        {loading ? (
+          <div className="h-full flex flex-col items-center justify-center text-white/50 gap-2 animate-fade-in">
+            <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center">
+              <FiRefreshCw className="h-6 w-6 animate-spin" />
+            </div>
+            <p className="!text-sm">Loading statistics...</p>
+          </div>
+        ) : stats.length === 0 ? (
+          <div className="h-full flex flex-col items-center justify-center text-white/50 gap-1 animate-fade-in">
             <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center">
               <FiBarChart2 className="h-6 w-6" />
             </div>
@@ -216,8 +196,8 @@ const StatsWidget = () => {
             </p>
           </div>
         ) : (
-          <div className="space-y-2">
-            {stats[activePeriod].map((item, index) => (
+          <div className="space-y-2 animate-fade-in">
+            {stats.map((item, index) => (
               <div
                 key={item.domain}
                 className="flex items-center justify-between rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 p-3 transition-all duration-200"
@@ -238,7 +218,7 @@ const StatsWidget = () => {
                     <div className="mt-1.5 h-1 w-full bg-white/5 rounded-full overflow-hidden">
                       <div
                         className="h-full bg-white/20 rounded-full transition-all duration-500"
-                        style={{ width: getBarWidth(item.time, activePeriod) }}
+                        style={{ width: getBarWidth(item.time) }}
                       />
                     </div>
                   </div>
