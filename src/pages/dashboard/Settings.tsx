@@ -9,7 +9,6 @@ import {
   FiAlertCircle,
   FiSettings,
   FiRefreshCw,
-  FiMoon,
   FiMessageSquare,
   FiClipboard,
   FiGlobe,
@@ -395,7 +394,7 @@ export default function Settings() {
                     {user?.isVerified ? (
                       <FiCheckCircle className="h-4 w-4 text-green-400" />
                     ) : (
-                      <span className="text-sm text-yellow-400">
+                      <span className="text-sm text-yellow-400 hidden">
                         (Unverified)
                       </span>
                     )}
@@ -499,7 +498,7 @@ export default function Settings() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Theme and Language Settings */}
                 <div className="space-y-4">
-                  <div className="p-4 rounded-lg bg-black/20 border border-white/5">
+                  {/* <div className="p-4 rounded-lg bg-black/20 border border-white/5">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         <FiMoon className="h-5 w-5 text-[var(--commandly-primary)]" />
@@ -516,7 +515,7 @@ export default function Settings() {
                         <option value="dark">Dark</option>
                       </select>
                     </div>
-                  </div>
+                  </div> */}
 
                   <div className="p-4 rounded-lg bg-black/20 border border-white/5">
                     <div className="flex items-center justify-between">
