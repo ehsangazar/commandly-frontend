@@ -28,11 +28,10 @@ type ChatGroup = {
 
 const getDirection = (text: string) => {
   const newText = text.replace(/```html|```/g, "").replace(/<[^>]*>?/g, "");
-  // check if text has more than 50% of rtl characters
-  const rtlChars = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
-  const rtlCount = (newText.match(rtlChars) || []).length;
   const ltrCount = (newText.match(/[a-zA-Z0-9]/g) || []).length;
-  return rtlCount > ltrCount ? "rtl" : "ltr";
+  const rtlCount = newText.length - ltrCount;
+  const isRTL = rtlCount > ltrCount;
+  return isRTL ? "rtl" : "ltr";
 };
 
 const Chat = () => {
