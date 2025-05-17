@@ -7,6 +7,7 @@ import {
   endOfDay,
   endOfMonth,
   endOfWeek,
+  format,
   startOfDay,
   startOfMonth,
   startOfWeek,
@@ -66,8 +67,17 @@ const DiagramWidget = () => {
   const [analysisError, setAnalysisError] = useState<string | null>(null);
 
   const today = new Date();
-  const yesterday = new Date(today.getTime() - 86400000);
-  const yesterdayISO = yesterday.toISOString().split("T")[0];
+  const yesterdayStartDate = format(
+    startOfDay(subDays(today, 1)),
+    "yyyy-MM-dd"
+  );
+  const yesterdayEndDate = format(endOfDay(subDays(today, 1)), "yyyy-MM-dd");
+
+  const weeklyStartDate = format(startOfWeek(today), "yyyy-MM-dd");
+  const weeklyEndDate = format(endOfWeek(today), "yyyy-MM-dd");
+
+  const monthlyStartDate = format(startOfMonth(today), "yyyy-MM-dd");
+  const monthlyEndDate = format(endOfMonth(today), "yyyy-MM-dd");
 
   const handleRefresh = () => {
     setIsRefreshing(true);
@@ -110,19 +120,19 @@ const DiagramWidget = () => {
     }
     try {
       // Clean up old cache entries
-      const today = new Date();
       for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key && key.startsWith("diagram-widget-analysis-")) {
-          // Extract the date range from the key
-          const parts = key.split("-");
-          const startDateStr = parts[parts.length - 2];
-          const endDateStr = parts[parts.length - 1];
+          const parts = key.split("|");
+          const startDateStr = parts[1];
+          const endDateStr = parts[2];
           if (key.includes("-yesterday-")) {
-            // Only keep if both start and end date are exactly yesterday
-            const startDateDay = startDateStr.split("T")[0];
-            const endDateDay = endDateStr.split("T")[0];
-            if (startDateDay !== yesterdayISO || endDateDay !== yesterdayISO) {
+            const startDateDay = startDateStr;
+            const endDateDay = endDateStr;
+            if (
+              startDateDay !== yesterdayStartDate ||
+              endDateDay !== yesterdayEndDate
+            ) {
               localStorage.removeItem(key);
             }
           } else {
@@ -141,19 +151,20 @@ const DiagramWidget = () => {
         }
       }
       // Cache for every period, category, and date range
-      let startDate: Date, endDate: Date;
+      let startDate: string, endDate: string;
       if (activePeriod === "yesterday") {
-        startDate = startOfDay(subDays(today, 1));
-        endDate = endOfDay(subDays(today, 1));
+        startDate = yesterdayStartDate;
+        endDate = yesterdayEndDate;
       } else if (activePeriod === "weekly") {
-        startDate = startOfWeek(today);
-        endDate = endOfWeek(today);
+        startDate = weeklyStartDate;
+        endDate = weeklyEndDate;
       } else {
-        startDate = startOfMonth(today);
-        endDate = endOfMonth(today);
+        startDate = monthlyStartDate;
+        endDate = monthlyEndDate;
       }
       const categoriesKey = categories.join(",");
-      const cacheKey = `diagram-widget-analysis-${activePeriod}-${categoriesKey}-${startDate.toISOString()}-${endDate.toISOString()}`;
+      const cacheKey = `diagram-widget-analysis-${activePeriod}-${categoriesKey}|${startDate}|${endDate}`;
+      // Always check cache for all periods, including yesterday
       const cached = localStorage.getItem(cacheKey);
       if (cached) {
         setAnalysisData(JSON.parse(cached));
@@ -174,7 +185,6 @@ const DiagramWidget = () => {
           }))
         ),
       });
-
       setAnalysisData(result.analysis);
       if (cacheKey) {
         localStorage.setItem(cacheKey, JSON.stringify(result.analysis));
