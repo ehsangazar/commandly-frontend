@@ -129,7 +129,7 @@ const WidgetSidebar = ({
               return (
                 <div
                   key={widget.type}
-                  className={`group ${isDisabled ? "opacity-50" : ""}`}
+                  className={`group ${isDisabled ? "opacity-40" : ""}`}
                 >
                   <button
                     onClick={() => {
