@@ -282,8 +282,6 @@ const DiagramWidget = () => {
     return null;
   };
 
-  console.log("debug stats", stats);
-
   useEffect(() => {
     fetchStats();
     // eslint-disable-next-line react-hooks/exhaustive-deps

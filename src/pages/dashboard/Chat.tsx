@@ -201,7 +201,6 @@ const Chat = () => {
         }
       }, 100);
     } catch (err) {
-      console.log("debug err", err);
       if (err instanceof Error && err.message.includes("429")) {
         setChatLimitError("limit");
       } else {
