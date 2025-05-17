@@ -115,6 +115,9 @@ const DashboardLayout = () => {
         backgroundImage: `url(${currentBackground.url})`,
         padding: "20px",
         height: "calc(100vh - 40px)",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
       }}
     >
       <Sidebar
