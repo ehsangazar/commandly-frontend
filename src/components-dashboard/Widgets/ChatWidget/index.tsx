@@ -25,7 +25,7 @@ const ChatWidget: React.FC<ChatWidgetProps> = ({ onSubmit }) => {
   };
 
   return (
-    <div className="bg-white text-black p-4 rounded-lg shadow-sm w-full max-w-[400px]">
+    <div className="bg-white text-black p-4 rounded-lg shadow-sm w-full">
       <div className="flex items-center justify-center gap-2 mb-2">
         <FiZap className="w-5 h-5 text-black" />
         <span className="text-lg text-black font-medium">

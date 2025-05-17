@@ -110,8 +110,12 @@ const DashboardLayout = () => {
 
   return (
     <div
-      className="w-full flex items-center gap-6 p-6 relative h-screen"
-      style={{ backgroundImage: `url(${currentBackground.url})` }}
+      className="w-full flex items-center gap-6 relative"
+      style={{
+        backgroundImage: `url(${currentBackground.url})`,
+        padding: "20px",
+        height: "calc(100vh - 40px)",
+      }}
     >
       <Sidebar
         isModifyMode={isModifyMode}
